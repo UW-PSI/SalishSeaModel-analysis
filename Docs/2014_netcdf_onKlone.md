@@ -4,7 +4,7 @@ To start with, I will summarize the files in the `Reference` run with files loca
 ```
 /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_ref_orig/hotstart/outputs
 ```
-Strangly, all files appear to be executables (`*` at the end).  I'm not familiar with having files show up as executables like this and why that might be.  The complete list looks like:
+Strangely, all files appear to be executables (`*` at the end).  I'm not familiar with having files show up as executables like this.  The complete list of files in this directory are:
 ```
 algae.3_yr_11*         restart.180*         s_hy_base000_pnnl007_nodes.mat*
 avg_plot.3_yr_11*      restart.220*         s_hy_base000_pnnl007_nodes.nc*
@@ -15,7 +15,7 @@ plot.3_yr_11*          restart.40*          snapshot.3_yr_11*
 restart.100*           restart.60*          transport_flux.3_yr_11*
 restart.140*           run_bs_wqm_HYAK.sh*
 ```
-The file used in the python script that I have is `s_hy_base000_pnnl007_nodes.nc*`.  It's big: 272 GB.
+The model output file used in the python script from Su Kyong is `s_hy_base000_pnnl007_nodes.nc*`.  It's big: 272 GB; which is great!
 Running `ncdump` on this files yields the following information about this file's content.
 ```
 [rdmseas@klone1 outputs]$ module load stf/netcdf/c-ompi/4.8.1
