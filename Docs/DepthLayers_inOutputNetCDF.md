@@ -11,13 +11,13 @@ else:
     temp_daily_mean=np.mean(np.reshape(temp[variable_input[ivariable-1]][:,layer-1:160120:10].data,(365,24,16012)),axis=1)
 ```
 This code gives me insight to how to handle depths in the model output.  
-##### Code translation
+## Code translation
 1. the temporary variable "temp" is reshaped to a 3D form with dimensions of `(time, I x J, 10 depth-levels)` or `(8760, 16012, 10)`
 2. the depth-average for the case of `layer==0` is taken as the sum across levels of the "temp" value scaled by `del_siglev`, which is presumably $frac{\Delta$z}{WCT}$ 
 3. the daily mean is then the daily-average of the depth-averaged value
 4. OR for "else" the daily mean is calculated at a specific depth
 
-##### Minimum across layers
+## Minimum across layers
 In order to get the Minimum across layers, I would just have to change the code as follows:
 
 1. Reshape "temp" variable to `(time, I x J, 10 depth-levels)`
