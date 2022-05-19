@@ -214,11 +214,28 @@ dependencies:
  - xarray
  - geopandas
 ```
-One might think that installing from this `envs` folder would install the environment in the lab directory after having installed `miniconda3` to the lab directory; however, this isn't the case.  The environment will still be installed to $HOME/.conda.  A symlink needs to be created in order to point `conda` from this location to the desired lab directory locations.  The solution is burried in the responses to this question on [Stack Overflow](https://stackoverflow.com/questions/37926940/how-to-specify-new-environment-location-for-conda-create).  This symlink is established as follows:
+One might think that installing from this `envs` folder would install the environment in the lab directory after having installed `miniconda3` to the lab directory; however, this isn't the case.  The environment will still be installed to $HOME/.conda.  A symlink needs to be created in order to point `conda` from this location to the desired lab directory locations.  The solution is burried in the responses to this question on [Stack Overflow](https://stackoverflow.com/questions/37926940/how-to-specify-new-environment-location-for-conda-create).  First create a `.conda` directory in `$HOME` and in the lab folder. 
 
 ```
-ln -s /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.conda $HOME/.conda
+$ mkdir ~/.conda
+$ mkdir /mmfs1/gscratch/ssmc/USRS/PSI/your-personal-folder-name/.conda
 ```
+
+Then establish a symlink as follows:
+
+```
+$ ln -s $HOME/.conda /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.conda 
+$ conda env create -f ./envs/klone-jupyter.yml
+```
+Now `$HOME/.conda` is a symbolic link that points to the lab space `.conda` directory.  See the symbolic link using `ls -lah ~/.conda`.
+```
+$ ls -lah ~/.conda
+total 18K
+drwxr-xr-x 2 rdmseas all  512 May 19 13:42 ./
+drwx------ 8 rdmseas all 8.0K May 19 13:41 ../
+lrwxrwxrwx 1 rdmseas all   44 May 19 13:42 .conda -> /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.conda/
+```
+
 From within `envs` folder, we can install this environment as follows
 ```
 $ module load foster/python/miniconda/3.8
