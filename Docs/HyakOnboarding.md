@@ -271,7 +271,7 @@ Jupyterlab provides an ability to plot up model results and develop methods visu
 
 From the wiki: "Mox nodes have 28, 32 or 40 cores. Ask the experienced members of your Hyak group about the number of cores for  the nodes in your group."  Need information on Hyak. 
 ### Create an alias to initiate an interactive node
-Create a shell script in your root directory (I choose ``) that specifies account and partition.  Use `hyakalloc` to see which account and partition apply to your personal account.  Mine are `ssmc` and `compute`.  The `$1` for `time` indicates that the first variable passed in will be the requested time allocation.  Here, I just select 1 node and 1 CPU with ~5GB memory (in multiples of 1280). 
+Create a shell script in your root directory (I chose `/mmfs1/home/rdmseas`) that specifies account and partition.  Use `hyakalloc` to see which account and partition apply to your personal account.  Mine are `ssmc` and `compute`.  The `$1` for `time` indicates that the first variable passed in will be the requested time allocation.  Here, I just select 1 node and 1 CPU with ~5GB memory (in multiples of 1280). 
 ```
 #!/bin/bash
 
@@ -292,9 +292,115 @@ salloc: Waiting for resource configuration
 salloc: Nodes n3012 are ready for job
 bash-4.4$ 
 ```
+Now we are ready to start a JupyterLab session without overloading the login node and making others mad.  :-) 
 
 ### Create an alias to initiate a JupyterLab session
+Create a shell script to initiate a JupyterLab session.  Mine is called `klone_jupyter.sh` and looks like:
+```
+#!/bin/bash
+
+# load modules and jupyter environment
+module load cesg/python/3.8.10
+conda activate klone_jupyter
+
+# activate remote login
+jupyter lab --no-browser --ip $(hostname -f)
+```
+NOTE: the `klone_jupyter` environment name used here matched the name used in the environment YAML files
+```
+name: klone_jupyter
+```
+Change it to match whichever environment name you have.  
+
+Create an alias to call this shell script.  This is mine:
+```
+alias startjupyter='bash /mmfs1/home/rdmseas/./klone_jupyter.sh'
+```
+Use the alias shortcut to initiate the JupyterLab session, e.g.
+```
+$ startjupyter
+```
+The output will look something like: 
+```
+(klone_jupyter) bash-4.4$ jupyter lab --no-browser --ip $(hostname -f)
+[I 2022-05-20 15:21:45.624 ServerApp] jupyterlab | extension was successfully linked.
+[I 2022-05-20 15:21:45.635 ServerApp] nbclassic | extension was successfully linked.
+[I 2022-05-20 15:21:45.653 ServerApp] Writing Jupyter server cookie secret to /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.local/share/jupyter/runtime/jupyter_cookie_secret
+[I 2022-05-20 15:21:48.001 ServerApp] notebook_shim | extension was successfully linked.
+[I 2022-05-20 15:21:48.163 ServerApp] notebook_shim | extension was successfully loaded.
+[I 2022-05-20 15:21:48.165 LabApp] JupyterLab extension loaded from /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.conda/envs/klone_jupyter/lib/python3.10/site-packages/jupyterlab
+[I 2022-05-20 15:21:48.165 LabApp] JupyterLab application directory is /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.conda/envs/klone_jupyter/share/jupyter/lab
+[I 2022-05-20 15:21:48.171 ServerApp] jupyterlab | extension was successfully loaded.
+[I 2022-05-20 15:21:48.203 ServerApp] nbclassic | extension was successfully loaded.
+[I 2022-05-20 15:21:48.204 ServerApp] Serving notebooks from local directory: /mmfs1/home/rdmseas
+[I 2022-05-20 15:21:48.204 ServerApp] Jupyter Server 1.17.0 is running at:
+[I 2022-05-20 15:21:48.204 ServerApp] http://n3012.hyak.local:8888/lab?token=03324ebd47d67438d610da6044be0c1b10147525a40b4767
+[I 2022-05-20 15:21:48.204 ServerApp]  or http://127.0.0.1:8888/lab?token=03324ebd47d67438d610da6044be0c1b10147525a40b4767
+[I 2022-05-20 15:21:48.204 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 2022-05-20 15:21:48.215 ServerApp] 
+    
+    To access the server, open this file in a browser:
+        file:///mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.local/share/jupyter/runtime/jpserver-62970-open.html
+    Or copy and paste one of these URLs:
+        http://n3012.hyak.local:8888/lab?token=03324ebd47d67438d610da6044be0c1b10147525a40b4767
+     or http://127.0.0.1:8888/lab?token=03324ebd47d67438d610da6044be0c1b10147525a40b4767
+```
+The most important bits from the above is the computer and port address `n3012.hyak.local:8888` and the key `03324ebd47d67438d610da6044be0c1b10147525a40b4767`.  We used these in a `ssh` call from a local computer as follows (using my USERID "rdmseas").
+```
+ssh -N -L localhost:8800:n3012.hyak.local:8888 rdmseas@klone.hyak.uw.edu
+```
+In this call, I'm connecting my local system port `8800` to HYAK's port `8888` using `localhost:8800:n3012.hyak.local:8888`, followed by my login.  The system will prompt for password and two-factor login authentication. Once the password and authentication is provided, open a new browser window and use `localhost:8800` as the web address.  Et voila!  Compute away.  
+
+# In summary: Creating a JupyterLab session on Klone
+Login to Klone and type the following three shortcuts at the command line to initialize an interactive node and to start a JupyterLab session.  For example, for a 2-hour coding session, type:
+```
+$ allocate2
+$ cda
+$ startjupyter
+```
+Where `cda` is my `alias-to-directory-where-notebooks-are-located`, i.e., in my `.bashrc` I've specified
+```
+alias cda='cd /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/Projects'
+```
+Something that I've noticed on `Klone` is that my `.bashrc` isn't automatically initialized when I start an interactive node.  In this case, the setup requires four command lines:
+```
+$ allocate2
+$ source .bashrc
+$ cda
+$ startjupyter
+```
+Happy computing! 
 
 # `.bashrc` setup
-Useful aliases for `.bashrc` file
-...
+Here is an overview of useful bits in my `.bashrc` file
+```
+# ~~~ SYSTEM CONFIG ~~~
+# Point $HOME to lab directory for conda environment installations
+HOME="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael"
+
+# ~~~ ALIASES ~~~
+alias cdw='cd /mmfs1/gscratch/ssmc/USRS/PSI/Rachael'
+alias cda='cd /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/Projects'
+alias cdh='cd /mmfs1/home/rdmseas'
+alias sukscripts='cd /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/script'
+alias ssmoutputs='cd /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_exist_orig/hotstart/o
+utputs'
+
+# interactive node
+alias allocate130='bash /mmfs1/home/rdmseas/./startallocation.sh 1:30:00'
+alias allocate1='bash /mmfs1/home/rdmseas/./startallocation.sh 1:00:00'
+alias allocate2='bash /mmfs1/home/rdmseas/./startallocation.sh 2:00:00'
+
+# jupyter
+alias startjupyter='bash /mmfs1/home/rdmseas/./klone_jupyter.sh'
+
+# utils
+alias du="du -h"
+alias ls="ls --color=auto -F"
+alias grep="grep --color=auto"
+alias df="df -h"
+alias la="ls -a"
+alias rm="rm -i"
+alias ll="ls -al"
+
+```
