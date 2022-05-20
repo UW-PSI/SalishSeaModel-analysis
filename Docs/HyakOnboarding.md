@@ -6,6 +6,15 @@ SSMC has a disk quota of 92 TB and has used (as of this file creation) 60 TB.  T
 
 Use command `hyakstorage` to get more information on `home` and `"research lab"` storage
 
+Installing conda environments to `$HOME` doesn't work due to disk limits (see, e.g. [Hyak Miniconda3 instructions](https://hyak.uw.edu/docs/tools/python/)), so the installation has to go to `/mmfs1/gscratch/ssmc/USRS/PSI/` subdirectories.  The only way that I figured out how to make this work was to add a line to `.bashrc` that defines `$HOME` as the subdirectory of `/mmfs1/gscratch/ssmc/USRS/PSI/` in which `.conda` directory will reside.  For example:
+```
+HOME="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael"
+```
+The install instructions below only worked when this line was added to my `/mmfs1/home/USERID/.bashrc` (i.e. `/mmfs1/home/rdmseas/.bashrc`).  What this means is that `~/` will point to `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael`.  As such, I also added an alias to allow me to easily navigate to my login (and former $HOME) directory `/mmfs1/home/rdmseas/`.
+```
+alias cdh='cd /mmfs1/home/rdmseas'
+```
+
 # Install Miniconda3 in lab workspace
 We install miniconda in the lab workspace because there isn't enough disk space to accomodate miniconda environments in `$HOME`.  See [Hyak Miniconda3 instructions](https://hyak.uw.edu/docs/tools/python/) for more details.  
 
@@ -261,10 +270,51 @@ Please update conda by running
 Downloading and Extracting Packages
 freetype-2.10.4      | 890 KB    | ##################################### | 100% 
 tornado-6.1          | 657 KB    | ##################################### | 100% 
+
 ...[and many more!]...
+
+readline-8.1         | 295 KB    | ################################################ | 100% 
+Preparing transaction: done
+Verifying transaction: done
+Executing transaction: done
+#
+# To activate this environment, use
+#
+#     $ conda activate klone_jupyter
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
 ```
 
-My output looks like
+# Initiate a remote Jupyterlab session
+Jupyterlab provides an ability to plot up model results and develop methods visualizing model output.  Opening a visual session requires that we set up our local system with an `SSH` connection to `HYAK`.  Setting up an `SSH` connection is a bit tedious, though.  Here are steps to make it more functional.  
+
+From the wiki: "Mox nodes have 28, 32 or 40 cores. Ask the experienced members of your Hyak group about the number of cores for  the nodes in your group."  Need information on Hyak. 
+### Create an alias to initiate an interactive node
+Create a shell script in your root directory (I choose ``) that specifies account and partition.  Use `hyakalloc` to see which account and partition apply to your personal account.  Mine are `ssmc` and `compute`.  The `$1` for `time` indicates that the first variable passed in will be the requested time allocation.  Here, I just select 1 node and 1 CPU with ~5GB memory (in multiples of 1280). 
+```
+#!/bin/bash
+
+# activate a compute node
+salloc --time=$1 --ntasks=1 --cpus-per-task=1 --mem-per-cpu=5120M --account=ssmc -p compute
+```
+I then use an alias to call this shell script.  The alias is in my `.bashrc` file.  I have three aliases with the three most common compute window sessions that I like to use. 
+```
+alias allocate130='bash /mmfs1/home/rdmseas/./startallocation.sh 1:30:00'
+alias allocate1='bash /mmfs1/home/rdmseas/./startallocation.sh 1:00:00'
+alias allocate2='bash /mmfs1/home/rdmseas/./startallocation.sh 2:00:00'
+```
+Once this is setup (and `source .bashrc` is run or terminal re-started) then an interactive node for 1-hour can be started with this alias
+```
+(base) [rdmseas@klone1 rdmseas]$ allocate1
+salloc: Granted job allocation 4618953
+salloc: Waiting for resource configuration
+salloc: Nodes n3012 are ready for job
+bash-4.4$ 
+```
+
+### Create an alias to initiate a JupyterLab session
 
 # `.bashrc` setup
 Useful aliases for `.bashrc` file
