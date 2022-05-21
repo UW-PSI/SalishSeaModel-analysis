@@ -301,6 +301,8 @@ Create a shell script to initiate a JupyterLab session.  Mine is called `klone_j
 
 # load modules and jupyter environment
 module load cesg/python/3.8.10
+# UPDATE PATH BELOW WITH YOUR USER PATH
+source /mmfs1/gscratch/ssmc/USRS/PSI/USERID/miniconda3/etc/profile.d/conda.sh
 conda activate klone_jupyter
 
 # activate remote login
