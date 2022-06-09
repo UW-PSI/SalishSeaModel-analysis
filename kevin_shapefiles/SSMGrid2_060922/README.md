@@ -13,7 +13,7 @@ The shapefile includes information for the Salish Sea Model, version `FVCOM_v2.7
 - Change regions from those used in State of Knowledge report (relating to the 2021 Department of Ecology Optimization Report), to the updated regions described in the [Dept. of Ecology GIS](https://waecy.maps.arcgis.com/apps/webappviewer/index.html?id=c7318e19bf3141aca62e980a7e5b53f2) as the `Optimization scenarios regions`
 ### Attribute Descriptions
 These attributes are explained as follows:
-- **DO_std**: The dissolved oxygen standard for the given node as established by the EPA.  Values ranges from 1-7.
+- **DO_std**: The dissolved oxygen standard for the given node as established by the Department of Ecology.  Values ranges from 1-7.
 - **include_indicator**: [0] for nodes where the Department of Ecology has specified to mask out node (due to water depth being too shallow or other reasons), [1] for nodes that are to be included in analyses.  
 - **uncatagorized_boundary**: [1] for nodes with areas that are on but mostly outside of regional boundaries. These are mostly points along the outer boundaries of the JDF and Admiralty region as well as the SOG and N. Bays region.
 - **depth**: Salish Sea model depth for given node
