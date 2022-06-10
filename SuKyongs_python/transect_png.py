@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import os
 import datetime
-import netCDF4
+#import netCDF4
 from transect_info_calc import transect_info_calc
 
 variable_name=['DO','NH3','NO3','NPP','Temp','Salinity']
@@ -18,7 +18,7 @@ variable_input=['Var_10','Var_14','Var_15','Var_17','Var_18','Var_19']
 #change here according to your need
 data_directory='/mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_exist1.5_reg/hotstart/outputs'
 transect_directory='transect_node_id.csv'
-save_directory='/mmfs1/home/rdmseas/projects/ssmc/rachael-ssmc/output/transect'
+save_directory='/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/graphics/transect'
 ivariable= 1 
 min_value=5
 max_value=10
