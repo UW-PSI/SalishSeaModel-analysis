@@ -14,7 +14,7 @@
 ## Tasks per node (Slurm assumes you want to run 28 tasks per node unless explicitly told otherwise)
 #SBATCH --ntasks-per-node=1 
 ## Walltime (hh:mm:ss) 
-#SBATCH --time=24:00:00 
+#SBATCH --time=0:30:00 
 ## Memory per node 
 #SBATCH --mem=175G 
 
