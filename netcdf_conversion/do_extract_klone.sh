@@ -23,7 +23,7 @@ export TMPDIR=~/scr
 
 echo starting conversion
 date
-./ssm-analysis/rawcdf_extract.py -v --cache "$@"
+../../ssm-analysis/rawcdf_extract.py -v --cache "$@"
 
 date
 echo conversion finished
