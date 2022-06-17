@@ -1,5 +1,52 @@
 import numpy
+import geopandas as gpd
+from shapely.geometry import Point
+from pyproj import CRS
 
+
+def estimate_nearest_node(shapefile_path, ilat=48.724,ilon=-122.576):
+    """
+    Calculate the great circle distance in kilometers between two points 
+    on the earth (specified in decimal degrees) using Haversine function
+    
+    Default ilat, ilon values correspond to the Bellingham Bay outfall buoy 
+    (NOAA Station 46118)
+    
+    This script can only run on Hyak and has a hard-coded access to Kevin's shapefile
+    
+    lat: latitude in decimal degree, e.g. 48.724
+    lon: longitude in decimal degree, e.g. -122.576
+    """
+    try: 
+        gdf = gpd.read_file(shapefile_path)
+    except FileNotFoundError:
+        print(f'File does not exist: {shapefile_path}')
+    
+    # project lat/lon to shapefile coordinate
+    iloc = [Point(xy) for xy in zip([ilon],[ilat])]
+    crs = CRS('epsg:6318')
+    geo_df_iloc = gpd.GeoDataFrame(geometry = iloc, crs = crs)
+    geo_df_iloc = geo_df_iloc.to_crs(crs = gdf.crs)
+    
+    # find nearest polygon to point
+    polygon_index = gdf.distance(geo_df_iloc).sort_values().index[0]
+    print(polygon_index)
+    nearest_node = gdf['node_id'].loc[polygon_index]
+#     node = numpy.array(gdf['node_id'])
+#     ssmlat,ssmlon = gdf['lat'].values, gdf['lon'].values
+    
+#     # calculate distance using haversine function
+#     dlat = numpy.radians(ssmlat - ilat)
+#     dlon = numpy.radians(ssmlon - ilon)
+#     r = 6367 # approx. radius of earth in km
+#     d = (numpy.sin(dlat/2)**2) + numpy.cos(ilat)*numpy.cos(ssmlat)*(numpy.sin(dlon/2))**2
+#     dist = 2*r*numpy.arcsin(numpy.sqrt(d))
+    
+#     # get the nearest node to input lat/lon pair
+#     nearest_node = node[dist == min(dist)].item()
+#     print(ssmlat[node==nearest_node], ssmlon[node==nearest_node])
+    
+    return nearest_node
 
 def reshape_fvcom(fvcom_timeIJK, reshape_type):
     """ Reorganize the 2D FVCOM output from 2-dimensions of (time,nodes)
