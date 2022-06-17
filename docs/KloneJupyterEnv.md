@@ -15,7 +15,6 @@ $module load foster/python/miniconda/3.8
 ```
 Updating bash profile
 ```
-```
 $conda init bash
 no change     /sw/contrib/foster-src/python/miniconda/3.8/condabin/conda
 no change     /sw/contrib/foster-src/python/miniconda/3.8/bin/conda
