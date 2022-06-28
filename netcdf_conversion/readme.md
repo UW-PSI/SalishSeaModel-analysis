@@ -1,5 +1,5 @@
 ---
-# Instructions for SSM netcdf conversion 
+# Instructions for sub-sampling the v4-like netcdf output created by Bens' C++ script 
 ---
 
 The shell script `do_extract_klone.sh` is modified from a version provided by Ben Roberts (06/16/2022).
