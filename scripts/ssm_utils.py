@@ -3,7 +3,6 @@ import geopandas as gpd
 from shapely.geometry import Point
 from pyproj import CRS
 
-
 def estimate_nearest_node(shapefile_path, ilat=48.724,ilon=-122.576):
     """
     Calculate the great circle distance in kilometers between two points 
@@ -24,7 +23,8 @@ def estimate_nearest_node(shapefile_path, ilat=48.724,ilon=-122.576):
     
     # project lat/lon to shapefile coordinate
     iloc = [Point(xy) for xy in zip([ilon],[ilat])]
-    crs = CRS('epsg:6318')
+    crs = CRS('epsg:3857')
+    #crs = CRS('epsg:6318')
     geo_df_iloc = gpd.GeoDataFrame(geometry = iloc, crs = crs)
     geo_df_iloc = geo_df_iloc.to_crs(crs = gdf.crs)
     
@@ -46,6 +46,41 @@ def estimate_nearest_node(shapefile_path, ilat=48.724,ilon=-122.576):
 #     nearest_node = node[dist == min(dist)].item()
 #     print(ssmlat[node==nearest_node], ssmlon[node==nearest_node])
     
+    return nearest_node
+
+
+
+def estimate_nearest_node_DO_NOT_USE(shapefile_path, ilat=48.724,ilon=-122.576):
+    """
+    THIS CODE IS HERE FOR REFERENCE ONLY AND WILL EVENTUALLY GO AWAY B/C IT'S NOT ACCURATE
+    Calculate the great circle distance in kilometers between two points 
+    on the earth (specified in decimal degrees) using Haversine function
+    
+    Default ilat, ilon values correspond to the Bellingham Bay outfall buoy 
+    (NOAA Station 46118)
+    
+    This script can only run on Hyak and has a hard-coded access to Kevin's shapefile
+    
+    lat: latitude in decimal degree, e.g. 48.724
+    lon: longitude in decimal degree, e.g. -122.576
+    """
+    try: 
+        gdf = gpd.read_file(shapefile_path)
+    except FileNotFoundError:
+        print(f'File does not exist: {shapefile_path}')
+    
+    # project lat/lon to shapefile coordinate
+    iloc = [Point(xy) for xy in zip([ilon],[ilat])]
+    crs = CRS('epsg:3857')
+    #crs = CRS('epsg:6318')
+    geo_df_iloc = gpd.GeoDataFrame(geometry = iloc, crs = crs)
+    geo_df_iloc = geo_df_iloc.to_crs(crs = gdf.crs)
+    
+    # find nearest polygon to point
+    polygon_index = gdf.distance(geo_df_iloc).sort_values().index[0]
+    print(polygon_index)
+    nearest_node = gdf['node_id'].loc[polygon_index]
+
     return nearest_node
 
 def reshape_fvcom(fvcom_timeIJK, reshape_type):
