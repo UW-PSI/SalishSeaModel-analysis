@@ -2,7 +2,7 @@
 # Instructions for sub-sampling the v4-like netcdf output created by Bens' C++ script 
 ---
 
-The shell script `do_extract_klone.sh` is modified from a version provided by Ben Roberts (06/16/2022).
+The shell script `do_extract_klone.sh` is modified from a version provided by Ben Roberts (06/16/2022, https://github.com/bedaro/ssm-analysis).
 This file described the changes made and an overview of running the code.
 
 ### Environment setup
@@ -23,7 +23,7 @@ There are two parts of the shell script that will need to be modified to fit the
 
 3. path to `rawcdf_extract.py`.
 
-The path to `rawcdf_extract.py` will also need to be modified to reflect the relative path of `ssm-analysis` to the location of the shell script
+The path to [rawcdf_extract.py](https://github.com/bedaro/ssm-analysis/blob/main/rawcdf_extract.py) will also need to be modified to reflect the relative path of `ssm-analysis` to the location of the shell script
 ```
 ../../ssm-analysis/rawcdf_extract.py -v --cache "$@"
 ```
