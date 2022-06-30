@@ -14,8 +14,11 @@ output_paths:
 - /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_wwtp0.0_reg/hotstart/outputs
 - /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_wwtp1.5_reg/hotstart/outputs
 - /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_wwtp0.5_reg/hotstart/outputs
-root_graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/output/daily_min
-shapefile_path: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_060922/SSMGrid2_060922.shp
+root_graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/graphics
+run_index:
+  existing: 0
+  reference: 1
+shapefile_path: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_062822/SSMGrid2_062822.shp
 siglev_diff:
 - 3.2
 - 5.7
