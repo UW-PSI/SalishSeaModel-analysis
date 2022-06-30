@@ -3,12 +3,7 @@ import geopandas as gpd
 from shapely.geometry import Point
 from pyproj import CRS, Transformer
 
-
-def estimate_nearest_node(shapefile_path, ilat=48.724,ilon=-122.576):
-def find_closest_node(
-    lats=48.724,
-    lons-122.576,
-    shapefile):
+def find_closest_node(shapefile,lats=48.724,lons=-122.576):
     """
     INPUTS:
         - lats: scalar value or numpy array values 
@@ -36,7 +31,10 @@ def find_closest_node(
         It requires attribute names of "lat","lon", and "node_id". 
     """
     # load shapefile
-    gdf = gpd.read_file(shapefile)
+    try: 
+        gdf = gpd.read_file(shapefile)
+    except FileNotFoundError:
+        print(f'File does not exist: {shapefile}')
     # get shapefile projection information
     shapefile_EPSG = gdf.crs.to_epsg()
     # create transformation from WGS84 to shapefile projection
@@ -53,32 +51,32 @@ def find_closest_node(
     try: # for array of station locations
         # find nearest node index and ID
         for idx in range(0,len(stations_y)):
-            distance=(np.ones((n_nodes))*stations_x[idx] - ssm_x)**2 + \
-                     (np.ones((n_nodes))*stations_y[idx] - ssm_y)**2  
+            distance=(numpy.ones((n_nodes))*stations_x[idx] - ssm_x)**2 + \
+                     (numpy.ones((n_nodes))*stations_y[idx] - ssm_y)**2  
             #create boolean vector with True for node with the closest node index 
             # (find the minimum distance between the interested locations 
             #  and node locations)           
-            closest_node_index=(distance==np.nanmin(distance))
+            closest_node_index=(distance==numpy.nanmin(distance))
             # get index where True
-            index.append(np.where(closest_node_index)[0].item())
+            index.append(numpy.where(closest_node_index)[0].item())
             # identify nearest SSM node ID(s) to lat/lon locations 
             node_id.append(gdf.node_id[closest_node_index].item())
             
     except: # for single station location
-        distance=(np.ones((n_nodes))*stations_x - ssm_x)**2 + \
-                  (np.ones((n_nodes))*stations_y - ssm_y)**2 
+        distance=(numpy.ones((n_nodes))*stations_x - ssm_x)**2 + \
+                  (numpy.ones((n_nodes))*stations_y - ssm_y)**2 
         #create boolean vector with True for node with the closest node index 
         # (find the minimum distance between the interested locations 
         #  and node locations)
-        closest_node_index=(distance==np.nanmin(distance))
+        closest_node_index=(distance==numpy.nanmin(distance))
         # get index where True
-        index.append(np.where(closest_node_index)[0].item())
+        index.append(numpy.where(closest_node_index)[0].item())
         # identify nearest SSM node ID(s) to lat/lon locations 
         node_id.append(gdf.node_id[closest_node_index].item())
     return node_id,index,stations_x, stations_y
 
 
-def estimate_nearest_node_DO_NOT_USE(shapefile_path, ilat=48.724,ilon=-122.576):
+def estimate_nearest_node(shapefile_path, ilat=48.724,ilon=-122.576):
     """
     THIS CODE IS HERE FOR REFERENCE ONLY AND WILL EVENTUALLY GO AWAY B/C IT'S NOT ACCURATE
     Calculate the great circle distance in kilometers between two points 
@@ -99,10 +97,10 @@ def estimate_nearest_node_DO_NOT_USE(shapefile_path, ilat=48.724,ilon=-122.576):
     
     # project lat/lon to shapefile coordinate
     iloc = [Point(xy) for xy in zip([ilon],[ilat])]
-    crs = CRS('epsg:3857')
+    crs = CRS(f'epsg:{gdf.crs.to_epsg()}')
     #crs = CRS('epsg:6318')
-    geo_df_iloc = gpd.GeoDataFrame(geometry = iloc, crs = crs)
-    geo_df_iloc = geo_df_iloc.to_crs(crs = gdf.crs)
+    geo_df_iloc = gpd.GeoDataFrame(geometry = iloc, crs = 'WGS84')
+    geo_df_iloc = geo_df_iloc.to_crs(crs = crs)
     
     # find nearest polygon to point
     polygon_index = gdf.distance(geo_df_iloc).sort_values().index[0]
