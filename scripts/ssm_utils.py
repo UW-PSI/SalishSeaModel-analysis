@@ -3,7 +3,7 @@ import geopandas as gpd
 from shapely.geometry import Point
 from pyproj import CRS, Transformer
 
-def find_closest_node(shapefile,lats=48.724,lons=-122.576):
+def get_nearest_node(shapefile,lats=48.724,lons=-122.576):
     """
     INPUTS:
         - lats: scalar value or numpy array values 
