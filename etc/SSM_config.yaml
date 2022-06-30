@@ -1,0 +1,36 @@
+line_colors:
+  0.5-river: sienna
+  2-river: brown
+  BHAM-only-wwtp: darkslategrey
+  exist: darkblue
+  no-BHAM-wwtp: lightseagreen
+  no-SOG&NB-river: darkgoldenrod
+  no-SOG&NB-wwtp: teal
+  ref: royalblue
+output_paths:
+- /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_exist_orig/hotstart/outputs
+- /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_ref_orig/hotstart/outputs
+- /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_rvr0.5_reg/hotstart/outputs
+- /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_wwtp0.0_reg/hotstart/outputs
+- /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_wwtp1.5_reg/hotstart/outputs
+- /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_wwtp0.5_reg/hotstart/outputs
+root_graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/output/daily_min
+shapefile_path: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_060922/SSMGrid2_060922.shp
+siglev_diff:
+- 3.2
+- 5.7
+- 7.5
+- 8.9
+- 10.1
+- 11.1
+- 12.1
+- 13.0
+- 13.8
+- 14.6
+var_name:
+  DO: Var_10
+  NH3: Var_14
+  NO3: Var_15
+  NPP: Var_17
+  Salinity: Var_19
+  Temp: Var_18
