@@ -4,32 +4,42 @@ from shapely.geometry import Point
 from pyproj import CRS, Transformer
 
 def get_nearest_node(shapefile,lats=48.724,lons=-122.576):
-    """
-    INPUTS:
-        - lats: scalar value or numpy array values 
-        - lons: scalar value or numpy array of values
-        - shapefile (.shp): path and .shp file name, combined
-    OUTPUTS:
-        - node_id: SSM node corresponding to specified lat/lon pair(s), 
-            and same length as input, returned as a list 
-        - index: dataframe row index for nodes.  Same length as input, 
-            returned as a list. 
-        - station_x, station_y: projected lat/lon station locations 
-            (for graphing purposes)
-    DEVELOPEMENT NOTES:
-        Use of Transformer and example of using Pythagorean Theorem instead
-        of Haversine Function are adopted from Su Kyong's "find_closest_node.py"
-        script (https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/SuKyongs_python/find_closest_node_index.py)
+    """ Return Salish Sea Model (SSM) node ID, dataframe index and projected
+    x-, y- coordinate pair(s) for selected lat/lon location, 
+    according to a shapefile representation of the SSM grid. 
+
+    This code is adapted from "find_closest_node_index" https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/SuKyongs_python/find_closest_node_index.py
+
+    It is designed around a shapefile provided by Kevin Bogue
+    (https://github.com/RachaelDMueller/KingCounty-Rachael/tree/main/kevin_shapefiles/SSMGrid2_062822) and requires a shapefile
+    with attribute names of "lat","lon", and "node_id".
         
-        QAQC results show examples where the nearest node is different
+    USAGE:
+         param [float or numpy array] lats: latitude(s) of selected locations. 
+             Default value 48.724 N.
+         param [float or numpy array] lons: longitude(s) of selected locations.
+             Default value -122.576 E.
+         param [string or Path object] shapefile (.shp): combined path and 
+             name of SSM shapefile. No default value. 
+         return: Four lists of values, all the same length as input lats/lons. 
+            [list] node_id(s): SSM node IDs corresponding to input 
+             lat(s)/lon(s).
+            [list] index: dataframe row index corresponding to node_id(s). 
+            [list] station_x: projected lon station locations. 
+            [list] station_y: projected lat station locations.
+    EXAMPLE:
+        node_id, df_index, st_x, st_y = get_nearest_node(
+            ssm['shapefile_path'], np.array([48.724, 48.767422, 48.898880]), 
+            np.array([-122.57, -122.575792, -122.781905])
+        )
+    DEVELOPEMENT NOTES:
+        This code does not include many error checks. 
+        I've identified an example where the nearest node is different
         than I would expect (see, e.g. BHAM-bay location 48.767422 N, 
         -122.575792 E).  This difference is likely due to the way the node
-        center is identified. 
-        
-        This code is designed around a shapefile provided by Kevin Bogue
-        (https://github.com/RachaelDMueller/KingCounty-Rachael/tree/main/kevin_shapefiles/SSMGrid2_062822)
-        It requires attribute names of "lat","lon", and "node_id". 
+        center is identified.  I haven't put time into evaluating this difference.  
     """
+    
     # load shapefile
     try: 
         gdf = gpd.read_file(shapefile)
