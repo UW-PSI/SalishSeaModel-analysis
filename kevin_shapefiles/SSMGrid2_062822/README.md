@@ -1,7 +1,7 @@
-# SSMGrid2_060922 development notes
+# SSMGrid2_062822 development notes
 
 ### Developer 
-This shapefile was created by Kevin Bogue on June 9th, 2022, to help facilitate work for King County. 
+This shapefile was created by Kevin Bogue on June 9th, 2022, to help facilitate work for King County. The shapefile and basin boundaries come from [The Department of Ecology](https://waecy.maps.arcgis.com/apps/webappviewer/index.html?id=c7318e19bf3141aca62e980a7e5b53f2).s 
 ### Modification overview
 The shapefile includes information for the Salish Sea Model, version `FVCOM_v2.7ecy` (see the [Salish Sea Modeling Center version history page](https://ssmc-uw.org/salish-sea-modeling-center/salish-sea-model/history/) for more information). Updates to this shapefile from previous versions include:
 
