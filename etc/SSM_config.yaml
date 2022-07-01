@@ -2,6 +2,8 @@ line_colors:
   0.5-river: sienna
   2-river: brown
   BHAM-only-wwtp: darkslategrey
+  baseline: royalblue
+  deviation: darkblue
   exist: darkblue
   no-BHAM-wwtp: lightseagreen
   no-SOG&NB-river: darkgoldenrod
@@ -16,6 +18,8 @@ output_paths:
 - /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_wwtp0.5_reg/hotstart/outputs
 root_graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/graphics
 run_index:
+  baseline: 1
+  deviation: 0
   existing: 0
   reference: 1
 shapefile_path: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_062822/SSMGrid2_062822.shp
