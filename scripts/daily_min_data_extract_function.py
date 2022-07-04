@@ -14,7 +14,8 @@
 # limitations under the License.
 """
 Function for calculating the minimum daily value for desired variables. 
-This script was developed to run on the Hyak supercomputer, at the University of Washington.  
+This function was developed by Rachael Mueller using code adopted from /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/script/daily_min_data_extract.py.  
+It is developed to run on the Hyak supercomputer, at the University of Washington.  
 
 This function can be run in a few ways
 ## Batch Script (single submission)
@@ -139,10 +140,19 @@ def main(variable_name, output_path):
             model_output[model_output_name[variable_name]][:,:].data, (365,24,160120)
         )
         model_output_daily_min=numpy.min(model_output_daily,axis=1)
-        model_output_daily_min_pd=pandas.DataFrame(model_output_daily_min)
-        model_output_daily_min_pd.to_pickle(
-            output_path/f'{scenario_name}{variable_name}.pkl'
+        # model_output_daily_min_pd=pandas.DataFrame(model_output_daily_min)
+        # model_output_daily_min_pd.to_pickle(
+        #     output_path/f'{scenario_name}{variable_name}.pkl'
+        # )
+        # replace pickle with netcdf output
+        model_output_daily_min_xr=xarray.DataArray(
+            dailyDO_tmin_bottom[run_type], name='DailyMinBottomDO'
         )
+        model_output_daily_min_xr.to_netcdf(
+            output_dir/
+            f'dailyMinDO_{scenario_name}_{variable_name}.nc'
+        )
+    
     # display processing time
     executionTime = (time.time() - startTime)
     print(f'Execution time in minutes: {executionTime/60:.2f}')
