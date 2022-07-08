@@ -10,18 +10,30 @@ line_colors:
   no-SOG&NB-wwtp: teal
   ref: royalblue
 output_paths:
-- /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_exist_orig/hotstart/outputs
-- /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_ref_orig/hotstart/outputs
-- /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_rvr0.5_reg/hotstart/outputs
-- /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_wwtp0.0_reg/hotstart/outputs
-- /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_wwtp1.5_reg/hotstart/outputs
-- /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_wwtp0.5_reg/hotstart/outputs
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1b_all_sog_wwtp_off/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1c_all_sog_riv_off/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1d_small_sog_wwtp_off/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1e_med_sog_wwtp_off/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2a_sog_river_0.5times/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2b_sog_river_2times/ssm_output.nc
 root_graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/graphics
 run_index:
-  baseline: 1
-  deviation: 0
-  existing: 0
-  reference: 1
+  0.5x SOG/NB River Loading: 5
+  2.0x SOG/NB River Loading: 6
+  Baseline: 0
+  No BNR<100 WWTP: 3
+  No BNR>100 WWTP: 4
+  No SOG/NB River Loading: 2
+  No SOG/NB WWTP: 1
+run_tag:
+  0p5x_SOGNB_RiverLoading: 5
+  2p0x_SOGNB_RiverLoading: 6
+  Baseline: 0
+  No_SOGNB_RiverLoading: 2
+  No_SOGNB_WWTP: 1
+  No_gt100_WWTP: 4
+  No_lt100_WWTP: 3
 shapefile_path: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_062822/SSMGrid2_062822.shp
 siglev_diff:
 - 3.2
@@ -34,10 +46,3 @@ siglev_diff:
 - 13.0
 - 13.8
 - 14.6
-var_name:
-  DO: Var_10
-  NH3: Var_14
-  NO3: Var_15
-  NPP: Var_17
-  Salinity: Var_19
-  Temp: Var_18

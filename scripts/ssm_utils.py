@@ -119,7 +119,7 @@ def estimate_nearest_node(shapefile_path, ilat=48.724,ilon=-122.576):
 
     return nearest_node
 
-def reshape_fvcom(fvcom_timeIJK, reshape_type):
+def reshape_fvcom2D(fvcom_timeIJK, reshape_type):
     """ Reorganize the 2D FVCOM output from 2-dimensions of (time,nodes)
     to a format that allows for daily, yearly, or depth calculations. 
     
@@ -162,6 +162,26 @@ def reshape_fvcom(fvcom_timeIJK, reshape_type):
         )
         
     return fvcom_reshaped
+
+def reshape_fvcom3D(fvcom_timeIJK):
+    """ Reorganize the 3D FVCOM output from 3-dimensions of (time,nodes)
+    to a format that allows for daily, yearly, or depth calculations. 
+    
+    param float fvcom_timeIJK: FVCOM_v2.7ecy output array in dimension of 8760x10x16012.
+    return: Reorganized array
+    """
+    ti,zi,ni = fvcom_timeIJK.shape
+    print(ti,zi,ni)
+    if (ti != 8784):
+        raise TypeError(
+            "FVCOM array must have a time dimension of 8760"
+        )
+    fvcom_reshaped = numpy.reshape(
+        fvcom_timeIJK[:,:,:].data, (366,24,zi,ni)
+    )
+        
+    return fvcom_reshaped
+
 
 def extract_fvcom_level(gdf, fvcom_timeIJK, LevelNum):
     """ Extract model output at nodes by level. 
