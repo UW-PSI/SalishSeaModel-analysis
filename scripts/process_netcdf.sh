@@ -17,17 +17,10 @@ module load foster/python/miniconda/3.8
 source /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/miniconda3/etc/profile.d/conda.sh
 conda activate klone_jupyter
 
-echo  starting the run
-date
+run_folders=("1b_all_sog_wwtp_off" "1d_small_sog_wwtp_off" "2a_sog_river_0.5times" "wqm_baseline" "1c_all_sog_riv_off" "1e_med_sog_wwtp_off" "2b_sog_river_2times")
 
-python process_netcdf.py "/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc" 
-python process_netcdf.py "/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1b_all_sog_wwtp_off/ssm_output.nc" 
-python process_netcdf.py "/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1c_all_sog_riv_off/ssm_output.nc" 
-python process_netcdf.py "/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1d_small_sog_wwtp_off/ssm_output.nc"
-python process_netcdf.py "/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1e_med_sog_wwtp_off/ssm_output.nc" 
-python process_netcdf.py "/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2a_sog_river_0.5times/ssm_output.nc"
-python process_netcdf.py "/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2b_sog_river_2times/ssm_output.nc" 
-
-date
-echo run ended
-
+for run_name in ${run_folders[@]}; do
+	file_path="/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/${run_name}/ssm_output.nc"
+	echo ${file_path}
+	python process_netcdf.py ${file_path}
+done

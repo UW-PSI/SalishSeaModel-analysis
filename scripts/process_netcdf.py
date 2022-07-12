@@ -10,7 +10,7 @@ import time
 from ssm_utils import reshape_fvcom3D, calc_fvcom_stat
 
 def process_netcdf(netcdf_file_path):
-    output_base = pathlib.Path('/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data')
+    output_base = pathlib.Path('/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/slurm_array/')
     graphics_directory = pathlib.Path('/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics')
 
     model_var = 'DOXG'
@@ -55,13 +55,21 @@ def process_netcdf(netcdf_file_path):
     # store time series of minimum across depth levels & save to file
     print(f'Saving to file:{run_type}/dailyDO_24hrmin.nc')
     xr_minDO=xarray.DataArray(dailyDO_tmin) 
-    xr_minDO.to_netcdf(output_dir/run_type/f'dailyDO_24hrmin.nc')
+    xr_minDO.name=f'{model_var}24hrMin'
+    xr_minDO.to_netcdf(
+        output_dir/run_type/f'dailyDO_24hrmin.nc',
+        format='netcdf4'
+    )
     
     # store time series of daily min bottom DO & save to file
     dailyDO_tmin_bottom = dailyDO_tmin[:,-1,:]
     print(f'Saving to file:{run_type}/bottom/dailyDO_24hrmin_bottom.nc')
     xr_minbotDO=xarray.DataArray(dailyDO_tmin_bottom)
-    xr_minbotDO.to_netcdf(output_dir/run_type/'bottom'/f'dailyDO_24hrmin_bottom.nc')
+    xr_minbotDO.name=f'{model_var}24hrMinBott'
+    xr_minbotDO.to_netcdf(
+        output_dir/run_type/'bottom'/f'dailyDO_24hrmin_bottom.nc',
+        format='netcdf4'
+    )
 
 if __name__=='__main__':
     args = sys.argv[1:]
