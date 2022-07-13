@@ -9,15 +9,18 @@ line_colors:
   no-SOG&NB-river: darkgoldenrod
   no-SOG&NB-wwtp: teal
   ref: royalblue
-output_paths:
-- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
-- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1b_all_sog_wwtp_off/ssm_output.nc
-- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1c_all_sog_riv_off/ssm_output.nc
-- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1d_small_sog_wwtp_off/ssm_output.nc
-- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1e_med_sog_wwtp_off/ssm_output.nc
-- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2a_sog_river_0.5times/ssm_output.nc
-- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2b_sog_river_2times/ssm_output.nc
-root_graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/graphics
+paths:
+  graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/graphics
+  model_output:
+  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
+  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1b_all_sog_wwtp_off/ssm_output.nc
+  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1c_all_sog_riv_off/ssm_output.nc
+  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1d_small_sog_wwtp_off/ssm_output.nc
+  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1e_med_sog_wwtp_off/ssm_output.nc
+  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2a_sog_river_0.5times/ssm_output.nc
+  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2b_sog_river_2times/ssm_output.nc
+  processed_output: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/
+  shapefile: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_062822/SSMGrid2_062822.shp
 run_index:
   0.5x SOG/NB River Loading: 5
   2.0x SOG/NB River Loading: 6
@@ -26,6 +29,28 @@ run_index:
   No BNR>100 WWTP: 4
   No SOG/NB River Loading: 2
   No SOG/NB WWTP: 1
+run_information:
+  baseline: wqm_baseline
+  run_description:
+    1b_all_sog_wwtp_off: No SOGNB WWTP
+    1c_all_sog_riv_off: No SOGNB River Loading
+    1d_small_sog_wwtp_off: No SOGNB WWTP <100
+    1e_med_sog_wwtp_off: No SOGNB WWTP >100
+    2a_sog_river_0.5times: '0.5x(River Loading)
+
+      in SOGNB'
+    2b_sog_river_2times: '2.0x(River Loading)
+
+      in SOGNB'
+    wqm_baseline: Baseline
+  run_tag:
+    1b_all_sog_wwtp_off: 1b
+    1c_all_sog_riv_off: 1c
+    1d_small_sog_wwtp_off: 1d
+    1e_med_sog_wwtp_off: 1e
+    2a_sog_river_0.5times: 2a
+    2b_sog_river_2times: 2b
+    wqm_baseline: Baseline
 run_tag:
   0p5x_SOGNB_RiverLoading: 5
   2p0x_SOGNB_RiverLoading: 6
@@ -34,7 +59,6 @@ run_tag:
   No_SOGNB_WWTP: 1
   No_gt100_WWTP: 4
   No_lt100_WWTP: 3
-shapefile_path: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_062822/SSMGrid2_062822.shp
 siglev_diff:
 - 3.2
 - 5.7
