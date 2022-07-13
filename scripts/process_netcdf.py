@@ -9,72 +9,85 @@ import time
 # load functions from my scripts file "ssm_utils"
 from ssm_utils import reshape_fvcom3D, calc_fvcom_stat
 
-def process_netcdf(netcdf_file_path):
-    output_base = pathlib.Path('/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/slurm_array/')
-    graphics_directory = pathlib.Path('/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics')
-
-    model_var = 'DOXG'
+def process_netcdf(netcdf_file_path, model_var='DOXG', np_operator='min'):
+    """
+    *** HEADER INFORMATION TO BE ADDED ***
+    model_var options: DOXG, LDOC,B1, B2, NH4, NO3,PO4,temp, salinity, 
+                       RDOC, LPOC, RPOC, TDIC, TALK, pH, pCO2
+    """
+    
+    # load yaml file containing path definitions.  This file is created by
+    # https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/etc/SSM_config.ipynb
+    # but can also be modified here (with the caveat the modifications will be 
+    # over-written when the SSM_config.ipynb is run
+    # https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/etc/SSM_config.yaml
+    with open('../etc/SSM_config.yaml', 'r') as file:
+        ssm = yaml.safe_load(file)
+    
+    # load shapefile   
+    shp = ssm['paths']['shapefile'] 
+    gdf = gpd.read_file(shp)
+    
+    # define output directory path for storing extracted variables in netcdf files
+    print(ssm['paths']['processed_output'])
+    output_base = pathlib.Path(ssm['paths']['processed_output']) 
+    print(output_base)
     output_dir = output_base/model_var
+    
+    # use directory name of model output to define run-type
     run_type = netcdf_file_path.split('/')[-2]
     print(run_type)
 
-    # create output directories if they don't exist for (1) all depths
+    # create output directories, if they don't already exist for:
+    # (1) all depths
     if os.path.exists(output_dir)==False:
         print(f'creating: {output_dir}')
         os.makedirs(output_dir)
         os.makedirs(output_dir/run_type)
-    # bottom depth only
+    # (2) bottom-level only
     if os.path.exists(output_dir/run_type/'bottom')==False:
         print(f'creating: {output_dir}/{run_type}/bottom')
         os.makedirs(output_dir/run_type/'bottom')
-        
-    with open('../etc/SSM_config.yaml', 'r') as file:
-        ssm = yaml.safe_load(file)
-    # get shapefile path    
-    shp = ssm['shapefile_path']
-    # load shapefile into geopandas dataframe
-    gdf = gpd.read_file(shp)
-    gdf.head(1)
     
-    # loop through comparison cases and get timeseries from model output
-    #for index,run_type in enumerate(ssm['run_tag']):
-#for index,run_type in enumerate([*ssm['run_tag']]):
     # input netcdf filename
     path=netcdf_file_path 
     print('***********************************************************')
     print('processing: ', path)
-    # load variable into xarray and calculate daily min.
+    # load variable into xarray and calculate daily stat (e.g. min)
     ds = xarray.open_dataset(path,engine='netcdf4')
-    dailyDO = reshape_fvcom3D(
+    hourly_values = reshape_fvcom3D(
         ds[model_var]
     )
     ds.close()
     # calculate daily minimum
-    dailyDO_tmin = calc_fvcom_stat(dailyDO, 'min', axis=1)
+    daily_values = calc_fvcom_stat(hourly_values, np_operator, axis=1)
 
     # store time series of minimum across depth levels & save to file
-    print(f'Saving to file:{run_type}/dailyDO_24hrmin.nc')
-    xr_minDO=xarray.DataArray(dailyDO_tmin) 
-    xr_minDO.name=f'{model_var}24hrMin'
-    xr_minDO.to_netcdf(
-        output_dir/run_type/f'dailyDO_24hrmin.nc',
+    print(f'Saving to file:{run_type}/daily_{np_operator}_{model_var}.nc')
+    xr_min=xarray.DataArray(daily_values) 
+    xr_min.name=f'{model_var}_daily_{np_operator}'
+    xr_min.to_netcdf(
+        output_dir/run_type/f'daily_{np_operator}_{model_var}.nc',
         format='netcdf4'
     )
     
     # store time series of daily min bottom DO & save to file
-    dailyDO_tmin_bottom = dailyDO_tmin[:,-1,:]
-    print(f'Saving to file:{run_type}/bottom/dailyDO_24hrmin_bottom.nc')
-    xr_minbotDO=xarray.DataArray(dailyDO_tmin_bottom)
-    xr_minbotDO.name=f'{model_var}24hrMinBott'
-    xr_minbotDO.to_netcdf(
-        output_dir/run_type/'bottom'/f'dailyDO_24hrmin_bottom.nc',
+    daily_values_bottom = daily_values[:,-1,:]
+    print(f'Saving to file:{run_type}/bottom/daily_{np_operator}_{model_var}_bottom.nc')
+    xr_minbot=xarray.DataArray(daily_values_bottom)
+    xr_minbot.name=f'{model_var}_daily_{np_operator}_bott'
+    xr_minbot.to_netcdf(
+        output_dir/run_type/'bottom'/f'daily_{np_operator}_{model_var}_bottom.nc',
         format='netcdf4'
     )
 
 if __name__=='__main__':
+    # args[0]: input netcdf file path
+    # args[1]: variable to extract, e.g. 'DOXG'
+    # args[2]: daily stat (as numpy operation) to create, e.g. 'min'
     args = sys.argv[1:]
     if os.path.exists(args[0]):
-        process_netcdf(args[0])
+        process_netcdf(args[0], args[1], args[2])
     else:
         raise FileNotFoundError(
             errno.ENOENT, os.strerror(errno.ENOENT), args[0]
