@@ -119,6 +119,74 @@ def estimate_nearest_node(shapefile_path, ilat=48.724,ilon=-122.576):
 
     return nearest_node
 
+def reshape_fvcom(fvcom_timeIJK, reshape_type):
+    """ Reorganize the FVCOM output from 2-dimensions of (time,nodes)
+    to a format that allows for daily, yearly, or depth calculations. 
+    
+    param float fvcom_timeIJK: FVCOM_v2.7ecy output array in dimension of 
+        (a) 8760x160120, or 
+        (b) .
+    param string reshape_type: ['days','levels','dayslevels']
+    return: Reorganized array
+    """
+    # Error handling
+    try:
+        output_dims = fvcom_timeIJK.ndim
+        if output_dims not in [2,3]:
+            raise Exception(f'Input array has {output_dims} dimensions, '
+                            'but only 2- or 3-dimension arrays are allowed.')
+    except ValueError:
+        print('ValueError: reshape_fvcom requires a numpy input array')
+    
+    # 2D output 
+    if output_dims == 2:
+        ti,ni = fvcom_timeIJK.shape
+        print(ti,ni)
+        # Error handling
+        if reshape_type not in ['days','levels','dayslevels']:
+            raise ValueError(
+                "options for reshape_type are: 'days','levels','dayslevels'"
+            )
+
+        # Reshaping
+        if reshape_type == 'days':
+            if (ti != 8760):
+                raise TypeError(
+                    "FVCOM array must reflect a 365-day run with a time dimension of 8760"
+                )
+            fvcom_reshaped = numpy.reshape(
+                fvcom_timeIJK[:,:].data, (365,24,ni)
+            )
+        elif reshape_type == 'levels':
+            if (ni != 160120):
+                raise TypeError(
+                    "FVCOM array must have a node dimension of 160120"
+                )
+            fvcom_reshaped = numpy.reshape(
+                fvcom_timeIJK[:,:].data, (ti,16012,10)
+            )
+        elif reshape_type == 'dayslevels':
+            if (ti != 8760) or (ni != 160120):
+                raise TypeError(
+                    "FVCOM array size must be 8760 x 160120"
+                )
+            fvcom_reshaped = numpy.reshape(
+                fvcom_timeIJK[:,:].data, (365,24,16012,10)
+            )
+    else:
+        ti,zi,ni = fvcom_timeIJK.shape
+        print(ti,zi,ni)
+        if (ti != 8784):
+            raise TypeError(
+                "FVCOM array must reflect a 366-day run with a time dimension of 8784"
+            )
+        fvcom_reshaped = numpy.reshape(
+            fvcom_timeIJK[:,:,:].data, (366,24,zi,ni)
+        )
+        
+    return fvcom_reshaped
+
+
 def reshape_fvcom2D(fvcom_timeIJK, reshape_type):
     """ Reorganize the 2D FVCOM output from 2-dimensions of (time,nodes)
     to a format that allows for daily, yearly, or depth calculations. 
@@ -127,6 +195,10 @@ def reshape_fvcom2D(fvcom_timeIJK, reshape_type):
     param string reshape_type: ['days','levels','dayslevels']
     return: Reorganized array
     """
+    print('***************************************************')
+    print('reshape_fvcom2D() is replaced with reshape_fvcom().')
+    print('Please update code to use reshape_fvcom()')
+    print('***************************************************')
     ti,ni = fvcom_timeIJK.shape
     print(ti,ni)
     # Error handling
@@ -170,6 +242,11 @@ def reshape_fvcom3D(fvcom_timeIJK):
     param float fvcom_timeIJK: FVCOM_v2.7ecy output array in dimension of 8760x10x16012.
     return: Reorganized array
     """
+    print('***************************************************')
+    print('reshape_fvcom3D() is replaced with reshape_fvcom().')
+    print('Please update code to use reshape_fvcom()')
+    print('***************************************************')
+    
     ti,zi,ni = fvcom_timeIJK.shape
     print(ti,zi,ni)
     if (ti != 8784):
