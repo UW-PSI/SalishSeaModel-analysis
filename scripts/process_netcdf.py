@@ -9,11 +9,14 @@ import time
 # load functions from my scripts file "ssm_utils"
 from ssm_utils import reshape_fvcom3D, calc_fvcom_stat
 
-def process_netcdf(netcdf_file_path, model_var='DOXG', np_operator='min'):
+def process_netcdf(netcdf_file_path, model_var='DOXG', np_operator='min', 
+                   bottom_flag=1, surface_flag=0):
     """
     *** HEADER INFORMATION TO BE ADDED ***
     model_var options: DOXG, LDOC,B1, B2, NH4, NO3,PO4,temp, salinity, 
                        RDOC, LPOC, RPOC, TDIC, TALK, pH, pCO2
+    bottom_flag: [1] to save bottom values to netcdf, [0] to not save
+    surface_flag: [1] to save surface values to netcdf, [0] to not save
     """
     
     # load yaml file containing path definitions.  This file is created by
@@ -38,17 +41,12 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', np_operator='min'):
     run_type = netcdf_file_path.split('/')[-2]
     print(run_type)
 
-    # create output directories, if they don't already exist for:
-    # (1) all depths
+    # create output directory, if is doesn't already exist for all depths
     if os.path.exists(output_dir)==False:
         print(f'creating: {output_dir}')
         os.makedirs(output_dir)
         os.makedirs(output_dir/run_type)
-    # (2) bottom-level only
-    if os.path.exists(output_dir/run_type/'bottom')==False:
-        print(f'creating: {output_dir}/{run_type}/bottom')
-        os.makedirs(output_dir/run_type/'bottom')
-    
+   
     # input netcdf filename
     path=netcdf_file_path 
     print('***********************************************************')
@@ -72,20 +70,50 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', np_operator='min'):
     )
     
     # store time series of daily min bottom DO & save to file
-    daily_values_bottom = daily_values[:,-1,:]
-    print(f'Saving to file:{run_type}/bottom/daily_{np_operator}_{model_var}_bottom.nc')
-    xr_minbot=xarray.DataArray(daily_values_bottom)
-    xr_minbot.name=f'{model_var}_daily_{np_operator}_bott'
-    xr_minbot.to_netcdf(
-        output_dir/run_type/'bottom'/f'daily_{np_operator}_{model_var}_bottom.nc',
-        format='netcdf4'
-    )
+    if bottom_flag:
+        # create ouptut directory if it doesn't yet exist
+        if os.path.exists(output_dir/run_type/'bottom')==False:
+            print(f'creating: {output_dir}/{run_type}/bottom')
+            os.makedirs(output_dir/run_type/'bottom')
+
+        daily_values_bottom = daily_values[:,-1,:]
+        print(f'Saving to file:{run_type}/bottom/daily_{np_operator}_{model_var}_bottom.nc')
+        xr_out=xarray.DataArray(daily_values_bottom)
+        xr_out.name=f'{model_var}_daily_{np_operator}_bottom'
+        xr_out.to_netcdf(
+            output_dir/run_type/'bottom'/f'daily_{np_operator}_{model_var}_bottom.nc',
+            format='netcdf4'
+        )
+    # store time series of daily min surface DO & save to file
+    if surface_flag:
+        # create ouptut directory if it doesn't yet exist
+        if os.path.exists(output_dir/run_type/'surface')==False:
+            print(f'creating: {output_dir}/{run_type}/surface')
+            os.makedirs(output_dir/run_type/'surface')
+
+        daily_values_sfc = daily_values[:,0,:]
+        print(f'Saving to file:{run_type}/surface/daily_{np_operator}_{model_var}_surface.nc')
+        xr_out=xarray.DataArray(daily_values_sfc)
+        xr_out.name=f'{model_var}_daily_{np_operator}_surface'
+        xr_out.to_netcdf(
+            output_dir/run_type/'surface'/f'daily_{np_operator}_{model_var}_surface.nc',
+            format='netcdf4'
+        )
 
 if __name__=='__main__':
+    """
+    VERY basic error handling.  Update needed. 
     # args[0]: input netcdf file path
     # args[1]: variable to extract, e.g. 'DOXG'
     # args[2]: daily stat (as numpy operation) to create, e.g. 'min'
+    # args[3]: Boolean flag to save bottom values to netcdf [1] or not [0]
+    # args[4]: Boolean flag to save surface values to netcdf [1] or not [0]
+    """
     args = sys.argv[1:]
+    if length(args)>5:
+        raise Error("Too many arguments")
+    if length(args)<5:
+        raise Error("Too few arguments")
     if os.path.exists(args[0]):
         process_netcdf(args[0], args[1], args[2])
     else:
