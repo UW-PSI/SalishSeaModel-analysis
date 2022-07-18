@@ -1,16 +1,14 @@
 line_colors:
-  0.5-river: sienna
-  2-river: brown
-  BHAM-only-wwtp: darkslategrey
-  baseline: royalblue
-  deviation: darkblue
-  exist: darkblue
-  no-BHAM-wwtp: lightseagreen
-  no-SOG&NB-river: darkgoldenrod
-  no-SOG&NB-wwtp: teal
-  ref: royalblue
+  1b_all_sog_wwtp_off: teal
+  1c_all_sog_riv_off: darkgoldenrod
+  1d_small_sog_wwtp_off: darkslategrey
+  1e_med_sog_wwtp_off: lightseagreen
+  2a_sog_river_0.5times: sienna
+  2b_sog_river_2times: brown
+  deviation: royalblue
+  wqm_baseline: darkviolet
 paths:
-  graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/graphics
+  graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/
   model_output:
   - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
   - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1b_all_sog_wwtp_off/ssm_output.nc
@@ -32,16 +30,16 @@ run_index:
 run_information:
   baseline: wqm_baseline
   run_description:
-    1b_all_sog_wwtp_off: No SOGNB WWTP
-    1c_all_sog_riv_off: No SOGNB River Loading
-    1d_small_sog_wwtp_off: No SOGNB WWTP <100
-    1e_med_sog_wwtp_off: No SOGNB WWTP >100
-    2a_sog_river_0.5times: '0.5x(River Loading)
+    1b_all_sog_wwtp_off: '1b: No SOG/NB WWTP'
+    1c_all_sog_riv_off: '1c: No SOG/NB River Loading'
+    1d_small_sog_wwtp_off: '1d: No SOG/NB WWTP<100'
+    1e_med_sog_wwtp_off: '1e: No SOG/NB WWTP>100'
+    2a_sog_river_0.5times: '2a: 0.5x(River Loading)
 
-      in SOGNB'
-    2b_sog_river_2times: '2.0x(River Loading)
+      in SOG/NB'
+    2b_sog_river_2times: '2b: 2.0x(River Loading)
 
-      in SOGNB'
+      in SOG/NB'
     wqm_baseline: Baseline
   run_tag:
     1b_all_sog_wwtp_off: 1b
@@ -70,3 +68,30 @@ siglev_diff:
 - 13.0
 - 13.8
 - 14.6
+variables:
+  model_tags:
+    DO: Var_10
+    NH3: Var_14
+    NO3: Var_15
+    NPP: Var_17
+    Salinity: Var_19
+    Temp: Var_18
+  name_list:
+  - time
+  - depth
+  - DOXG
+  - LDOC
+  - B1
+  - B2
+  - NH4
+  - NO3
+  - PO4
+  - temp
+  - salinity
+  - RDOC
+  - LPOC
+  - RPOC
+  - TDIC
+  - TALK
+  - pH
+  - pCO2
