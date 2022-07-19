@@ -1,12 +1,31 @@
-line_colors:
-  1b_all_sog_wwtp_off: teal
-  1c_all_sog_riv_off: darkgoldenrod
-  1d_small_sog_wwtp_off: darkslategrey
-  1e_med_sog_wwtp_off: lightseagreen
-  2a_sog_river_0.5times: sienna
-  2b_sog_river_2times: brown
-  deviation: royalblue
-  wqm_baseline: darkviolet
+line:
+  color:
+    1b_all_sog_wwtp_off: teal
+    1c_all_sog_riv_off: darkgoldenrod
+    1d_small_sog_wwtp_off: darkslategrey
+    1e_med_sog_wwtp_off: steelblue
+    2a_sog_river_0.5times: sienna
+    2b_sog_river_2times: brown
+    deviation: royalblue
+    wqm_baseline: darkviolet
+  style:
+    1b_all_sog_wwtp_off: solid
+    1c_all_sog_riv_off: solid
+    1d_small_sog_wwtp_off: dashdot
+    1e_med_sog_wwtp_off: dashed
+    2a_sog_river_0.5times: dashdot
+    2b_sog_river_2times: dashed
+    deviation: solid
+    wqm_baseline: solid
+  width:
+    1b_all_sog_wwtp_off: 1.5
+    1c_all_sog_riv_off: 1.5
+    1d_small_sog_wwtp_off: 2.0
+    1e_med_sog_wwtp_off: 3.0
+    2a_sog_river_0.5times: 2.0
+    2b_sog_river_2times: 3.0
+    deviation: 1
+    wqm_baseline: 1.5
 paths:
   graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/
   model_output:
@@ -68,6 +87,28 @@ siglev_diff:
 - 13.0
 - 13.8
 - 14.6
+stations:
+  BHAM-Bay:
+  - 48.767422
+  - -122.575792
+  Birch Bay:
+  - 48.89888
+  - -122.781905
+  Birch Bay (Point Whitehorn):
+  - 48.895273
+  - -122.805067
+  Cherry Point:
+  - 48.868451
+  - -122.7804
+  Eastsound:
+  - 48.684406
+  - -122.898953
+  NOAA_46118:
+  - 48.724
+  - -122.576
+  Quartermaster Harbor:
+  - 47.3793
+  - -122.462
 variables:
   model_tags:
     DO: Var_10
