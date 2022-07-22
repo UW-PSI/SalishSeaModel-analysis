@@ -1,29 +1,29 @@
 line:
   color:
-    1b_all_sog_wwtp_off: teal
-    1c_all_sog_riv_off: darkgoldenrod
-    1d_small_sog_wwtp_off: darkslategrey
-    1e_med_sog_wwtp_off: steelblue
-    2a_sog_river_0.5times: sienna
-    2b_sog_river_2times: brown
+    1b_all_sog_wwtp_off: palevioletred
+    1c_all_sog_riv_off: lightsteelblue
+    1d_small_sog_wwtp_off: mediumpurple
+    1e_med_sog_wwtp_off: indigo
+    2a_sog_river_0.5times: cadetblue 
+    2b_sog_river_2times: darkslategrey
     deviation: royalblue
-    wqm_baseline: darkviolet
+    wqm_baseline: grey
   style:
-    1b_all_sog_wwtp_off: solid
+    1b_all_sog_wwtp_off: dashed
     1c_all_sog_riv_off: solid
     1d_small_sog_wwtp_off: dashdot
-    1e_med_sog_wwtp_off: dashed
+    1e_med_sog_wwtp_off: solid
     2a_sog_river_0.5times: dashdot
     2b_sog_river_2times: dashed
     deviation: solid
     wqm_baseline: solid
   width:
-    1b_all_sog_wwtp_off: 1.5
-    1c_all_sog_riv_off: 1.5
+    1b_all_sog_wwtp_off: 2.5
+    1c_all_sog_riv_off: 2.5
     1d_small_sog_wwtp_off: 2.0
-    1e_med_sog_wwtp_off: 3.0
+    1e_med_sog_wwtp_off: 1.5
     2a_sog_river_0.5times: 2.0
-    2b_sog_river_2times: 3.0
+    2b_sog_river_2times: 1.5
     deviation: 1
     wqm_baseline: 1.5
 paths:
