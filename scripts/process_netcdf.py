@@ -7,7 +7,7 @@ import geopandas as gpd
 import pathlib
 import time
 # load functions from my scripts file "ssm_utils"
-from ssm_utils import reshape_fvcom3D, calc_fvcom_stat
+from ssm_utils import reshape_fvcom, calc_fvcom_stat
 
 def process_netcdf(netcdf_file_path, model_var='DOXG', np_operator='min', 
                    bottom_flag=1, surface_flag=0):
@@ -42,10 +42,12 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', np_operator='min',
     print(run_type)
 
     # create output directory, if is doesn't already exist for all depths
+    # see https://docs.python.org/3/library/os.html#os.makedirs
     if os.path.exists(output_dir)==False:
         print(f'creating: {output_dir}')
-        os.makedirs(output_dir)
-        os.makedirs(output_dir/run_type)
+        os.umask(0) #clears permissions
+        os.makedirs(output_dir, mode=0o777,exist_ok=True)
+    os.makedirs(output_dir/run_type, mode=0o777,exist_ok=True)
    
     # input netcdf filename
     path=netcdf_file_path 
@@ -53,30 +55,35 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', np_operator='min',
     print('processing: ', path)
     # load variable into xarray and calculate daily stat (e.g. min)
     ds = xarray.open_dataset(path,engine='netcdf4')
-    hourly_values = reshape_fvcom3D(
-        ds[model_var]
+    hourly_values = reshape_fvcom(
+        ds[model_var],'days'
     )
     ds.close()
     # calculate daily minimum
     daily_values = calc_fvcom_stat(hourly_values, np_operator, axis=1)
+    # remove first five (spin-up) days
+    daily_values_clean = np.delete(daily_values,[0,1,2,3,4],0)
+    print('Output file size:',daily_values_clean.shape)
 
     # store time series of minimum across depth levels & save to file
     print(f'Saving to file:{run_type}/daily_{np_operator}_{model_var}.nc')
-    xr_min=xarray.DataArray(daily_values) 
+    xr_min=xarray.DataArray(daily_values_clean) 
     xr_min.name=f'{model_var}_daily_{np_operator}'
     xr_min.to_netcdf(
         output_dir/run_type/f'daily_{np_operator}_{model_var}.nc',
         format='netcdf4'
     )
-    
+    print(bottom_flag)
     # store time series of daily min bottom DO & save to file
-    if bottom_flag:
+    if int(bottom_flag)==1:
         # create ouptut directory if it doesn't yet exist
         if os.path.exists(output_dir/run_type/'bottom')==False:
             print(f'creating: {output_dir}/{run_type}/bottom')
-            os.makedirs(output_dir/run_type/'bottom')
+            os.makedirs(
+                output_dir/run_type/'bottom',mode=0o777,exist_ok=True
+            )
 
-        daily_values_bottom = daily_values[:,-1,:]
+        daily_values_bottom = daily_values_clean[:,-1,:]
         print(f'Saving to file:{run_type}/bottom/daily_{np_operator}_{model_var}_bottom.nc')
         xr_out=xarray.DataArray(daily_values_bottom)
         xr_out.name=f'{model_var}_daily_{np_operator}_bottom'
@@ -85,13 +92,15 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', np_operator='min',
             format='netcdf4'
         )
     # store time series of daily min surface DO & save to file
-    if surface_flag:
+    if int(surface_flag)==1:
         # create ouptut directory if it doesn't yet exist
         if os.path.exists(output_dir/run_type/'surface')==False:
             print(f'creating: {output_dir}/{run_type}/surface')
-            os.makedirs(output_dir/run_type/'surface')
+            os.makedirs(
+                output_dir/run_type/'surface',mode=0o777,exist_ok=True
+            )
 
-        daily_values_sfc = daily_values[:,0,:]
+        daily_values_sfc = daily_values_clean[:,0,:]
         print(f'Saving to file:{run_type}/surface/daily_{np_operator}_{model_var}_surface.nc')
         xr_out=xarray.DataArray(daily_values_sfc)
         xr_out.name=f'{model_var}_daily_{np_operator}_surface'
@@ -110,12 +119,14 @@ if __name__=='__main__':
     # args[4]: Boolean flag to save surface values to netcdf [1] or not [0]
     """
     args = sys.argv[1:]
-    if length(args)>5:
+    if len(args)>5:
         raise Error("Too many arguments")
-    if length(args)<5:
+    if len(args)<5:
         raise Error("Too few arguments")
     if os.path.exists(args[0]):
-        process_netcdf(args[0], args[1], args[2])
+        print("input args:\n", args[0], "\n", args[1], "\n",
+              args[2], "\n", args[3], "\n", args[4])
+        process_netcdf(args[0], args[1], args[2], args[3], args[4])
     else:
         raise FileNotFoundError(
             errno.ENOENT, os.strerror(errno.ENOENT), args[0]

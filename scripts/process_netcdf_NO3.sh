@@ -1,7 +1,7 @@
 #!/bin/bash
  
 ## job name 
-#SBATCH --job-name=DOXG_netcdf
+#SBATCH --job-name=NO3_netcdf
 #SBATCH --account=ssmc
 #SBATCH --partition=compute
 #SBATCH --nodes=1       
@@ -32,4 +32,4 @@ ${run_folders[${SLURM_ARRAY_TASK_ID}]}/ssm_output.nc"
 
 
 echo ${file_path}
-python process_netcdf.py ${file_path} "DOXG" "min" 1 0
+python process_netcdf.py ${file_path} "NO3" "max" 1 1
