@@ -6,7 +6,7 @@
 #SBATCH --partition=compute
 #SBATCH --nodes=1       
 #SBATCH --ntasks-per-node=1
-#SBATCH --array=0-6
+#SBATCH --array=0-7
 #SBATCH --time=0:30:00 
 #SBATCH --mem=175G 
 #SBATCH --mail-user=rdmseas@uw.edu
@@ -22,6 +22,7 @@ run_folders=(
 "1d_small_sog_wwtp_off" 
 "2a_sog_river_0.5times" 
 "wqm_baseline" 
+"wqm_reference"
 "1c_all_sog_riv_off" 
 "1e_med_sog_wwtp_off" 
 "2b_sog_river_2times"
@@ -32,4 +33,4 @@ ${run_folders[${SLURM_ARRAY_TASK_ID}]}/ssm_output.nc"
 
 
 echo ${file_path}
-python process_netcdf.py ${file_path} "NO3" "max" 1 1
+python process_netcdf.py ${file_path} "NO3" "median" 1 1

@@ -13,6 +13,7 @@ line:
     2b_sog_river_2times: darkslategrey
     deviation: royalblue
     wqm_baseline: grey
+    wqm_reference: black
   style:
     1b_all_sog_wwtp_off: dashed
     1c_all_sog_riv_off: solid
@@ -22,6 +23,7 @@ line:
     2b_sog_river_2times: dashed
     deviation: solid
     wqm_baseline: solid
+    wqm_reference: solid
   width:
     1b_all_sog_wwtp_off: 2.5
     1c_all_sog_riv_off: 2.5
@@ -31,10 +33,12 @@ line:
     2b_sog_river_2times: 3.0
     deviation: 1
     wqm_baseline: 1.5
+    wqm_reference: 1.0
 paths:
   graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/
   model_output:
   - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
+  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_reference/ssm_output.nc
   - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1b_all_sog_wwtp_off/ssm_output.nc
   - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1c_all_sog_riv_off/ssm_output.nc
   - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1d_small_sog_wwtp_off/ssm_output.nc
@@ -43,16 +47,9 @@ paths:
   - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2b_sog_river_2times/ssm_output.nc
   processed_output: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/
   shapefile: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_062822/SSMGrid2_062822.shp
-run_index:
-  0.5x SOG/NB River Loading: 5
-  2.0x SOG/NB River Loading: 6
-  Baseline: 0
-  No BNR<100 WWTP: 3
-  No BNR>100 WWTP: 4
-  No SOG/NB River Loading: 2
-  No SOG/NB WWTP: 1
 run_information:
   baseline: wqm_baseline
+  reference: wqm_reference
   run_description:
     1b_all_sog_wwtp_off: '1b: No SOG/NB WWTP'
     1c_all_sog_riv_off: '1c: No SOG/NB River Loading'
@@ -64,7 +61,8 @@ run_information:
     2b_sog_river_2times: '2b: 2.0x(River Loading)
 
       in SOG/NB'
-    wqm_baseline: Baseline
+    wqm_baseline: Modern day nutrient loading
+    wqm_reference: Pre-industrial nutrient loading
   run_tag:
     1b_all_sog_wwtp_off: 1b
     1c_all_sog_riv_off: 1c
@@ -73,14 +71,7 @@ run_information:
     2a_sog_river_0.5times: 2a
     2b_sog_river_2times: 2b
     wqm_baseline: Baseline
-run_tag:
-  0p5x_SOGNB_RiverLoading: 5
-  2p0x_SOGNB_RiverLoading: 6
-  Baseline: 0
-  No_SOGNB_RiverLoading: 2
-  No_SOGNB_WWTP: 1
-  No_gt100_WWTP: 4
-  No_lt100_WWTP: 3
+    wqm_reference: Reference
 siglev_diff:
 - 3.2
 - 5.7
@@ -108,12 +99,12 @@ stations:
   Eastsound:
   - 48.684406
   - -122.898953
-  NOAA_46118:
-  - 48.724
-  - -122.576
   Quartermaster Harbor:
   - 47.3793
   - -122.462
+  Se'lhaemNOAA_46118:
+  - 48.724
+  - -122.576
 variables:
   model_tags:
     DO: Var_10
