@@ -1,8 +1,26 @@
 # An overview of my method to process the SSM (~V4) output netcdf
-### Output file locations
-The King County model runs are located in the following directories
+Different sets of model experiments were performed to evaluate WWTP and river nutrient loading into various regions of the Salish Sea.  The first two sets of runs evaluate the region that the WA State Department of Ecology refers to as Strait of Georgia and North Bays (note: very little of the oceanographic domain of the Strait of Georgia is actually included here because this region is bounded to the north by the U.S./CAD border).  I use the following terminology to help organize model output for these cases.
+
+1. **case**: Describes the model experiment case and is defined as either `SOG-NB` or `whidbey`.
+2. **scope**: Refers to the scope of the analysis, whether it is for `benthic` layer or water column (`wc`). 
+3. **model_var**: Model variable being evaluated (`DOXG` for dissolved oxygen).  Most code has been developed for dissolved oxygen but some code is flexible and able to be run with the other model output variables listed below.  
+
+### Whidbey
+The SOG-NB model runs are located in the following directories
 ```
 - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_reference/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3b/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3c/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3g/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3h/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3i/ssm_output.nc
+```
+### SOG-NB runs
+The SOG-NB model runs are located in the following directories
+```
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
+- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_reference/ssm_output.nc
 - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1b_all_sog_wwtp_off/ssm_output.nc
 - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1c_all_sog_riv_off/ssm_output.nc
 - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1d_small_sog_wwtp_off/ssm_output.nc
