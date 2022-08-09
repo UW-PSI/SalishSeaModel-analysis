@@ -16,7 +16,7 @@ import matplotlib as mpl
 # load functions from my scripts file "ssm_utils"
 from ssm_utils import get_nearest_node, reshape_fvcom, calc_fvcom_stat, extract_fvcom_level
 
-def calc_impaired(shp, scope, impairment=-0.2):
+def calc_impaired(shp, case, scope, impairment=-0.2):
     """
     HEADER TO BE ADDED
     This script requires inclusion of reference case subdirectory in 
@@ -41,7 +41,7 @@ def calc_impaired(shp, scope, impairment=-0.2):
     
     # Get path for model output
     model_var='DOXG' 
-    processed_netcdf_dir = pathlib.Path(ssm['paths']['processed_output'])/model_var
+    processed_netcdf_dir = pathlib.Path(ssm['paths']['processed_output'])/case/model_var
     
     # Get list of run sub-directories in processed netcdf directory
     dir_list = os.listdir(processed_netcdf_dir)
@@ -103,16 +103,18 @@ def calc_impaired(shp, scope, impairment=-0.2):
         DO_diff_lt_0p2[run_type] = DO_diff<=impairment #361x4144 (nodes x time) or 361x10x4144
         # Number of days where DO < threshold = True
         if scope=='benthic':
-            DO_diff_lt_0p2_days[run_type]=DO_diff_lt_0p2[run_type].sum(axis=0) #4144 (nodes) or 10x4144
+            DO_diff_lt_0p2_days[run_type]=DO_diff_lt_0p2[run_type].sum(
+                axis=0, initial=0) #4144 (nodes) or 10x4144
             VolumeDays_all=volume*DO_diff_lt_0p2_days[run_type]
         else: # water column: sum over days and take max value over depth
             # First get a count of days impaired for each depth level
-            DO_diff_lt_0p2_days_wc=DO_diff_lt_0p2[run_type].sum(axis=0)
+            DO_diff_lt_0p2_days_wc=DO_diff_lt_0p2[run_type].sum(
+                axis=0, initial=0)
             # Volume days: Use days impaired for each level  and element-wise 
             # multiplication of 10x4144 * 10x4144 matrices to get volume days by level
             VolumeDays_wc=volume2D.transpose()*DO_diff_lt_0p2_days_wc
             # Add across levels to get total VolumeDays per node
-            VolumeDays_all = VolumeDays_wc.sum(axis=0)
+            VolumeDays_all = VolumeDays_wc.sum(axis=0, initial=0)
         
         # Total number of days and percent volume days for each region
         DaysImpaired[run_type]={}
@@ -160,50 +162,58 @@ def calc_impaired(shp, scope, impairment=-0.2):
             )
         # Create totals across entire domain 
         if scope=='benthic': #(361x4771): max over nodes and sum over time
-            DaysImpaired[run_type]['combined'] = DO_diff_lt_0p2[run_type].max(
+            DaysImpaired[run_type]['ALL_REGIONS'] = DO_diff_lt_0p2[run_type].max(
                 axis=1, initial=0).sum(axis=0,initial=0).item()
         else: #(361x10x4771): max over nodes and depth and sum over time
-            DaysImpaired[run_type]['combined'] = DO_diff_lt_0p2[run_type].max(
+            DaysImpaired[run_type]['ALL_REGIONS'] = DO_diff_lt_0p2[run_type].max(
                 axis=2,initial=0).max(axis=1,initial=0).sum(axis=0,initial=0).item()
-        VolumeDaysImpaired[run_type]['combined'] = VolumeDays_all.sum().item()
-        PercentVolumeDaysImpaired[run_type]['combined'] = 100*(
+        VolumeDaysImpaired[run_type]['ALL_REGIONS'] = VolumeDays_all.sum(initial=0).item()
+        PercentVolumeDaysImpaired[run_type]['ALL_REGIONS'] = 100*(
             VolumeDays_all.sum(initial=0).item()/(volume.sum(initial=0).item()*ndays)
         )
     # Convert to dataframe and organize information
     DaysImpaired_df = pandas.DataFrame(DaysImpaired)
-    DaysImpaired_df = DaysImpaired_df.rename(columns=ssm['run_information']['run_tag'])
+    DaysImpaired_df = DaysImpaired_df.rename(
+        columns=ssm['run_information']['run_tag'][case])
     print('*** DaysImpaired_df ***')
     print([*DaysImpaired_df])
-    #DaysImpaired_df = DaysImpaired_df.reindex(columns=['Present Day','Reference','1b','1c','1d','1e','2a','2b'])
-    DaysImpaired_df = DaysImpaired_df.reindex(columns=['Present Day','1b','1c','1d','1e','2a','2b'])
-    #DaysImpaired_df = DaysImpaired_df.drop(['Reference'],axis=1) # drop empty column
+    if case=='SOG_NB':
+        DaysImpaired_df = DaysImpaired_df.reindex(
+            columns=['Present Day','1b','1c','1d','1e','2a','2b'])
+    else: # whidbey
+        DaysImpaired_df = DaysImpaired_df.reindex(
+            columns=['Present Day','3b','3c','3g','3h','3i'])
     # Percent of volume over the year in each region where DO change < threshold
     VolumeDaysImpaired_df = pandas.DataFrame(VolumeDaysImpaired)
     VolumeDaysImpaired_df = VolumeDaysImpaired_df.rename(
-        columns=ssm['run_information']['run_tag'])
-    VolumeDaysImpaired_df = VolumeDaysImpaired_df.reindex(
-        columns=['Present Day','1b','1c','1d','1e','2a','2b'])
-    #VolumeDaysImpaired_df = VolumeDaysImpaired_df.drop(['Reference'],axis=1) # drop empty column
-    #    columns=['Present Day','Reference','1b','1c','1d','1e','2a','2b'])
+        columns=ssm['run_information']['run_tag'][case])
+    if case=='SOG_NB':
+        VolumeDaysImpaired_df = VolumeDaysImpaired_df.reindex(
+            columns=['Present Day','1b','1c','1d','1e','2a','2b'])
+    else: # whidbey
+        VolumeDaysImpaired_df = VolumeDaysImpaired_df.reindex(
+            columns=['Present Day','3b','3c','3g','3h','3i'])
     # Percent of cumulative volume over the year in eash region where DO change < threshold
     PercentVolumeDaysImpaired_df = pandas.DataFrame(PercentVolumeDaysImpaired)
     PercentVolumeDaysImpaired_df = PercentVolumeDaysImpaired_df.rename(
-        columns=ssm['run_information']['run_tag'])
-    #PercentVolumeDaysImpaired_df = PercentVolumeDaysImpaired_df.reindex(
-    #    columns=['Present Day','Reference','1b','1c','1d','1e','2a','2b'])
-    PercentVolumeDaysImpaired_df = PercentVolumeDaysImpaired_df.reindex(
-        columns=['Present Day','1b','1c','1d','1e','2a','2b'])
-    #VolumeDaysImpaired_df = VolumeDaysImpaired_df.drop(['Reference'],axis=1) # drop empty column
-    
+        columns=ssm['run_information']['run_tag'][case])
+    if case=='SOG_NB':
+        PercentVolumeDaysImpaired_df = PercentVolumeDaysImpaired_df.reindex(
+            columns=['Present Day','1b','1c','1d','1e','2a','2b'])
+    else: # whidbey
+        PercentVolumeDaysImpaired_df = PercentVolumeDaysImpaired_df.reindex(
+            columns=['Present Day','3b','3c','3g','3h','3i'])
     return DaysImpaired_df,VolumeDaysImpaired_df,PercentVolumeDaysImpaired_df
 
 if __name__=='__main__':
     """
     HEADER information not yet added
-    scope=="benthic" or "wc" for water column
+    case: "SOG_NB" or "whidbey"
+    scope: s"benthic" or "wc" for water column
     """
     args = sys.argv[1:]
-    scope=args[0]
+    case=args[0]
+    scope=args[1]
 
     # Start time counter
     start = time.time()
@@ -219,7 +229,7 @@ if __name__=='__main__':
         shp = ssm['paths']['shapefile']
 
     DaysImpaired_df,VolumeDays_df,PercentVolumeDays_df = calc_impaired(
-        shp, scope)
+        shp, case, scope)
         
     # make README 
     this_file = '=HYPERLINK("https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/scripts/calc_DO_impairment.py","calc_DO_impairment.py")'
@@ -249,7 +259,6 @@ if __name__=='__main__':
                                    'Percent_Volume_Days[%]'])
 
     # Save to output to 
-    case="SOG_NB"
     excel_output_path = pathlib.Path(ssm['paths']['processed_output'])/case
     print('*************************************************************')
     print('Writing spreadsheet to: ',excel_output_path)

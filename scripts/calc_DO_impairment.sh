@@ -18,6 +18,7 @@ source /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/miniconda3/etc/profile.d/conda.sh
 conda activate klone_jupyter
 
 scope=("benthic" "wc")
+case="whidbey"
 
 echo "Calculating DO volume days impaired for: " ${scope}
-python calc_DO_impairment.py ${scope[${SLURM_ARRAY_TASK_ID}]} 
+python calc_DO_impairment.py case ${scope[${SLURM_ARRAY_TASK_ID}]} 

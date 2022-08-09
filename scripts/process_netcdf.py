@@ -9,7 +9,7 @@ import time
 # load functions from my scripts file "ssm_utils"
 from ssm_utils import reshape_fvcom, calc_fvcom_stat
 
-def process_netcdf(netcdf_file_path, model_var='DOXG', np_operator='min', 
+def process_netcdf(netcdf_file_path, model_var='DOXG', case='SOG_NB', np_operator='min', 
                    bottom_flag=1, surface_flag=0):
     """
     *** HEADER INFORMATION TO BE ADDED ***
@@ -33,7 +33,7 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', np_operator='min',
     
     # define output directory path for storing extracted variables in netcdf files
     print(ssm['paths']['processed_output'])
-    output_base = pathlib.Path(ssm['paths']['processed_output']) 
+    output_base = pathlib.Path(ssm['paths']['processed_output'])/case
     print(output_base)
     output_dir = output_base/model_var
     
@@ -43,6 +43,10 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', np_operator='min',
 
     # create output directory, if is doesn't already exist for all depths
     # see https://docs.python.org/3/library/os.html#os.makedirs
+    if os.path.exists(output_base)==False:
+        print(f'creating: {output_base}')
+        os.umask(0) #clears permissions
+        os.makedirs(output_base, mode=0o777,exist_ok=True)
     if os.path.exists(output_dir)==False:
         print(f'creating: {output_dir}')
         os.umask(0) #clears permissions
@@ -114,21 +118,31 @@ if __name__=='__main__':
     VERY basic error handling.  Update needed. 
     # args[0]: input netcdf file path
     # args[1]: variable to extract, e.g. 'DOXG'
-    # args[2]: daily stat (as numpy operation) to create, e.g. 'min'
-    # args[3]: Boolean flag to save bottom values to netcdf [1] or not [0]
-    # args[4]: Boolean flag to save surface values to netcdf [1] or not [0]
+    # args[2]: Experiment case (`SOG_NB` or `whidbey`)
+    # args[3]: daily stat (as numpy operation) to create, e.g. 'min'
+    # args[4]: Boolean flag to save bottom values to netcdf [1] or not [0]
+    # args[5]: Boolean flag to save surface values to netcdf [1] or not [0]
     """
     args = sys.argv[1:]
-    if len(args)>5:
+    if len(args)>6:
         raise Error("Too many arguments")
-    if len(args)<5:
+    if len(args)<6:
         raise Error("Too few arguments")
     if os.path.exists(args[0]):
         print("input args:\n", args[0], "\n", args[1], "\n",
               args[2], "\n", args[3], "\n", args[4])
-        process_netcdf(args[0], args[1], args[2], args[3], args[4])
+        # assign inputs
+        netcdf_file_path = args[0]
+        model_var = args[1]
+        case = args[2]
+        np_operator = args[3]
+        bottom_flag = args[4]
+        surface_flag = args[5]
+        # process netcdf
+        process_netcdf(
+            netcdf_file_path, model_var, case, np_operator, 
+            bottom_flag, surface_flag)
     else:
         raise FileNotFoundError(
             errno.ENOENT, os.strerror(errno.ENOENT), args[0]
             )
-

@@ -16,8 +16,9 @@ import matplotlib as mpl
 # load functions from my scripts file "ssm_utils"
 from ssm_utils import get_nearest_node, reshape_fvcom, calc_fvcom_stat, extract_fvcom_level
 
-def calc_DO_below_thresh(DO_thresh, shp, scope):
+def calc_DO_below_thresh(case, DO_thresh, shp, scope):
     """ 
+    case [string]: "SOG_NB" or "whidbey"
     DO_thresh [1D or int]: "DO_standard" or integer value
     shp [path]: shapefile path
     dir_list [list]: List of directory names for model output
@@ -45,7 +46,7 @@ def calc_DO_below_thresh(DO_thresh, shp, scope):
    
     # Get path for model output
     model_var='DOXG' 
-    processed_netcdf_dir = pathlib.Path(ssm['paths']['processed_output'])/model_var
+    processed_netcdf_dir = pathlib.Path(ssm['paths']['processed_output'])/case/model_var
     
     # Get list of run sub-directories in processed netcdf directory
     dir_list = os.listdir(processed_netcdf_dir)
@@ -115,20 +116,21 @@ def calc_DO_below_thresh(DO_thresh, shp, scope):
         if scope=='benthic':
             DOXGBelowThresh[run_type] = MinDO[run_type]<=DO_thresh2D.transpose() #361x4144 (nodes x time)
             # Number of days where DOXGBelowThresh = True
-            DOXGBelowThreshDays[run_type]=DOXGBelowThresh[run_type].sum(axis=0)
+            DOXGBelowThreshDays[run_type]=DOXGBelowThresh[run_type].sum(axis=0,initial=0 )
             # Volume days
             VolumeDays_all=volume*DOXGBelowThreshDays[run_type]
         else:
             DOXGBelowThresh[run_type] = MinDO[run_type]<=DO_thresh3D.transpose() #361x10x4144 (nodes x time)
             # First get a count of days below threshold for each depth level
-            DOXGBelowThreshDays_wc=DOXGBelowThresh[run_type].sum(axis=0) #10x4144 (nodes)
+            DOXGBelowThreshDays_wc=DOXGBelowThresh[run_type].sum(
+                axis=0,initial=0) #10x4144 (nodes)
             # Take max over depth to get result similar to benthic case where
             # 1-day of impairement is counted if there is one or more levels less than threshold
             # Volume days: Use days impaired for each level  and element-wise 
             # multiplication of 10x4144 * 10x4144 matrices to get volume days by level 
             VolumeDays_wc=volume2D.transpose()*DOXGBelowThreshDays_wc
             # Add across levels to get total VolumeDays per node
-            VolumeDays_all = VolumeDays_wc.sum(axis=0)
+            VolumeDays_all = VolumeDays_wc.sum(axis=0,initial=0)
      
         # Total number of days and percent volume days for each region
         DaysDOXGBelowThresh[run_type]={}
@@ -173,47 +175,62 @@ def calc_DO_below_thresh(DO_thresh, shp, scope):
      
         # Add sum across all region to the dataframe
         if scope=='benthic':
-            DaysDOXGBelowThresh[run_type]['TOTAL'] = DOXGBelowThresh[run_type].max(
-                axis=1).sum(axis=0).item()     
+            DaysDOXGBelowThresh[run_type]['ALL_REGIONS'] = DOXGBelowThresh[run_type].max(
+                axis=1,initial=0).sum(axis=0,initial=0).item()     
         else:
-            DaysDOXGBelowThresh[run_type]['TOTAL'] = DOXGBelowThresh[run_type].max(
-                axis=2).max(axis=1).sum(axis=0).item()
-        VolumeDays[run_type]['TOTAL'] = VolumeDays_all.sum().item()
-        PercentVolumeDays[run_type]['TOTAL'] = 100*(
-            VolumeDays_all.sum().item()/(volume.sum().item()*ndays)
+            DaysDOXGBelowThresh[run_type]['ALL_REGIONS'] = DOXGBelowThresh[run_type].max(
+                axis=2,initial=0).max(axis=1,initial=0).sum(axis=0,initial=0).item()
+        VolumeDays[run_type]['ALL_REGIONS'] = VolumeDays_all.sum(initial=0).item()
+        PercentVolumeDays[run_type]['ALL_REGIONS'] = 100*(
+            VolumeDays_all.sum(initial=0).item(initial=0)/
+            (volume.sum(initial=0).item(initial=0)*ndays)
         )
         
     # Convert to dataframe and organize information
     DaysDOXGBelowThresh_df = pandas.DataFrame(DaysDOXGBelowThresh)
     DaysDOXGBelowThresh_df = DaysDOXGBelowThresh_df.rename(
-        columns=ssm['run_information']['run_tag'])
-    DaysDOXGBelowThresh_df = DaysDOXGBelowThresh_df.reindex(
-        columns=['Present Day','Reference','1b','1c','1d','1e','2a','2b'])
+        columns=ssm['run_information']['run_tag'][case])
+    if case=='SOG_NB':
+        DaysDOXGBelowThresh_df = DaysDOXGBelowThresh_df.reindex(
+            columns=['Present Day','Reference','1b','1c','1d','1e','2a','2b'])
+    else: # whidbey
+        DaysDOXGBelowThresh_df = DaysDOXGBelowThresh_df.reindex(
+            columns=['Present Day','Reference','3b','3c','3g','3h','3i'])
     # Percent of volume over the year in each region where DOXG change < threshold
     VolumeDays_df = pandas.DataFrame(VolumeDays)
-    VolumeDays_df = VolumeDays_df.rename(columns=ssm['run_information']['run_tag'])
-    VolumeDays_df = VolumeDays_df.reindex(
-        columns=['Present Day','Reference','1b','1c','1d','1e','2a','2b'])
+    VolumeDays_df = VolumeDays_df.rename(
+        columns=ssm['run_information']['run_tag'][case])
+    if case=='SOG_NB':
+        VolumeDays_df = VolumeDays_df.reindex(
+            columns=['Present Day','Reference','1b','1c','1d','1e','2a','2b'])
+    else: # whidbey
+        VolumeDays_df = VolumeDays_df.reindex(
+            columns=['Present Day','Reference','3b','3c','3g','3h','3i'])
     # Percent of cumulative volume over the year in eash region where DOXG change < threshold
     PercentVolumeDays_df = pandas.DataFrame(PercentVolumeDays)
     PercentVolumeDays_df = PercentVolumeDays_df.rename(
-        columns=ssm['run_information']['run_tag'])
-    PercentVolumeDays_df = PercentVolumeDays_df.reindex(
-        columns=['Present Day','Reference','1b','1c','1d','1e','2a','2b'])
+        columns=ssm['run_information']['run_tag'][case])
+    if case=='SOG_NB':
+        PercentVolumeDays_df = PercentVolumeDays_df.reindex(
+            columns=['Present Day','Reference','1b','1c','1d','1e','2a','2b'])
+    else: # whidbey  
+        PercentVolumeDays_df = PercentVolumeDays_df.reindex(
+            columns=['Present Day','Reference','3b','3c','3g','3h','3i'])
     return DaysDOXGBelowThresh_df,VolumeDays_df,PercentVolumeDays_df
 
 if __name__=='__main__':
     """
     VERY basic error handling.  Update needed. 
-    # args[0]: benthic or wc
-    # args[1]:
+    # args[0]: SOG_NB or whidbey 
+    # args[1]: DO threshold
+    # args[2]: benthic or wc
     """
     # skip first argument, which is the file name
     print(sys.argv[0])
     args = sys.argv[1:]
-    DO_thresh=args[0]
-    scope=args[1]
-    case="SOG_NB" #eventually to pass in
+    case=args[0]
+    DO_thresh=args[1]
+    scope=args[2]
     print('*****************************')
     print(args[0],type(args[0]),type(args[1]))
     print('*****************************')
@@ -235,6 +252,7 @@ if __name__=='__main__':
     VD={} #volume days
     PVD={} # percent volume days
     H['DO_std'],VD['DO_std'], PVD['DO_std']=calc_DO_below_thresh(
+        case,
         DO_thresh, # "DO_standard" or integer (e.g. 2 or 5)
         shp, # shapefile path (with "DO_std" attribute)
         scope # "benthic" or "wc" (for water column)

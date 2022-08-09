@@ -23,6 +23,8 @@ thresholds=(
 "5"
 )
 
+case="whidbey"
+
 echo ${thresholds[${SLURM_ARRAY_TASK_ID}]}
 
-python calc_DO_below_threshold.py ${thresholds[${SLURM_ARRAY_TASK_ID}]} "wc"
+python calc_DO_below_threshold.py case ${thresholds[${SLURM_ARRAY_TASK_ID}]} "wc"
