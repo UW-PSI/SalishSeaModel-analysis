@@ -6,7 +6,7 @@ Different sets of model experiments were performed to evaluate WWTP and river nu
 3. **model_var**: Model variable being evaluated (`DOXG` for dissolved oxygen).  Most code has been developed for dissolved oxygen but some code is flexible and able to be run with the other model output variables listed below.  
 
 ### Whidbey
-The SOG-NB model runs are located in the following directories
+The Whidbey model runs are located in the following directories
 ```
 - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
 - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_reference/ssm_output.nc
