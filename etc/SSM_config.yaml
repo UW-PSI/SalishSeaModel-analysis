@@ -37,14 +37,23 @@ line:
 paths:
   graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/
   model_output:
-  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
-  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_reference/ssm_output.nc
-  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1b_all_sog_wwtp_off/ssm_output.nc
-  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1c_all_sog_riv_off/ssm_output.nc
-  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1d_small_sog_wwtp_off/ssm_output.nc
-  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1e_med_sog_wwtp_off/ssm_output.nc
-  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2a_sog_river_0.5times/ssm_output.nc
-  - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2b_sog_river_2times/ssm_output.nc
+    SOG_NB:
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_reference/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1b_all_sog_wwtp_off/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1c_all_sog_riv_off/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1d_small_sog_wwtp_off/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1e_med_sog_wwtp_off/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2a_sog_river_0.5times/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2b_sog_river_2times/ssm_output.nc
+    whidbey:
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_reference/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3b/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3c/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3g/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3h/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3i/ssm_output.nc
   processed_output: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/
   shapefile: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_07222022/SSMGrid2_tce_ecy_node_info_v2_07222022.shp
 region:
@@ -59,38 +68,48 @@ run_information:
   baseline: wqm_baseline
   reference: wqm_reference
   run_description:
-    1b_all_sog_wwtp_off: '1b: No SOG/NB WWTP'
-    1c_all_sog_riv_off: '1c: No SOG/NB River Loading'
-    1d_small_sog_wwtp_off: '1d: No SOG/NB WWTP<100'
-    1e_med_sog_wwtp_off: '1e: No SOG/NB WWTP>100'
-    2a_sog_river_0.5times: '2a: 0.5x(River Loading)
+    SOG_NB:
+      1b_all_sog_wwtp_off: '1b: No SOG/NB WWTP'
+      1c_all_sog_riv_off: '1c: No SOG/NB River Loading'
+      1d_small_sog_wwtp_off: '1d: No SOG/NB WWTP<100'
+      1e_med_sog_wwtp_off: '1e: No SOG/NB WWTP>100'
+      2a_sog_river_0.5times: '2a: 0.5x(River Loading)
 
-      in SOG/NB'
-    2b_sog_river_2times: '2b: 2.0x(River Loading)
+        in SOG/NB'
+      2b_sog_river_2times: '2b: 2.0x(River Loading)
 
-      in SOG/NB'
-    wqm_baseline: Modern day nutrient loading
-    wqm_reference: Pre-industrial nutrient loading
+        in SOG/NB'
+      wqm_baseline: Modern day nutrient loading
+      wqm_reference: Pre-industrial nutrient loading
   run_tag:
-    1b_all_sog_wwtp_off: 1b
-    1c_all_sog_riv_off: 1c
-    1d_small_sog_wwtp_off: 1d
-    1e_med_sog_wwtp_off: 1e
-    2a_sog_river_0.5times: 2a
-    2b_sog_river_2times: 2b
-    wqm_baseline: Present Day
-    wqm_reference: Reference
+    SOG_NB:
+      1b_all_sog_wwtp_off: 1b
+      1c_all_sog_riv_off: 1c
+      1d_small_sog_wwtp_off: 1d
+      1e_med_sog_wwtp_off: 1e
+      2a_sog_river_0.5times: 2a
+      2b_sog_river_2times: 2b
+      wqm_baseline: Present Day
+      wqm_reference: Reference
+    whidbey:
+      3b: 3b
+      3c: 3c
+      3g: 3g
+      3h: 3h
+      3i: 3i
+      wqm_baseline: Present Day
+      wqm_reference: Reference
 siglev_diff:
 - 3.2
-- 5.7
-- 7.5
-- 8.9
-- 10.1
-- 11.1
-- 12.1
-- 13.0
-- 13.8
-- 14.6
+- 5.8
+- 7.4
+- 9.0
+- 9.8
+- 11.4
+- 11.8
+- 13.4
+- 13.4
+- 15.0
 stations:
   BHAM-Bay:
   - 48.767422
