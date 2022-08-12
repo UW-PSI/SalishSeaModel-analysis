@@ -24,12 +24,7 @@ def calc_DO_below_thresh(case, DO_thresh, shp, scope):
     dir_list [list]: List of directory names for model output
     scope [string]: "benthic" or "wc" (for water column)
     """
-    # load yaml file containing path definitions.  This file is created by
-    # https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/etc/SSM_config.ipynb
-    # but can also be modified here (with the caveat the modifications will be 
-    # over-written when the SSM_config.ipynb is run
-    # https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/etc/SSM_config.yaml
-
+ 
     # Initialize dictionaries
     MinDO={}
     DOXGBelowThresh={} # Boolean where DOXG<threshold
@@ -114,23 +109,23 @@ def calc_DO_below_thresh(case, DO_thresh, shp, scope):
         print(run_type)
         # Boolean where DOXG<threshold
         if scope=='benthic':
-            DOXGBelowThresh[run_type] = MinDO[run_type]<=DO_thresh2D.transpose() #361x4144 (nodes x time)
+            # 361x4144 (nodes x time)
+            DOXGBelowThresh[run_type] = MinDO[run_type]<=DO_thresh2D.transpose() 
             # Number of days where DOXGBelowThresh = True
-            DOXGBelowThreshDays[run_type]=DOXGBelowThresh[run_type].sum(axis=0,initial=0 )
+            DOXGBelowThreshDays[run_type]=DOXGBelowThresh[run_type].sum(axis=0,initial=0)
             # Volume days
             VolumeDays_all=volume*DOXGBelowThreshDays[run_type]
-        else:
-            DOXGBelowThresh[run_type] = MinDO[run_type]<=DO_thresh3D.transpose() #361x10x4144 (nodes x time)
+        else: # water column
+            #361x10x4144 (nodes x depth x time)
+            DOXGBelowThresh[run_type] = MinDO[run_type]<=DO_thresh3D.transpose() 
             # First get a count of days below threshold for each depth level
             DOXGBelowThreshDays_wc=DOXGBelowThresh[run_type].sum(
                 axis=0,initial=0) #10x4144 (nodes)
-            # Take max over depth to get result similar to benthic case where
-            # 1-day of impairement is counted if there is one or more levels less than threshold
             # Volume days: Use days impaired for each level  and element-wise 
             # multiplication of 10x4144 * 10x4144 matrices to get volume days by level 
             VolumeDays_wc=volume2D.transpose()*DOXGBelowThreshDays_wc
             # Add across levels to get total VolumeDays per node
-            VolumeDays_all = VolumeDays_wc.sum(axis=0,initial=0)
+            VolumeDays_all = VolumeDays_wc.sum(axis=0)
      
         # Total number of days and percent volume days for each region
         DaysDOXGBelowThresh[run_type]={}
@@ -147,11 +142,14 @@ def calc_DO_below_thresh(case, DO_thresh, shp, scope):
             if scope=='benthic':
                 # Assign the maximum (True) of DO < threshold occurrence across region
                 DaysDOXGBelowThresh[run_type][region] = DOXGBelowThresh[run_type].max(
-                    axis=1,where=idx,initial=0)
+                    axis=1,where=idx,initial=0).sum().item()
             else:
                 # Assign the maximum (True) of DO < threshold occurrence across depths
+                # Take max over depth to assign True if DO < threshold in one 
+                # or more levels
                 DOXGBelowThresh_daysnodes = DOXGBelowThresh[run_type].max(axis=1,initial=0)
-                # Assign the maximum (True) of DO < threshold occurrence across region
+                # Assign the maximum (True) if DO < threshold occurrence across region
+                # then add values over time to get days < threshold
                 DaysDOXGBelowThresh[run_type][region] = DOXGBelowThresh_daysnodes.max(
                     axis=1,where=idx,initial=0).sum().item()
             VolumeDays[run_type][region]=np.array(VolumeDays_all)[
@@ -180,10 +178,10 @@ def calc_DO_below_thresh(case, DO_thresh, shp, scope):
         else:
             DaysDOXGBelowThresh[run_type]['ALL_REGIONS'] = DOXGBelowThresh[run_type].max(
                 axis=2,initial=0).max(axis=1,initial=0).sum(axis=0,initial=0).item()
-        VolumeDays[run_type]['ALL_REGIONS'] = VolumeDays_all.sum(initial=0).item()
+        VolumeDays[run_type]['ALL_REGIONS'] = VolumeDays_all.sum().item()
         PercentVolumeDays[run_type]['ALL_REGIONS'] = 100*(
-            VolumeDays_all.sum(initial=0).item(initial=0)/
-            (volume.sum(initial=0).item(initial=0)*ndays)
+            VolumeDays_all.sum().item()/
+            (volume.sum().item()*ndays)
         )
         
     # Convert to dataframe and organize information
@@ -260,7 +258,7 @@ if __name__=='__main__':
     
     # make README 
     this_file = '=HYPERLINK("https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/scripts/calc_DO_below_threshold.py","calc_DO_below_threshold.py")'
-    run_description = '=HYPERLINK("https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/Shared%20Documents/Nutrient%20Science/9.%20Modeling/Municipal%20%20model%20runs%20and%20scripting%20task%20list_0803.xlsx?d=wc2379d95258844a0b0b611347c90e748&csf=1&web=1&e=ENBajh", "Municipal  model runs and scripting task list")'
+    run_description  = '=HYPERLINK("https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B417ABADA-C061-4340-9D09-2A23A26727E6%7D&file=Municipal%20%20model%20runs%20and%20scripting%20task%20list.xlsx&action=default&mobileredirect=true&cid=b2fb77a1-5678-4b1a-b7e6-39446422cd36","Municipal model runs and scripting")'
     ndays = 'Number of days where DO < threshold anywhere in Region (or in benthic layer of region if benthic case)'
     vd = 'Total volume of cells in region that experienced DO < threshold over the course of the year'
     pvd='Percent of regional volume that experienced DO < threshold over the course of the year'
@@ -275,7 +273,7 @@ if __name__=='__main__':
                                    'Created with:',
                                    'Reference:',
                                    'Number_of_Days',
-                                   'Volume_Days [km^3]',
+                                   'Volume_Days [km^3 days]',
                                    'Percent_Volume_Days[%]'])
 
     # Save to output to 
@@ -284,7 +282,7 @@ if __name__=='__main__':
             print(f'creating: {excel_output_path}')
             os.umask(0) #clears permissions
             os.makedirs(excel_output_path, mode=0o777,exist_ok=True)
-    with pandas.ExcelWriter(excel_output_path/f'{case}_{scope}_DO-lt-{args[0]}.xlsx', mode='w') as writer:  
+    with pandas.ExcelWriter(excel_output_path/f'{case}_{scope}_DO-lt-{DO_thresh}.xlsx', mode='w') as writer:  
         H['DO_std'].to_excel(writer, sheet_name='Number_of_Days')
         VD['DO_std'].to_excel(writer, sheet_name='Volume_Days')
         PVD['DO_std'].to_excel(writer, sheet_name='Percent_Volume_Days')
