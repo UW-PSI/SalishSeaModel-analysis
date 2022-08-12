@@ -31,24 +31,25 @@ run_folders=(
 
 ## Processing output files to smaller-sized netcdfs
 file_path="/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/\
-${run_folders[${SLURM_ARRAY_TASK_ID}]}/ssm_output.nc"	
+${run_folders[${SLURM_ARRAY_TASK_ID}]}/ssm_output.nc"
 
-echo ${file_path}
-python process_netcdf.py ${file_path} "DOXG" case "min" 1 0
+echo "Processing:" ${file_path}
+echo "As " $case " run"
+python process_netcdf.py ${file_path} "DOXG" $case "min" 1 0
 
 ## Calculating DO impaired days, volume, % volume
 scope=("benthic" "wc")
 
 echo "Calculating DO volume days impaired for: " ${scope}
-python calc_DO_impairment.py case ${scope[${SLURM_ARRAY_TASK_ID}]%2} 
+python calc_DO_impairment.py $case ${scope[${SLURM_ARRAY_TASK_ID}]} 
 
-## Calculating DO < threshold days, volume, % volume
-thresholds=(
-"DO_standard" 
-"2" 
-"5"
-)
+# ## Calculating DO < threshold days, volume, % volume
+# thresholds=(
+# "DO_standard" 
+# "2" 
+# "5"
+# )
 
-echo ${thresholds[${SLURM_ARRAY_TASK_ID}]}
+# echo ${thresholds[${SLURM_ARRAY_TASK_ID}]}
 
-python calc_DO_below_threshold.py case ${thresholds[${SLURM_ARRAY_TASK_ID}]%3} "wc"
+# python calc_DO_below_threshold.py case ${thresholds[${SLURM_ARRAY_TASK_ID}]%3} "wc"

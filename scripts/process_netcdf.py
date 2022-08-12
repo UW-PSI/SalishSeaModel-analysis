@@ -9,8 +9,8 @@ import time
 # load functions from my scripts file "ssm_utils"
 from ssm_utils import reshape_fvcom, calc_fvcom_stat
 
-def process_netcdf(netcdf_file_path, model_var='DOXG', case='SOG_NB', np_operator='min', 
-                   bottom_flag=1, surface_flag=0):
+def process_netcdf(netcdf_file_path, model_var='DOXG', case='SOG_NB',
+                   np_operator='min', bottom_flag=1, surface_flag=0):
     """
     *** HEADER INFORMATION TO BE ADDED ***
     model_var options: DOXG, LDOC,B1, B2, NH4, NO3,PO4,temp, salinity, 
