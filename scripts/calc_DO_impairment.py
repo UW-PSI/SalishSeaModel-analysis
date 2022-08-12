@@ -99,7 +99,7 @@ def calc_impaired(shp, case, scope, impairment=-0.2):
         print(f'Calculating difference for {run_type}')
         # Create array of Dissolved Oxygen threshold values 
         DO_diff = MinDO[run_type] - MinDO[reference]
-        # Boolean where DO_diff<0.2
+        # Boolean where DO_diff < -0.2 (or impairment value)
         DO_diff_lt_0p2[run_type] = DO_diff<=impairment #361x4144 (nodes x time) or 361x10x4144
         # Number of days where DO < threshold = True
         if scope=='benthic':
@@ -114,7 +114,7 @@ def calc_impaired(shp, case, scope, impairment=-0.2):
             # multiplication of 10x4144 * 10x4144 matrices to get volume days by level
             VolumeDays_wc=volume2D.transpose()*DO_diff_lt_0p2_days_wc
             # Add across levels to get total VolumeDays per node
-            VolumeDays_all = VolumeDays_wc.sum(axis=0, initial=0)
+            VolumeDays_all = VolumeDays_wc.sum(axis=0)
         
         # Total number of days and percent volume days for each region
         DaysImpaired[run_type]={}
@@ -129,16 +129,17 @@ def calc_impaired(shp, case, scope, impairment=-0.2):
             # The "where" keywork specifies to only use values where idx=True,
             # which in this case I set to specify the region.
             if scope=='benthic':
-                # Assign the maximum (True) of DO < threshold occurrence across region
+                # Assign the maximum (True) of DO < threshold occurrence anywhere in region
+                # then sum values over time
                 DaysImpaired[run_type][region] = DO_diff_lt_0p2[run_type].max(
-                    axis=1,where=idx,initial=0).item()
+                    axis=1,where=idx,initial=0).sum().item()
             else:
                 # Assign the maximum (True) of DO < threshold occurrence across depths 
                 # such that 1-day of impairement is counted if there is one or more 
                 # levels impaired
                 DOBelowThresh_daysnodes = DO_diff_lt_0p2[run_type].max(axis=1,initial=0)
-                # Assign the maximum (True) of DO < threshold occurrence across region
-                # then sum values over time
+                # Assign the maximum (True) of DO < threshold occurrence 
+                # anywhere in region then sum values over time
                 DaysImpaired[run_type][region] = DOBelowThresh_daysnodes.max(
                     axis=1,where=idx,initial=0).sum().item()
             
@@ -167,9 +168,9 @@ def calc_impaired(shp, case, scope, impairment=-0.2):
         else: #(361x10x4771): max over nodes and depth and sum over time
             DaysImpaired[run_type]['ALL_REGIONS'] = DO_diff_lt_0p2[run_type].max(
                 axis=2,initial=0).max(axis=1,initial=0).sum(axis=0,initial=0).item()
-        VolumeDaysImpaired[run_type]['ALL_REGIONS'] = VolumeDays_all.sum(initial=0).item()
+        VolumeDaysImpaired[run_type]['ALL_REGIONS'] = VolumeDays_all.sum().item()
         PercentVolumeDaysImpaired[run_type]['ALL_REGIONS'] = 100*(
-            VolumeDays_all.sum(initial=0).item()/(volume.sum(initial=0).item()*ndays)
+            VolumeDays_all.sum().item()/(volume.sum().item()*ndays)
         )
     # Convert to dataframe and organize information
     DaysImpaired_df = pandas.DataFrame(DaysImpaired)
@@ -209,7 +210,7 @@ if __name__=='__main__':
     """
     HEADER information not yet added
     case: "SOG_NB" or "whidbey"
-    scope: s"benthic" or "wc" for water column
+    scope: "benthic" or "wc" for water column
     """
     args = sys.argv[1:]
     case=args[0]
@@ -233,17 +234,10 @@ if __name__=='__main__':
         
     # make README 
     this_file = '=HYPERLINK("https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/scripts/calc_DO_impairment.py","calc_DO_impairment.py")'
-    run_description = """=HYPERLINK("https://uwnetid.sharepoint.com/:x:/r/sites/
-       og_uwt_psi/Shared%20Documents/Nutrient%20Science/9.%20Modeling
-       /Municipal%20%20model%20runs%20and%20scripting%20task%20list_0803.xlsxd=
-       wc2379d95258844a0b0b611347c90e748&csf=1&web=1&e=ENBajh", 
-       "Municipal  model runs and scripting task list")"""
-    ndays = """Number of days where DO(scenario) - DO(reference) < -0.2 anywhere in Region 
-        (or in benthic layer of region if benthic case)"""
-    vd = """Total volume of cells in region (or benthic layer in region) 
-        that experienced DO(scenario) - DO(reference) < -0.2 over the course of the years"""
-    pvd="""Percent of regional (or benthic) volume that experienced DO(scenario) - 
-        DO(reference) < -0.2 over the course of the year"""
+    run_description = '=HYPERLINK("https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B417ABADA-C061-4340-9D09-2A23A26727E6%7D&file=Municipal%20%20model%20runs%20and%20scripting%20task%20list.xlsx&action=default&mobileredirect=true&cid=b2fb77a1-5678-4b1a-b7e6-39446422cd36","Municipal model runs and scripting task list")'
+    ndays = 'Number of days where DO(scenario) - DO(reference) < -0.2 anywhere in Region (or in benthic layer of region if benthic case)'
+    vd = 'Total volume of cells in region (or benthic layer in region) that experienced DO(scenario) - DO(reference) < -0.2 over the course of the years'
+    pvd= 'Percent of regional (or benthic) volume that experienced DO(scenario) - DO(reference) < -0.2 over the course of the year'
 
     created_by = 'Rachael D. Mueller'
     created_on = date.today().strftime("%B %d, %Y")
@@ -255,7 +249,7 @@ if __name__=='__main__':
                                    'Created with:',
                                    'Reference:',
                                    'Impaired_Days',
-                                   'Volume_Days [km^3]',
+                                   'Volume_Days [km^3 days]',
                                    'Percent_Volume_Days[%]'])
 
     # Save to output to 
