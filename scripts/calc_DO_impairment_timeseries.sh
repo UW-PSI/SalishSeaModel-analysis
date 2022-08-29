@@ -20,6 +20,12 @@ conda activate klone_jupyter
 ## case options: SOG_NB or whidbey
 case="SOG_NB"
 
+## Impairment
+## -0.25 mg/l referenced on pp. 49 and 50 of Appendix F in Optimization Report
+## https://www.ezview.wa.gov/Portals/_1962/Documents/PSNSRP/Appendices%20A-G%20for%20Tech%20Memo.pdf
+impairment=-0.2
+echo "impairment: " $impairment
+
 run_folders=(
 "1b_all_sog_wwtp_off" 
 "1d_small_sog_wwtp_off" 
@@ -33,4 +39,4 @@ run_folders=(
 file_path="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/\
 $case/DOXG/${run_folders[${SLURM_ARRAY_TASK_ID}]}/daily_min_DOXG.nc"
 echo "Processing:" ${file_path}
-python calc_DO_impairment_timeseries.py $case ${file_path}
+python calc_DO_impairment_timeseries.py $impairment $case ${file_path}

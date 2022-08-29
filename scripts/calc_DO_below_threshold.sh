@@ -24,7 +24,7 @@ thresholds=(
 )
 
 ## case options: SOG_NB or whidbey
-case="whidbey"
+case="SOG_NB"
 
 echo ${thresholds[${SLURM_ARRAY_TASK_ID}]}
 

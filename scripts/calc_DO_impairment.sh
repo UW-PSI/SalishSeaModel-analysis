@@ -20,7 +20,13 @@ conda activate klone_jupyter
 scope=("benthic" "wc")
 
 ## case options: SOG_NB or whidbey
-case="whidbey"
+case="SOG_NB"
+
+## Impairement
+## -0.25 mg/l referenced on pp. 49 and 50 of Appendix F in Optimization Report
+## https://www.ezview.wa.gov/Portals/_1962/Documents/PSNSRP/Appendices%20A-G%20for%20Tech%20Memo.pdf
+impairment=-0.2
+echo "impairment: " $impairment
 
 echo "Calculating DO volume days impaired for: " ${scope}
-python calc_DO_impairment.py $case ${scope[${SLURM_ARRAY_TASK_ID}]} 
+python calc_DO_impairment.py $case $impairment ${scope[${SLURM_ARRAY_TASK_ID}]} 
