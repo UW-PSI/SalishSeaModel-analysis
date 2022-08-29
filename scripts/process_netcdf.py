@@ -65,8 +65,9 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', case='SOG_NB',
     ds.close()
     # calculate daily minimum
     daily_values = calc_fvcom_stat(hourly_values, np_operator, axis=1)
-    # remove first five (spin-up) days
-    daily_values_clean = np.delete(daily_values,[0,1,2,3,4],0)
+    # remove spin-up days
+    daily_values_clean = np.delete(
+        daily_values,range(0,ssm['run_information']['spin_up_days']),0)
     print('Output file size:',daily_values_clean.shape)
 
     # store time series of minimum across depth levels & save to file
