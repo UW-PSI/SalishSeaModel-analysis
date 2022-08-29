@@ -58,9 +58,10 @@ paths:
   shapefile: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_07222022/SSMGrid2_tce_ecy_node_info_v2_07222022.shp
 region:
   colors:
+    ALL_REGIONS: black
     Hood: darkseagreen
     Main: mediumpurple
-    SJFAdmiralty: lightsteelblue
+    SFJAdmiralty: lightsteelblue
     SOG_Bellinghham: rosybrown
     SouthSound: c
     Whidbey: cornflowerblue
@@ -99,17 +100,18 @@ run_information:
       3i: 3i
       wqm_baseline: Present Day
       wqm_reference: Reference
+  spin_up_days: 5
 siglev_diff:
 - 3.2
-- 5.8
-- 7.4
-- 9.0
-- 9.8
-- 11.4
-- 11.8
-- 13.4
-- 13.4
-- 15.0
+- 5.7
+- 7.5
+- 8.9
+- 10.1
+- 11.1
+- 12.1
+- 13.0
+- 13.8
+- 14.6
 stations:
   BHAM-Bay:
   - 48.767422
