@@ -258,7 +258,7 @@ if __name__=='__main__':
     
     # make README 
     this_file = '=HYPERLINK("https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/scripts/calc_DO_below_threshold.py","calc_DO_below_threshold.py")'
-    run_description  = '=HYPERLINK("https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B417ABADA-C061-4340-9D09-2A23A26727E6%7D&file=Municipal%20%20model%20runs%20and%20scripting%20task%20list.xlsx&action=default&mobileredirect=true&cid=b2fb77a1-5678-4b1a-b7e6-39446422cd36","Municipal model runs and scripting")'
+    run_description  = '=HYPERLINK("https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/docs/supporting/KingCounty_Model_Runs.xlsx","KingCounty_Model_Runs.xlsx")'
     ndays = 'Number of days where DO < threshold anywhere in Region (or in benthic layer of region if benthic case)'
     vd = 'Total volume of cells in region that experienced DO < threshold over the course of the year'
     pvd='Percent of regional volume that experienced DO < threshold over the course of the year'
