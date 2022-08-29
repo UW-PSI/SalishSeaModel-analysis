@@ -16,7 +16,7 @@ import matplotlib as mpl
 # load functions from my scripts file "ssm_utils"
 from ssm_utils import get_nearest_node, reshape_fvcom, calc_fvcom_stat, extract_fvcom_level
 
-def calc_impaired(shp, case, scope, impairment=-0.2):
+def calc_impaired(shp, case, scope, impairment=-0.25):
     """
     HEADER TO BE ADDED
     This script requires inclusion of reference case subdirectory in 
@@ -161,7 +161,11 @@ def calc_impaired(shp, case, scope, impairment=-0.2):
             PercentVolumeDaysImpaired[run_type][region]=100*(
                 VolumeDaysImpaired[run_type][region]/(RegionVolume*ndays)
             )
-        # Create totals across entire domain 
+        # Create totals across entire domain.  This includes "Other" nodes. 
+        # I tested np.asarray(VolumeDays_all)[idx], where 
+        # idx = (gdf['Regions']!='Other')
+        # and VolumeDays_all.sum().item().  They give the same number, 
+        # so I'm keeping the 29 "Other" nodes in for now
         if scope=='benthic': #(361x4771): max over nodes and sum over time
             DaysImpaired[run_type]['ALL_REGIONS'] = DO_diff_lt_0p2[run_type].max(
                 axis=1, initial=0).sum(axis=0,initial=0).item()
@@ -214,8 +218,16 @@ if __name__=='__main__':
     """
     args = sys.argv[1:]
     case=args[0]
-    scope=args[1]
-
+    impairment=args[1]
+    scope=args[2]
+    
+    print(f'scope: {scope}')
+    
+    # convert impairment to text string to use in file name
+    impaired_txt = impairment
+    impaired_txt = impaired_txt.replace('.','p')
+    impaired_txt = impaired_txt.replace('-','m')
+    
     # Start time counter
     start = time.time()
     
@@ -230,27 +242,43 @@ if __name__=='__main__':
         shp = ssm['paths']['shapefile']
 
     DaysImpaired_df,VolumeDays_df,PercentVolumeDays_df = calc_impaired(
-        shp, case, scope)
+        shp, case, scope, float(impairment))
         
     # make README 
     this_file = '=HYPERLINK("https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/scripts/calc_DO_impairment.py","calc_DO_impairment.py")'
-    run_description = '=HYPERLINK("https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B417ABADA-C061-4340-9D09-2A23A26727E6%7D&file=Municipal%20%20model%20runs%20and%20scripting%20task%20list.xlsx&action=default&mobileredirect=true&cid=b2fb77a1-5678-4b1a-b7e6-39446422cd36","Municipal model runs and scripting task list")'
-    ndays = 'Number of days where DO(scenario) - DO(reference) < -0.2 anywhere in Region (or in benthic layer of region if benthic case)'
-    vd = 'Total volume of cells in region (or benthic layer in region) that experienced DO(scenario) - DO(reference) < -0.2 over the course of the years'
-    pvd= 'Percent of regional (or benthic) volume that experienced DO(scenario) - DO(reference) < -0.2 over the course of the year'
+    run_description = '=HYPERLINK("https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/docs/supporting/KingCounty_Model_Runs.xlsx","KingCounty_Model_Runs.xlsx")'
+    impairment_value=f'{impairment} mg/l'
+    impaired = f'Impairment in this table is defined as < {impairment} mg/l. An impairment threshold of -0.25 is described in pages 49 and 50 of the Optimization report appendix.'
+    impaired_link = '=HYPERLINK("https://www.ezview.wa.gov/Portals/_1962/Documents/PSNSRP/Appendices%20A-G%20for%20Tech%20Memo.pdf", "Optimization Report Appendix")'
+    ndays = f'Number of days where DO(scenario) - DO(reference) < {impairment} anywhere in Region (or in benthic layer of region if benthic case)'
+    vd = f'Total volume of cells in region (or benthic layer in region) that experienced DO(scenario) - DO(reference) < {impairment} over the course of the years'
+    pvd= f'Percent of regional (or benthic) volume that experienced DO(scenario) - DO(reference) < {impairment} over the course of the year'
 
     created_by = 'Rachael D. Mueller'
+    created_at = 'Puget Sound Institute'
+    created_from = 'Model results produced by Su Kyong Yun at the Salish Sea Modeling Center'
     created_on = date.today().strftime("%B %d, %Y")
+    contact = 'Rachael D Mueller (rdmseas@uw.edu), Joel E Baker (jebaker@uw.edu), and Stefano Mazilli (mazzilli@uw.edu)'
     header = {
-        ' ':[created_by, created_on, this_file, run_description, ndays, vd, pvd]
+        ' ':[created_by, created_at, created_on, this_file, 
+            contact, created_from, 
+            run_description, impairment_value, impaired, 
+            impaired_link, ndays, vd, pvd]
     }
-    header_df = pandas.DataFrame(header, index=['Created by:',
-                                   'Created on:',
-                                   'Created with:',
-                                   'Reference:',
-                                   'Impaired_Days',
-                                   'Volume_Days [km^3 days]',
-                                   'Percent_Volume_Days[%]'])
+    header_df = pandas.DataFrame(header, index=[
+        'Created by',
+        'Created at',                           
+        'Created on',
+        'Created with',
+        'Contacts',
+        'Modeling by',
+        'Model Run Overview',
+        'Impairment threshold [mg/l]',
+        'Impairment Reference',
+        'Impairment Reference',
+        'Impaired_Days',
+        'Volume_Days [km^3 days]',
+        'Percent_Volume_Days[%]'])
 
     # Save to output to 
     excel_output_path = pathlib.Path(ssm['paths']['processed_output'])/case
@@ -262,7 +290,7 @@ if __name__=='__main__':
         os.umask(0) #clears permissions
         os.makedirs(excel_output_path, mode=0o777,exist_ok=True)
     with pandas.ExcelWriter(
-        excel_output_path/f'{case}_{scope}_impaired.xlsx', mode='w') as writer:  
+        excel_output_path/f'{case}_{scope}_impaired_{impaired_txt}.xlsx', mode='w') as writer:  
         DaysImpaired_df.to_excel(writer, sheet_name='Impaired_Days')
         VolumeDays_df.to_excel(writer, sheet_name='Volume_Days')
         PercentVolumeDays_df.to_excel(writer, sheet_name='Percent_Volume_Days')

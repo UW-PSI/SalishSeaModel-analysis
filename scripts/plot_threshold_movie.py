@@ -20,12 +20,13 @@ def plot_threshold_movie(shp, case, run_file, DO_thresh):
     """ 
     shp [path]: shapefile path
     case [string]: "SOG_NB" or "whidbey"
-    threshold: default is set to -0.2
+    threshold: e.g. 2 mg/l, 5 mg/l or DO standard
     """
     print(os.path.basename(__file__))
     model_var="DOXG"
     plt.rc('axes', titlesize=16)     # fontsize of the axes title
 
+    print(f'DO_thresh: {DO_thresh}', f'data type: {type(DO_thresh)}')
     # Define dimension sizes and load shapefile
     gdf = gpd.read_file(shp)
     gdf = gdf.rename(columns={'region_inf':'Regions'})
@@ -35,6 +36,13 @@ def plot_threshold_movie(shp, case, run_file, DO_thresh):
 
     # Pull directory name from run_file path
     run_type = run_file.split('/')[-2]
+    
+    # Isolate run tag for image file naming
+    run_tag = run_type.split("_")[0]
+    if run_tag=='wqm': # for baseline and reference cases
+        run_tag = run_type.split("_")[1]
+    print(f'run_tag: {run_tag}')
+    
     # Load minimum DO results from scenario
     MinDO_full={}
     MinDO={}
@@ -48,25 +56,16 @@ def plot_threshold_movie(shp, case, run_file, DO_thresh):
     except FileNotFoundError:
         print(f'File Not Found: {run_file}')
 
+    # Get number of days and nodes
+    [ndays,nlevels,nnodes]=MinDO[run_type].shape
+    
     # Create array of Dissolved Oxygen threshold values
     if DO_thresh=='DO_standard':
         DO_thresh=gdf['DO_std']
-        if scope=='benthic':
-            # create array of DO_threshold values
-            # (7494,361) x (7494,1) => element-wise multiplication
-            DO_thresh2D = np.ones(
-                (nnodes,ndays))*np.array(DO_thresh).reshape(nnodes,1)
-        else:
-            DO_thresh3D = np.ones(
-                (nnodes,nlevels,ndays))*np.array(DO_thresh).reshape(nnodes,1,1)
+        DO_thresh3D = np.ones(
+            (nnodes,nlevels,ndays))*np.array(DO_thresh).reshape(nnodes,1,1)
     else:
-        if scope=='benthic':
-            DO_thresh2D = np.ones((nnodes,ndays))*int(DO_thresh)
-        else:
-            DO_thresh3D = np.ones((nnodes,nlevels,ndays))*int(DO_thresh)
-            
-    # Get number of days and nodes
-    [ndays,nlevels,nnodes]=MinDO[run_type].shape
+        DO_thresh3D = np.ones((nnodes,nlevels,ndays))*int(DO_thresh)      
             
     # Calculate volume for volume days
     volume = np.asarray(gdf.volume)
@@ -88,46 +87,54 @@ def plot_threshold_movie(shp, case, run_file, DO_thresh):
    
     processed_netcdf_dir = pathlib.Path(
         ssm['paths']['processed_output'])/case/model_var
-    output_directory = processed_netcdf_dir/run_type/'movies'/'threshold'
+    output_directory = processed_netcdf_dir/'movies'/run_type/'threshold'
     # create output directory, if is doesn't already exist 
     # see https://docs.python.org/3/library/os.html#os.makedirs
     if os.path.exists(output_directory)==False:
         print(f'creating: {output_directory}')
         os.umask(0) #clears permissions
-        if os.path.exists(processed_netcdf_dir/run_type/'movies'/)==False:
+        if os.path.exists(processed_netcdf_dir/'movies'/run_type)==False:
             os.makedirs(
-                processed_netcdf_dir/run_type/'movies', 
+                processed_netcdf_dir/'movies'/run_type, 
                 mode=0o777,exist_ok=True)
         else:
-            os.makedirs(processed_netcdf_dir/run_type/'movies'/'threshold',
+            os.makedirs(processed_netcdf_dir/'movies'/run_type/'threshold',
                 mode=0o777,exist_ok=True)
     
     # Plot threshold for each day
     for day in range(ndays):
-        output_file = output_directory/f'{case}_{run_type}_threshold_wc_{day}.png'
+        model_day = day + ssm['run_information']['spin_up_days'] + 1
+        output_file = output_directory/f'{case}_{run_tag}_threshold_{DO_thresh}_wc_{model_day}.png'
 
-        gdf['BelowThresh']=DOXGBelowThresh[run_type][day,:]
+        print(f'DOXGBelowThreshDays_wc[day,:] for day={model_day}:{DOXGBelowThreshDays_wc[day,:].shape}')
+        gdf['BelowThresh']=DOXGBelowThreshDays_wc[day,:]
         gdf_belowThresh = gdf.loc[
             ((gdf['included_i']==1) & 
             (gdf['BelowThresh']==True))
         ]
         gdf_good = gdf.loc[
             ((gdf['included_i']==1) & 
-            (gdf['BelowThresh']==False))
+             (gdf['BelowThresh']==False)&
+             (gdf['Regions']!='Other'))
         ]
         fig, axs = plt.subplots(1,1, figsize = (8,8))
-        #~~~ Impaired (red) and Not Impaired (blue) nodes ~~~
+        #~~~ Below threshold (red) and above threshold (blue) nodes ~~~
         gdf_good.plot(ax=axs,color='blue',legend=True,
-                         label='Not Impaired', alpha = 0.3)
+                         label='DO<={DO_thresh}[mg/l]', alpha = 0.3)
         if gdf_belowThresh.empty == False: # plot if there are impaired values
             gdf_belowThresh.plot(ax=axs,color='red',legend=True,
                              label=f'DO<{DO_thresh}[mg/l]')
         #~~~ Location map ~~~
-        cx.add_basemap(axs, crs=gdf.crs,alpha=1)   
-        axs.set_title(f'DO<{DO_thresh}[mg/l](red) for day {day} of 2014')
-        #axs.set_xticklabels('')
-        #axs.set_yticklabels('')
-        output_file = output_directory/f'{case}_{run_type.split("_")[0]}_all_threshold_wc_{day}.png'
+        cx.add_basemap(axs, crs=gdf.crs,alpha=1)
+        if run_tag == 'baseline':
+            axs.set_title(
+                f'Current conditions\nDO<{DO_thresh}[mg/l](red) for day {model_day} of 2014')
+        else:
+            axs.set_title(f'{run_tag}\nDO<{DO_thresh}[mg/l](red) for day {model_day} of 2014')
+        
+        axs.set_xticklabels('')
+        axs.set_yticklabels('')
+        
         plt.savefig(output_file, bbox_inches='tight', format='png')
         plt.clf() #clear figure and memory
 

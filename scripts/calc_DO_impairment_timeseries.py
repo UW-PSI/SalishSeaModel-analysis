@@ -16,7 +16,7 @@ import matplotlib as mpl
 # load functions from my scripts file "ssm_utils"
 from ssm_utils import get_nearest_node, reshape_fvcom, calc_fvcom_stat, extract_fvcom_level
 
-def calc_impaired_TS(shp, case, run_file, impairment=-0.2):
+def calc_impaired_TS(shp, case, impairment, run_file):
     """
     HEADER TO BE ADDED
     This script requires inclusion of reference case subdirectory in 
@@ -83,17 +83,6 @@ def calc_impaired_TS(shp, case, run_file, impairment=-0.2):
     # water column
     DO_diff_lt_0p2_wc[run_type]=DO_diff_lt_0p2[run_type].max(
         axis=1, initial=0)
-    processed_netcdf_dir = pathlib.Path(ssm['paths']['processed_output'])/case/model_var
-    output_directory = processed_netcdf_dir/run_type/'spreadsheets'/'impairment'
-    # create output directory, if is doesn't already exist 
-    # see https://docs.python.org/3/library/os.html#os.makedirs
-    if os.path.exists(output_directory)==False:
-        print(f'creating: {output_directory}')
-        os.umask(0) #clears permissions
-        os.makedirs(
-            processed_netcdf_dir/run_type/'spreadsheets', 
-            mode=0o777,exist_ok=True)
-
     # # Initialize dictionaries
     # MinDO_full={} # Min, daily DO over all nodes
     # MinDO={} # Min, daily DO over all nodes in shapefile
@@ -121,6 +110,8 @@ def calc_impaired_TS(shp, case, run_file, impairment=-0.2):
     volume_lt_0p2_TS[run_type]=volume_lt_0p2[run_type].sum(axis=1) 
     # the above summed over regions
     volume_lt_0p2_TS_byRegion[run_type]={}
+    # percent of region's volume that is impaired
+    percent_volume_lt_0p2_TS_byRegion[run_type]={}
     for region in regions: 
         idx = ((gdf['Regions']==region) &
                 (gdf['included_i']==1))
@@ -150,17 +141,23 @@ def calc_impaired_TS(shp, case, run_file, impairment=-0.2):
     # Convert to dataframe and organize information
     PercentImpaired_df = pandas.DataFrame(percent_volume_lt_0p2_TS_byRegion[run_type])
     
-    return PercentImpaired_df
+    return PercentImpaired_df, output_directory
 
 if __name__=='__main__':
     """
     HEADER information not yet added
     case: "SOG_NB" or "whidbey"
-    
+    impairment: -0.2 in Bounding Scenarios and -0.25 in Optimization
     """
     args = sys.argv[1:]
-    case=args[0]
-    run_file=args[1]
+    impairment=args[0]
+    case=args[1]
+    run_file=args[2]
+
+    # convert impairment to text string to use in file name
+    impaired_txt = impairment
+    impaired_txt = impaired_txt.replace('.','p')
+    impaired_txt = impaired_txt.replace('-','m')
 
     # Start time counter
     start = time.time()
@@ -175,24 +172,77 @@ if __name__=='__main__':
         # get shapefile path    
         shp = ssm['paths']['shapefile']
 
-    PercentImpaired_TS_df = calc_impaired_TS(shp, case, run_file)
-        
+    processed_netcdf_dir = pathlib.Path(ssm['paths']['processed_output'])/case/model_var
+    output_directory = processed_netcdf_dir/'spreadsheets'/'impairment'/impaired_txt
+    # create output directory, if is doesn't already exist 
+    # see https://docs.python.org/3/library/os.html#os.makedirs
+    if os.path.exists(output_directory)==False:
+        if os.path.exists(processed_netcdf_dir/'spreadsheets')==False:
+            os.umask(0) #clears permissions
+            os.makedirs(
+                processed_netcdf_dir/'spreadsheets', 
+                mode=0o777,exist_ok=True)
+            os.makedirs(
+                processed_netcdf_dir/'spreadsheets'/'impairment', 
+                mode=0o777,exist_ok=True)
+            os.makedirs(
+                processed_netcdf_dir/'spreadsheets'/'impairment'/impaired_txt, 
+                mode=0o777,exist_ok=True)
+        else:
+            if os.path.exists(processed_netcdf_dir/'spreadsheets'/'impairment')==False:
+                os.umask(0) #clears permissions
+                os.makedirs(
+                    processed_netcdf_dir/'spreadsheets'/'impairment', 
+                    mode=0o777,exist_ok=True)
+                os.makedirs(
+                    processed_netcdf_dir/'spreadsheets'/'impairment'/impaired_txt,
+                    mode=0o777,exist_ok=True)
+
+
+    PercentImpaired_TS_df,output_directory = calc_impaired_TS(
+            shp, case, float(impairment), run_file
+            )
+    
+    # Pull directory name from run_file path
+    run_type = run_file.split('/')[-2]
+    
+    # Create a run scenario tag-name for file naming
+    run_tag = run_type.split("_")[0]
+    if run_tag=='wqm': # for baseline and reference cases
+        run_tag = run_type.split("_")[1]
+    
     # make README 
     this_file = '=HYPERLINK("https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/scripts/calc_DO_impairment_timeseries.py","calc_DO_impairment_timeseries.py")'
-    run_description = '=HYPERLINK("https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B417ABADA-C061-4340-9D09-2A23A26727E6%7D&file=Municipal%20%20model%20runs%20and%20scripting%20task%20list.xlsx&action=default&mobileredirect=true&cid=b2fb77a1-5678-4b1a-b7e6-39446422cd36","Municipal model runs and scripting task list")'
+    run_description = '=HYPERLINK("https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/docs/supporting/KingCounty_Model_Runs.xlsx","KingCounty_Model_Runs.xlsx")'
+    impairment_value=f'{impairment} mg/l'
+    impaired = f'Impairment in this table is defined as < {impairment} mg/l. An impairment threshold of -0.25 is described in pages 49 and 50 of the Optimization report appendix.'
+    impaired_link = '=HYPERLINK("https://www.ezview.wa.gov/Portals/_1962/Documents/PSNSRP/Appendices%20A-G%20for%20Tech%20Memo.pdf", "Optimization Report Appendix")'
     created_by = 'Rachael D. Mueller'
+    created_at = 'Puget Sound Institute'
+    created_from = 'Model results produced by Su Kyong Yun at the Salish Sea Modeling Center'
     created_on = date.today().strftime("%B %d, %Y")
+    contact = 'Rachael D Mueller (rdmseas@uw.edu)'
     header = {
-        ' ':[created_by, created_on, this_file, run_description]
+        ' ':[created_by, created_at, created_on, this_file,
+            contact, created_from,
+            run_description, impairment_value, impaired,
+            impaired_link]
     }
-    header_df = pandas.DataFrame(header, index=['Created by:',
-                                   'Created on:',
-                                   'Created with:',
-                                   'Reference:'])
+    header_df = pandas.DataFrame(header, index=[
+        'Created by',
+        'Created at',
+        'Created on',
+        'Created with',
+        'Contacts',
+        'Modeling by',
+        'Model Run Overview',
+        'Impairment threshold [mg/l]',
+        'Impairment Reference',
+        'Impairment Reference'])
 
     # Save to output to 
     with pandas.ExcelWriter(
-        output_directory/f'{case}_wc_impaired_TS_byRegion.xlsx', mode='w') as writer:  
+        output_directory/f'{case}_{run_tag}_wc_impaired_{impaired_txt}_TS_byRegion.xlsx', mode='w') as writer:  
         PercentImpaired_TS_df.to_excel(writer, sheet_name='Percent Impaired (by volume)')
         header_df.to_excel(writer, sheet_name='README')
 
