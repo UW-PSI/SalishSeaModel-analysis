@@ -33,4 +33,4 @@ ${run_folders[${SLURM_ARRAY_TASK_ID}]}/ssm_output.nc"
 
 
 echo ${file_path}
-python process_netcdf.py ${file_path} "NO3" "median" 1 1
+python process_netcdf.py ${file_path} "NO3" "SOG_NB" "max" 1 1
