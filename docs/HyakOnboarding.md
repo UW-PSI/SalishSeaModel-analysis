@@ -9,7 +9,19 @@ Host *
    ForwardAgent yes
    ServerAliveInterval 60
    AddKeysToAgent yes
+```
+Doug Latornell's documentation on setting up SSH [Directives for All Hosts](https://ubc-moad-docs.readthedocs.io/en/latest/ssh_access.html?highlight=Directives%20for%20all%20hosts#directives-for-all-hosts) gives a good explanation on this setup protocol (as well as other suggestions). 
 
+My completed setup of `.ssh/config` looks like: 
+
+```
+Host *
+   AddKeysToAgent yes
+   UseKeychain yes
+   ForwardAgent yes
+   ServerAliveInterval 60
+   AddKeysToAgent yes
+   
 Host klone
    HostName klone.hyak.uw.edu
    User rdmseas
