@@ -1,3 +1,20 @@
+# Connecting to Hyak
+Remote connection to Hyak via `ssh` might intermittently drop and yield the error:
+```
+channel 2: open failed: connect failed: Connection refused
+```
+This error is a result of internet hiccups but can be avoided by adding the following lines to `.ssh/config`:
+```
+Host *
+   ForwardAgent yes
+   ServerAliveInterval 60
+   AddKeysToAgent yes
+
+Host klone
+   HostName klone.hyak.uw.edu
+   User rdmseas
+```
+
 # Hyak storage
 
 `$HOME`  is located at `/mmfs1/home/USERID/` and has the most limited storage, at 10 GB.  
