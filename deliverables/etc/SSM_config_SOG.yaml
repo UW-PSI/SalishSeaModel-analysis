@@ -6,16 +6,16 @@ bar:
 bw_line:
   color:
     baseline: black
-    reference: lightslategrey
+    reference: black
     scenario: grey
   style:
     baseline: solid
     reference: dashdot
-    scenario: solid
+    scenario: dashed
   width:
-    baseline: 2
-    reference: 1.5
-    scenario: 1
+    baseline: 1
+    reference: 1
+    scenario: 1.5
 line:
   color:
     1b_all_sog_wwtp_off: palevioletred
