@@ -1,0 +1,164 @@
+bar:
+  colors:
+    DOXG: deepskyblue
+    NH4: darkolivegreen
+    NO3: y
+bw_line:
+  color:
+    baseline: black
+    reference: lightslategrey
+    scenario: grey
+  style:
+    baseline: solid
+    reference: dashdot
+    scenario: solid
+  width:
+    baseline: 2
+    reference: 1.5
+    scenario: 1
+line:
+  color:
+    1b_all_sog_wwtp_off: palevioletred
+    1c_all_sog_riv_off: lightsteelblue
+    1d_small_sog_wwtp_off: mediumpurple
+    1e_med_sog_wwtp_off: indigo
+    2a_sog_river_0.5times: cadetblue
+    2b_sog_river_2times: darkslategrey
+    deviation: royalblue
+    wqm_baseline: grey
+    wqm_reference: black
+  style:
+    1b_all_sog_wwtp_off: dashed
+    1c_all_sog_riv_off: solid
+    1d_small_sog_wwtp_off: dashdot
+    1e_med_sog_wwtp_off: solid
+    2a_sog_river_0.5times: dashdot
+    2b_sog_river_2times: dashed
+    deviation: solid
+    wqm_baseline: solid
+    wqm_reference: solid
+  width:
+    1b_all_sog_wwtp_off: 2.5
+    1c_all_sog_riv_off: 2.5
+    1d_small_sog_wwtp_off: 2.0
+    1e_med_sog_wwtp_off: 1.5
+    2a_sog_river_0.5times: 2.0
+    2b_sog_river_2times: 3.0
+    deviation: 1
+    wqm_baseline: 1.5
+    wqm_reference: 1.0
+paths:
+  graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/
+  model_output:
+    SOG_NB:
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_reference/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1b_all_sog_wwtp_off/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1c_all_sog_riv_off/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1d_small_sog_wwtp_off/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1e_med_sog_wwtp_off/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2a_sog_river_0.5times/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2b_sog_river_2times/ssm_output.nc
+  processed_output: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/
+  shapefile: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_09062022/SSMGrid2_tce_ecy_node_info_v2_09062022.shp
+region:
+  colors:
+    ALL_REGIONS: black
+    Hood: darkseagreen
+    Main: mediumpurple
+    SFJAdmiralty: lightsteelblue
+    SOG_Bellinghham: rosybrown
+    SouthSound: c
+    Whidbey: cornflowerblue
+run_information:
+  SOG_NB_WWTPs:
+    1b_all_sog_wwtp_off: 1b
+    1d_small_sog_wwtp_off: 1d
+    1e_med_sog_wwtp_off: 1e
+    wqm_baseline: exist
+    wqm_reference: ref
+  SOG_NB_rivers:
+    2a_sog_river_0.5times: 2a
+    2b_sog_river_2times: 2b
+    wqm_baseline: exist
+    wqm_reference: ref
+  baseline: wqm_baseline
+  reference: wqm_reference
+  run_description:
+    SOG_NB:
+      1b_all_sog_wwtp_off: '1b: No SOG/NB WWTP'
+      1c_all_sog_riv_off: '1c: No SOG/NB River Loading'
+      1d_small_sog_wwtp_off: '1d: No SOG/NB WWTP<100'
+      1e_med_sog_wwtp_off: '1e: No SOG/NB WWTP>100'
+      2a_sog_river_0.5times: '2a: 0.5x(River Loading)
+
+        in SOG/NB'
+      2b_sog_river_2times: '2b: 2.0x(River Loading)
+
+        in SOG/NB'
+      wqm_baseline: Modern day nutrient loading
+      wqm_reference: Pre-industrial nutrient loading
+  run_tag:
+    SOG_NB:
+      1b_all_sog_wwtp_off: 1b
+      1c_all_sog_riv_off: 1c
+      1d_small_sog_wwtp_off: 1d
+      1e_med_sog_wwtp_off: 1e
+      2a_sog_river_0.5times: 2a
+      2b_sog_river_2times: 2b
+      wqm_baseline: Present Day
+      wqm_reference: Reference
+  spin_up_days: 5
+siglev_diff:
+- 3.2
+- 5.7
+- 7.5
+- 8.9
+- 10.1
+- 11.1
+- 12.1
+- 13.0
+- 13.8
+- 14.6
+stations:
+  BHAM-Bay:
+  - 48.767422
+  - -122.575792
+  Birch Bay:
+  - 48.89888
+  - -122.781905
+  Birch Bay (Point Whitehorn):
+  - 48.895273
+  - -122.805067
+  Cherry Point:
+  - 48.868451
+  - -122.7804
+  Eastsound:
+  - 48.684406
+  - -122.898953
+  Quartermaster Harbor:
+  - 47.3793
+  - -122.462
+  Se'lhaemNOAA_46118:
+  - 48.724
+  - -122.576
+variables:
+  name_list:
+  - time
+  - depth
+  - DOXG
+  - LDOC
+  - B1
+  - B2
+  - NH4
+  - NO3
+  - PO4
+  - temp
+  - salinity
+  - RDOC
+  - LPOC
+  - RPOC
+  - TDIC
+  - TALK
+  - pH
+  - pCO2
