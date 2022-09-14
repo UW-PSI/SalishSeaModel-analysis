@@ -1,3 +1,23 @@
+# Setting up a computing environment
+
+## Terminal
+Open terminal preferences.  In the `General` section, specify that `Shells open with` a `Command` of:
+```
+/bin/bash
+```
+Follow [Doug Latornell's instructions](https://ubc-moad-docs.readthedocs.io/en/latest/bash_config.html#bash-configuration) for setting up the Bash environment. 
+
+## Git
+Follow [Doug's Git setup advice]() and configure with:
+```
+rdmseas@uwtlocadminsMBP ~ % git config --global user.name "Rachael D. Mueller"
+rdmseas@uwtlocadminsMBP ~ % git config --global user.email "rdmseas@uw.edu"
+rdmseas@uwtlocadminsMBP ~ % git config --global init.defaultbranch main
+rdmseas@uwtlocadminsMBP ~ % git config --global pull.rebase false
+rdmseas@uwtlocadminsMBP ~ % git config --global alias.glog "log --graph"
+rdmseas@uwtlocadminsMBP ~ % git config --global alias.out "log --pretty=oneline --abbrev-commit --graph @{u}.."
+```
+
 # Connecting to Hyak
 Remote connection to Hyak via `ssh` might intermittently drop and yield the error:
 ```
@@ -26,6 +46,7 @@ Host klone
    HostName klone.hyak.uw.edu
    User rdmseas
 ```
+NOTE: I haven't gotten this setup to work on my UW macOS Monterey laptop, and I'm working with IT to figure out why.  
 
 # Hyak storage
 
@@ -299,6 +320,8 @@ Executing transaction: done
 Jupyterlab provides an ability to plot up model results and develop methods visualizing model output.  Opening a visual session requires that we set up our local system with an `SSH` connection to `HYAK`.  Setting up an `SSH` connection is a bit tedious, though.  Here are steps to make it more functional.  
 
 From the wiki: "Mox nodes have 28, 32 or 40 cores. Ask the experienced members of your Hyak group about the number of cores for  the nodes in your group."  Need information on Hyak. 
+
+
 ### Create an alias to initiate an interactive node
 Create a shell script in your root directory (I chose `/mmfs1/home/rdmseas`) that specifies account and partition.  Use `hyakalloc` to see which account and partition apply to your personal account.  Mine are `ssmc` and `compute`.  The `$1` for `time` indicates that the first variable passed in will be the requested time allocation.  Here, I just select 1 node and 1 CPU with ~5GB memory (in multiples of 1280). 
 ```
@@ -435,3 +458,146 @@ alias rm="rm -i"
 alias ll="ls -al"
 
 ```
+
+# FFMPEG
+A big thanks to Matt in Hyak IT for helping to guide me through the setup of a FFMPEG Container on Hyak using the Apptainer module. From Matt:
+```
+Yes, you can install anything you want to either your private gscratch space or the 'contrib' area and then create a module for it if you wish: https://hyak.uw.edu/docs/tools/modules#how-do-i-create-personal-lmod-modules-on-klone
+
+Alternatively you can create an Apptainer (formerly Singularity) container with program (sometimes this is easier because you can use existing Docker images to build the container, or use apt-get/yum in the container host OS to install the software), and run applications via container: https://hyak.uw.edu/docs/tools/containers
+
+We encourage the container route as it is where things are going in HPC, and is more conducive to reproducible research than local installed software.
+```
+My setup is different owing to the fact that I changed my `$HOME` in order to be able to use miniconda packages.  Changing `$HOME` isn't advised.  I ended up getting help from Matt.  These instructions are still needing refinement but will hopefully help to guide in the process.
+
+#####  Installing FFMPEG on Hyak using Aptainer
+
+From Matt:
+```
+Yes, you can install anything you want to either your private gscratch space or the 'contrib' area and then create a module for it if you wish: https://hyak.uw.edu/docs/tools/modules#how-do-i-create-personal-lmod-modules-on-klone
+
+Alternatively you can create an Apptainer (formerly Singularity) container with program (sometimes this is easier because you can use existing Docker images to build the container, or use apt-get/yum in the container host OS to install the software), and run applications via container: https://hyak.uw.edu/docs/tools/containers
+
+We encourage the container route as it is where things are going in HPC, and is more conducive to reproducible research than local installed software.
+```
+On Hyak (Klone):
+I have my environment setup such that $HOME is
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael
+```
+1. I first moved to this directory and then initiated an interactive node:
+```
+(base) [rdmseas@klone1 ~]$ allocate2
+salloc: Pending job allocation 5899458
+salloc: job 5899458 queued and waiting for resources
+salloc: job 5899458 has been allocated resources
+salloc: Granted job allocation 5899458
+salloc: Waiting for resource configuration
+salloc: Nodes n3288 are ready for job
+```
+2. I loaded aptainer
+```
+module load apptainer
+```
+3. Create an Apptainer definition file.  I call the following file ffmpeg.def and placed it in an `app_defs` folder in my $HOME directory:
+```
+mkdir app_defs
+cd app_defs
+vi ffmpeg.def
+```
+
+   and wrote the following to the `ffmpeg.def` file:
+```
+Bootstrap: docker
+From: ubuntu:16.04
+%post
+    apt -y update
+    apt -y install ffmpeg
+```
+4. Following the UW-IT support instructions: Build a Apptainer container from its definition file. The generated SIF file is your portable container.
+
+The .def definition file should either be A) executable or B) a relative path (e.g. ./tools.def while in the same directory as the file) or an absolute path (e.g. /full/path/to/tools.def).
+
+When using the --fakeroot option, build the container image in /tmp. This avoids [a potential permission issue] with our shared storage filesystem, GPFS.
+```
+(base) [rdmseas@n3288 app_defs]$ apptainer build --fakeroot /tmp/ffmpeg.sif ./ffmpeg.def
+WARNING: Not compiled with seccomp, fakeroot may not work correctly, if you get permission denied error during creation of pseudo devices, you should install seccomp library and recompile Apptainer
+INFO:    Starting build...
+FATAL:   While performing build: conveyor failed to get: loading registries configuration: reading registries.conf.d: lstat /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.config/containers/registries.conf.d: permission denied
+```
+   
+This is where I needed Matt's help.  He helped fix by: 
+   
+   
+### Running FFMPEG using a Container
+From Matt: " the running containers 'see' their own container filesystem -- in order to see files from the host (ie, the compute node) they have to be bind mounted into the container (using --bind / -B): https://apptainer.org/docs/user/main/bind_paths_and_mounts.html#user-defined-bind-paths [apptainer.org]"
+ 
+```
+apptainer exec --bind /PATH/TO/impairment:/data ~/ffmpeg.sif ... -i /data/SOG_NB_wqm_all_impairment_wc_%d.png ... 
+``` 
+"So what's happening there is that you are mounting the Klone node path '/PATH/TO/impairment' to the path '/data' inside of the container -- allowing you to access files from the compute node under '/PATH/TO/impairment' via the path '/data' inside of the running container."
+   
+These are the pieces needed to run FFMPEG from a script:
+```
+## Modules needed to run
+module purge
+module load apptainer
+graphics_dir="/mmfs1/gscratch/ssmc/USRS/PSI/REST_OF_PATH_HERE"
+output_dir="/mmfs1/gscratch/ssmc/USRS/PSI/REST_OF_PATH_HERE"
+
+apptainer exec --bind ${graphics_dir} ~/ffmpeg.sif ffmpeg -start_number 6 -i filename_%d.png -r 20 -vcodec mpeg4 output_name.mp4
+```
+   
+My [bashscript]() looks like this: 
+```
+#!/bin/bash
+
+## job name 
+#SBATCH --job-name=DOXG_imparied
+#SBATCH --account=ssmc
+#SBATCH --partition=compute
+#SBATCH --nodes=1       
+#SBATCH --ntasks-per-node=1
+#SBATCH --array=0-6
+#SBATCH --time=0:30:00 
+#SBATCH --mem=175G 
+#SBATCH --mail-user=rdmseas@uw.edu
+   
+## Modules needed to run
+module purge
+module load apptainer
+
+## case options: SOG_NB or whidbey
+case="SOG_NB"
+
+run_folders=(
+"1b_all_sog_wwtp_off"
+"1d_small_sog_wwtp_off"
+"2a_sog_river_0.5times"
+"wqm_baseline"
+"wqm_reference"
+"1e_med_sog_wwtp_off"
+"2b_sog_river_2times"
+)
+
+run_tags=(
+"1b"
+"1d"
+"2a"
+"baseline"
+"reference"
+"1e"
+"2b"
+)
+
+graphics_dir="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/${case}/DOXG/movies/${run_folders[${SLURM_ARRAY_TASK_ID}]}/DO_conc/"
+output_dir="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/${case}/DOXG/movies/"
+
+echo ${graphics_dir}
+
+apptainer exec --bind ${graphics_dir} ~/ffmpeg.sif ffmpeg -start_number 6 -i ${graphics_dir}${case}_${run_tags[${SLURM_ARRAY_TASK_ID}]}_DO_conc_wc_%d.png -r 20 -vcodec mpeg4 ${output_dir}${case}_${run_tags[${SLURM_ARRAY_TASK_ID}]}_DO_conc_wc.mp4
+```
+   
+   
+   
+   
