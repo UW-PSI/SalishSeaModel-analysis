@@ -16,7 +16,7 @@ import matplotlib as mpl
 # load functions from my scripts file "ssm_utils"
 from ssm_utils import get_nearest_node, reshape_fvcom, calc_fvcom_stat, extract_fvcom_level
 
-def calc_impaired_TS(shp, case, impairment, run_file):
+def calc_impaired_TS(shp, case, impairment, model_var, run_file):
     """
     HEADER TO BE ADDED
     This script requires inclusion of reference case subdirectory in 
@@ -24,15 +24,18 @@ def calc_impaired_TS(shp, case, impairment, run_file):
     case sub-directory name in the yaml file under: ssm['run_information']['reference']
     """
     
-    model_var="DOXG"
+    #model_var="DOXG"
     plt.rc('axes', titlesize=16)     # fontsize of the axes title
 
+    print(shp)
+    
     # Define dimension sizes and load shapefile
     gdf = gpd.read_file(shp)
     gdf = gdf.rename(columns={'region_inf':'Regions'})
     regions = gdf[['node_id','Regions']].groupby(
         'Regions').count().index.to_list()
     regions.remove('Other')
+    print(regions)
  
     # Pull directory name from run_file path
     run_type = run_file.split('/')[-2]
@@ -119,12 +122,19 @@ def calc_impaired_TS(shp, case, impairment, run_file):
             (gdf['Regions']==region) &
             (gdf['included_i']==1)
         ].sum()
+        
         # time series of impaired volume in regions for each day  
         volume_lt_0p2_TS_byRegion[run_type][region] = volume_lt_0p2_TS[run_type][:,idx].sum(axis=1)
         # percent volume
         percent_volume_lt_0p2_TS_byRegion[run_type][region] = 100*(
             volume_lt_0p2_TS_byRegion[run_type][region]/RegionVolume
         )
+        
+        # debug print statements for SJF 
+        if region=="SJF_Admiralty":
+            print(f'SJF_Admiralty (volume < 0.25): {volume_lt_0p2_TS_byRegion[run_type][region].sum().item()}')
+            print(DO_diff.shape)
+            print(f'SJF_Admiralty (volume < 0.25): {DO_diff.min().item()}, {DO_diff.max().item()}')
     # repeat the above for the entire domain
     idx = (gdf['included_i']==1)
     RegionVolume = volume[
@@ -153,6 +163,7 @@ if __name__=='__main__':
     impairment=args[0]
     case=args[1]
     run_file=args[2]
+    model_var="DOXG"
 
     # convert impairment to text string to use in file name
     impaired_txt = impairment
@@ -167,7 +178,7 @@ if __name__=='__main__':
     # but can also be modified here (with the caveat the modifications will be 
     # over-written when the SSM_config.ipynb is run
     # https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/etc/SSM_config.yaml
-    with open('../etc/SSM_config.yaml', 'r') as file:
+    with open('../etc/SSM_config_SOG.yaml', 'r') as file:
         ssm = yaml.safe_load(file)
         # get shapefile path    
         shp = ssm['paths']['shapefile']
@@ -200,7 +211,7 @@ if __name__=='__main__':
 
 
     PercentImpaired_TS_df,output_directory = calc_impaired_TS(
-            shp, case, float(impairment), run_file
+            shp, case, float(impairment), model_var, run_file
             )
     
     # Pull directory name from run_file path

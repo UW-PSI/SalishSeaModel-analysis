@@ -6,7 +6,7 @@
 #SBATCH --partition=compute
 #SBATCH --nodes=1       
 #SBATCH --ntasks-per-node=1
-#SBATCH --array=0-6
+#SBATCH --array=0-5
 #SBATCH --time=0:30:00 
 #SBATCH --mem=175G 
 #SBATCH --mail-user=rdmseas@uw.edu
@@ -23,7 +23,7 @@ case="SOG_NB"
 ## Impairment
 ## -0.25 mg/l referenced on pp. 49 and 50 of Appendix F in Optimization Report
 ## https://www.ezview.wa.gov/Portals/_1962/Documents/PSNSRP/Appendices%20A-G%20for%20Tech%20Memo.pdf
-impairment=-0.2
+impairment=-0.25
 echo "impairment: " $impairment
 
 run_folders=(
@@ -31,7 +31,6 @@ run_folders=(
 "1d_small_sog_wwtp_off" 
 "2a_sog_river_0.5times" 
 "wqm_baseline" 
-"1c_all_sog_riv_off" 
 "1e_med_sog_wwtp_off" 
 "2b_sog_river_2times"
 )
