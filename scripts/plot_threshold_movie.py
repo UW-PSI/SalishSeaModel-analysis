@@ -1,6 +1,5 @@
 import sys
 import os
-sys.path.insert(1, '../scripts/')
 import xarray
 import openpyxl
 import contextily as cx 
@@ -86,19 +85,19 @@ def plot_threshold_movie(shp, case, run_file, DO_thresh):
         axis=1,initial=0) #361x4144 (nodes)
    
     processed_netcdf_dir = pathlib.Path(
-        ssm['paths']['processed_output'])/case/model_var
-    output_directory = processed_netcdf_dir/'movies'/run_type/'threshold'
+        ssm['paths']['graphics'])/case/model_var
+    output_directory = processed_netcdf_dir/run_type/'movies'/'threshold'
     # create output directory, if is doesn't already exist 
     # see https://docs.python.org/3/library/os.html#os.makedirs
     if os.path.exists(output_directory)==False:
         print(f'creating: {output_directory}')
         os.umask(0) #clears permissions
-        if os.path.exists(processed_netcdf_dir/'movies'/run_type)==False:
+        if os.path.exists(processed_netcdf_dir/run_type/'movies')==False:
             os.makedirs(
-                processed_netcdf_dir/'movies'/run_type, 
+                processed_netcdf_dir/run_type/'movies', 
                 mode=0o777,exist_ok=True)
         else:
-            os.makedirs(processed_netcdf_dir/'movies'/run_type/'threshold',
+            os.makedirs(processed_netcdf_dir/run_type/'movies'/'threshold',
                 mode=0o777,exist_ok=True)
     
     # Plot threshold for each day
