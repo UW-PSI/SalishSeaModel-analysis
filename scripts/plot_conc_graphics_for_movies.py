@@ -14,15 +14,15 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import cmocean.cm as cm
 
-def plot_conc_movies(shp, case, model_var, stat_type, loc, run_file):
+def plot_conc_graphics(shp, case, model_var, stat_type, loc, run_file):
     """ 
     shp [path]: shapefile path
     case [string]: "SOG_NB" or "whidbey"
     model_var [string]: "DOXG", "NO3", "salinity"
+    stat_type[string]: "mean","min","max"
+    loc[string]: "surface" or "bottom"
     """
     print(os.path.basename(__file__))
-    #model_var="NO3"
-    #stat_type="max"
     plt.rc('axes', titlesize=16)     # fontsize of the axes title
 
     # Define dimension sizes and load shapefile
@@ -33,18 +33,19 @@ def plot_conc_movies(shp, case, model_var, stat_type, loc, run_file):
     regions.remove('Other')
 
     # Pull directory name from run_file path
-    run_type = run_file.split('/')[-2]
+    run_type = run_file.split('/')[-3]
     
     # Isolate run tag for image file naming
     run_tag = run_type.split("_")[0]
     if run_tag=='wqm': # for baseline and reference cases
         run_tag = run_type.split("_")[1]
-    print(f'run_tag: {run_tag}')
     
-    # Load minimum DO results from scenario
+    # Load results from scenario for 2D case
     if (loc=='surface') or (loc=='bottom'):
         try: 
             with xarray.open_dataset(run_file) as ds:
+                # there is only one variable in these files ([0]),
+                # though the name changes; hence, [*ds]
                 param_full=ds[[*ds][0]]
                 # Sub-sample nodes (from 16012 nodes to 7494)
                 param_wc=param_full[:,gdf['node_id']-1]
@@ -52,6 +53,7 @@ def plot_conc_movies(shp, case, model_var, stat_type, loc, run_file):
                 [ndays,nnodes]=param_wc.shape
         except FileNotFoundError:
             print(f'File Not Found: {run_file}')
+    # Load results from scenario for 3D (water column) case
     else:
         try: 
             with xarray.open_dataset(run_file) as ds:
@@ -64,25 +66,27 @@ def plot_conc_movies(shp, case, model_var, stat_type, loc, run_file):
                 [ndays,nlevels,nnodes]=param.shape
         except FileNotFoundError:
             print(f'File Not Found: {run_file}')
-    processed_netcdf_dir = pathlib.Path(
-        ssm['paths']['processed_output'])/case/model_var
-    output_directory = processed_netcdf_dir/'movies'/run_type/f'{model_var}_conc'
+    graphics_output_dir = pathlib.Path(
+        ssm['paths']['graphics'])/case/model_var
+    output_directory = graphics_output_dir/run_type/f'{loc}_for_movie'
     # create output directory, if it doesn't already exist 
     # see https://docs.python.org/3/library/os.html#os.makedirs
     if os.path.exists(output_directory)==False:
-        print(f'creating: {output_directory}')
+        print(f'creating: {output_directory}.  Assumed that {graphics_output_dir} exists.')
         os.umask(0) #clears permissions
-        if os.path.exists(processed_netcdf_dir/'movies'/run_type)==False:
+        if os.path.exists(graphics_output_dir/run_type)==False:
             os.makedirs(
-                processed_netcdf_dir/'movies'/run_type, 
+                graphics_output_dir/run_type,
                 mode=0o777,exist_ok=True)
             os.makedirs(
-                processed_netcdf_dir/'movies'/run_type/f'{model_var}_conc',
+                graphics_output_dir/run_type/f'{loc}_for_movie',
                 mode=0o777,exist_ok=True)
-        else:
+            
+        elif os.path.exists(graphics_output_dir/run_type/f'{loc}_for_movie')==False:
             os.makedirs(
-                processed_netcdf_dir/'movies'/run_type/f'{model_var}_conc',
+                graphics_output_dir/run_type/f'{loc}_for_movie',
                 mode=0o777,exist_ok=True)
+           
 
     # Re-define legend labels from, e.g. "0.00, 2.00" to "0-2"
     # NOTE: Lables are hard-coded (not ideal) and need to match 
@@ -107,7 +111,7 @@ def plot_conc_movies(shp, case, model_var, stat_type, loc, run_file):
     # Plot threshold for each day
     for day in range(ndays):
         model_day = day + ssm['run_information']['spin_up_days'] + 1
-        output_file = output_directory/f'{case}_{run_tag}_{model_var}_{stat_type}_conc_wc_{model_day}.png'
+        output_file = output_directory/f'{case}_{run_tag}_{model_var}_{stat_type}_conc_{loc}_{model_day}.png'
 
         print(f'Day {model_day} of {ndays}')
         gdf[model_var] = param_wc[day,:]
@@ -213,13 +217,13 @@ if __name__=='__main__':
     # but can also be modified here (with the caveat the modifications will be 
     # over-written when the SSM_config.ipynb is run
     # https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/etc/SSM_config.yaml
-    with open('../etc/SSM_config.yaml', 'r') as file:
+    with open(f'../etc/SSM_config_{case}.yaml', 'r') as file:
         ssm = yaml.safe_load(file)
         # get shapefile path    
         shp = ssm['paths']['shapefile']
 
     print(f'Calling plot_conc_movie for: {run_file.split("/")[-2]}')
-    plot_conc_movies(shp, case, model_var, stat_type, loc, run_file)
+    plot_conc_graphics(shp, case, model_var, stat_type, loc, run_file)
     
     # End time counter
     end = time.time()
