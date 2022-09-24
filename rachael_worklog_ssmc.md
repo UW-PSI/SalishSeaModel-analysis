@@ -37,6 +37,40 @@ ln -s <target> <symlink name>
 ```
 ln -s /mmfs1/home/rdmseas/.conda  /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.conda
 ``` 
+### Sept 14
+NEXT: Create salinity movies
+Modify code so that graphics are saved to:
+`/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/SOG_NB/salinity/movies`
+-`/surface/run_tag`
+-`/bottom/run_tag`
+-`/wc/run_tag`
+
+
+Figure tasks (Sept 8)
+1. [done] Download new shapefile, transfer to Hyak and re-process all runs to incorporate typo corrections.  
+2. [done] Nutrient input timeseries graphics for 2014 conditions for all SOG WWTP and Rivers (1x4, 1x7 or 1x8 panels TBD by aesthetics) 
+3. [done] Create 6-panel graphic, one for each region, showing impairment timeseries for each scenario.  I thought this would be a slight modification of existing code but I’m now seeing that I need to create a new script to create this graphic.  It will be mostly a copy-paste job with some structural changes that are best done with a fresh start.  I bumped this down in priority given that you have something to work with for now, Joel.  
+4. Salinity movies for (a) surface and (b) bottom level.  I think I completed the graphics for the surface movie but haven’t yet looked at them to QAQC.  I ran into a debugging issue that is sorted out now so these ought to go smoothly from here.  
+5. NO3 movies for (a) surface and (b) bottom level. I think I completed the graphics for the surface movie but haven’t yet looked at them to QAQC. 
+
+####  Reviewing past work on salinity and NO3 
+- Created mean, daily NO3 file for water column, surface and bottom in `process_netcdf_NO3.sh`
+```
+python process_netcdf.py ${file_path} "NO3" "SOG_NB" "mean" 1 1
+```
+- Created mean, daily salinity files for water column, surface and bottom in `process_netcdf_salinity.sh
+```
+python process_netcdf.py ${file_path} "salinity" "SOG_NB" "mean" 1 1
+```
+- Created `.png` files for movies
+Surface, daily-mean salinity graphics
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/SOG_NB/salinity/movies/surface
+```
+
+
+
+
 ### Aug 22
 #####  Installing FFMPEG on Hyak using Aptainer
 
