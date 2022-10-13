@@ -124,11 +124,13 @@ def reshape_fvcom(fvcom_timeIJK, reshape_type):
     to a format that allows for daily, yearly, or depth calculations. 
     
     param float fvcom_timeIJK: FVCOM_v2.7ecy output array in dimension of 
-        (a) 8760x160120, or 
+        (a) (Nx24)x160120, or 
         (b) .
     param string reshape_type: ['days','levels','dayslevels']
     return: Reorganized array
     """
+    # Remove dimensions of size 1
+    fvcom_timeIJK = numpy.squeeze(fvcom_timeIJK)
     # Error handling
     try:
         output_dims = fvcom_timeIJK.ndim
@@ -150,12 +152,13 @@ def reshape_fvcom(fvcom_timeIJK, reshape_type):
 
         # Reshaping
         if reshape_type == 'days':
-            if (ti != 8760):
+            print('reshaping to days')
+            if (ti%24 != 0): # if the output isn't in intervals of 24-hours
                 raise TypeError(
-                    "FVCOM array must reflect a 365-day run with a time dimension of 8760"
+                    "FVCOM array must reflect a Nx24-day run with a time dimension of Nx24"
                 )
             fvcom_reshaped = numpy.reshape(
-                fvcom_timeIJK[:,:].data, (365,24,ni)
+                fvcom_timeIJK[:,:].data, (int(ti/24),24,ni)
             )
         elif reshape_type == 'levels':
             if (ni != 160120):
@@ -166,22 +169,22 @@ def reshape_fvcom(fvcom_timeIJK, reshape_type):
                 fvcom_timeIJK[:,:].data, (ti,16012,10)
             )
         elif reshape_type == 'dayslevels':
-            if (ti != 8760) or (ni != 160120):
+            if (ti%24 != 0) or (ni != 160120):
                 raise TypeError(
                     "FVCOM array size must be 8760 x 160120"
                 )
             fvcom_reshaped = numpy.reshape(
-                fvcom_timeIJK[:,:].data, (365,24,16012,10)
+                fvcom_timeIJK[:,:].data, (int(ti/24),24,16012,10)
             )
     else:
         ti,zi,ni = fvcom_timeIJK.shape
         print(ti,zi,ni)
-        if (ti != 8784):
+        if (ti%24 != 0):
             raise TypeError(
-                "FVCOM array must reflect a 366-day run with a time dimension of 8784"
+                "FVCOM array must reflect a Nx24-day run with a time dimension of Nx24"
             )
         fvcom_reshaped = numpy.reshape(
-            fvcom_timeIJK[:,:,:].data, (366,24,zi,ni)
+            fvcom_timeIJK[:,:,:].data, (int(ti/24),24,zi,ni)
         )
         
     return fvcom_reshaped
