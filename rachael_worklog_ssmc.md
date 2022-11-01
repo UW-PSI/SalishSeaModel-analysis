@@ -37,6 +37,54 @@ ln -s <target> <symlink name>
 ```
 ln -s /mmfs1/home/rdmseas/.conda  /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.conda
 ``` 
+### Next steps
+1. [DONE] Su Kyong QAQC’d the 4* runs by creating non-compliant values can comparing by Baseline.  See her values (See “Scenario_Noncompliant” for non-compliant values).  She has recommended that we look at the values this week to ensure they are right. She suggests that I re-do the calcs using my non-compliant days calculation.  The python scripts that she used to calculate her values can be found at `/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/wa_noncompliance_calc.py`
+2. Finish movies on salinity, NPP, DO, NO3+NH4 (for workshop)
+Sediment exchange
+3. Create script for sediment fluxes (Stefano to update with station names and provide USGS station data and locations/nodes)
+	- Individual graphic for each station (test using same y-axis scale)
+	- 6 graphics per page looping through all stations to add to appendix
+4. Use above script and apply to Reference and Baseline.
+5. Create movies for SOD, NO3, and NH4 fluxes.
+6. Finalize parameters to extract for new netcdf (Stefano: Particulates w/ input from Jeremy)
+
+
+### Oct 10, 2022
+
+Review station file for list of variables.
+
+Location of file: `/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/WQM`
+
+
+### Sept 28
+#### Workshop graphics
+
+NOTE: Whidbey Region zoomed movies were generated for whidbey case, not `SOG_NB`. Do we need for `SOG_NB`?
+
+#####  Movie graphics
+
+Location for DOXG graphics that are zoomed into Whidbey Region:
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/DOXG/3h/movies_whidbeyZoom/conc/wc
+```
+or, more generally:
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/${case}/${param}/${run_folders[${SLURM_ARRAY_TASK_ID}]}/movies_whidbeyZoom/conc/${loc}
+```
+where:
+- case: `SOG_NB` or `whidbey`
+- param (e.g.): `DOXG`
+- `run_folder`: The scenario name
+- loc: `wc`,`surface`, or `bottom`
+
+replace `conc/wc` with impairment for impairment graphics. 
+
+#### Workshop movies
+Location for movies that are zoomed into the Whidbey Region:
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/movies_whidbeyZoom/whidbey/DOXG/
+```
+
 ### Sept 14
 NEXT: Create salinity movies
 Modify code so that graphics are saved to:
