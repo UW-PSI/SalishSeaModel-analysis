@@ -57,7 +57,7 @@ paths:
     - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2b_sog_river_2times/ssm_output.nc
   movies: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/movies/
   processed_output: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/
-  shapefile: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_09062022/SSMGrid2_tce_ecy_node_info_v2_09062022.shp
+  shapefile: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_tce_ecy_node_info_v2_09292022/SSMGrid2_tce_ecy_node_info_v2_09292022.shp
 region:
   colors:
     ALL_REGIONS: black
