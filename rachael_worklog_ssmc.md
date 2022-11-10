@@ -48,6 +48,38 @@ Sediment exchange
 5. Create movies for SOD, NO3, and NH4 fluxes.
 6. Finalize parameters to extract for new netcdf (Stefano: Particulates w/ input from Jeremy)
 
+### Nov 10, 2022
+#### updates
+- Fixed noncompliant calculation to include Min DO reference < DO standard criteria
+For benthic case:
+```
+DO_std = np.tile(gdf.DO_std,(ndays, 1))
+DO_diff_lt_0p2[run_type] = (
+            (DO_diff<=non_compliant_threshold) &   #361x4144 (nodes x time) or 361x10x4144
+            (MinDO[reference] < DO_std)
+        )
+```
+For water column case
+```
+DO_std = np.tile(gdf.DO_std,(ndays,nlevels,1))
+DO_diff_lt_0p2[run_type] = (
+            (DO_diff<=non_compliant_threshold) &   #361x4144 (nodes x time) or 361x10x4144
+            (MinDO[reference] < DO_std)
+        )
+```
+
+
+### Nov 9, 2022
+
+#### updates
+- changed hypoxic and concentration plots to show all nodes where model output exists (kept non-compliance graphics to just show un-masked nodes)
+- finished correcting language from impaired -> non-compliant
+- fixed titles to show date rather than day in year and added date to .png file name for ease of reference
+- reprocessed graphics for full domain movies of surface mean daily NO3, surface mean dialy salinity, and min daily DOXG. NO3 processed OK but the others didn't.  Likely running into file quota limits.  Need to address that problem. Temporary solution: delete files.  
+- Deleted files in /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/SOG_NB/DOXG/1*, /2* (i.e. kept the reference and baseline noncompliance zoomed-in graphics)
+- Deleted "/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/SOG_NB/NO3".  This was a mistake, but it happened. 
+
+
 
 ### Oct 10, 2022
 
