@@ -36,17 +36,76 @@ ln -s <target> <symlink name>
 
 ```
 ln -s /mmfs1/home/rdmseas/.conda  /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.conda
-``` 
-### Next steps
-1. [DONE] Su Kyong QAQC’d the 4* runs by creating non-compliant values can comparing by Baseline.  See her values (See “Scenario_Noncompliant” for non-compliant values).  She has recommended that we look at the values this week to ensure they are right. She suggests that I re-do the calcs using my non-compliant days calculation.  The python scripts that she used to calculate her values can be found at `/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/wa_noncompliance_calc.py`
-2. Finish movies on salinity, NPP, DO, NO3+NH4 (for workshop)
-Sediment exchange
-3. Create script for sediment fluxes (Stefano to update with station names and provide USGS station data and locations/nodes)
-	- Individual graphic for each station (test using same y-axis scale)
-	- 6 graphics per page looping through all stations to add to appendix
-4. Use above script and apply to Reference and Baseline.
-5. Create movies for SOD, NO3, and NH4 fluxes.
-6. Finalize parameters to extract for new netcdf (Stefano: Particulates w/ input from Jeremy)
+```
+# Sediment and NPP netcdf
+### Message written to Ben
+I'm digging back into creating a netcdf using your yaml file technique and need to add "settling rate" variables. I'm seeing:
+```
+! WSLBNET,  & !net settling rate of LPOM (m/d)
+! WSRBNET,  & !net settling rate of RPOM (m/d)
+```
+but neither of these are in the output lines of `wqm_main.F`. My notes have line `2784` of `wqm_main.F` reflecting output for layers 1-10 and line `2824` showing addition outputs for 10-only (additional to those output from line `2784)`. I have these variables listed with notes and see values of m2/day associated with, e.g., `JHS_GL`. Line `2652` shows: `JHS_GL = JHSTM1S`. `JHSTM1S` is "grepped" in `mod_sed.F` as being related to "!dissolved Si flux to water column (gO2/m^2/d)", so I think this variable is a flux to the water rather than a settling rate. The other variable that I'm seeing with at unit that reflects a rate is `JPON`.
+
+```
+./mod_sav.F:  !SEDPONSAV (gN/m^2/day) --> JPON (mgN/m^2/day) -> PON1, PON2, PON3 (source of particulate organic nitrogen in sediments)
+./mod_sav.F:  !SEDPOPSAV (gP/m^2/day) --> JPON (mgP/m^2/day) -> POP1, POP2, POP3 (source of particulate organic phosphorus in sediments)
+```
+I'm just a bit unfamiliar with terms here. I would interpret the above to combine settling rate (m/day) and concentration (g/m3) => i.e. a flux....so I'm a bit at a loss for finding a settling rate.
+
+When I grep all the files for "settling rate," I see them in `mod_sed` and `mod_wqm`  
+```
+./mod_sed.F:    !******* Assign base net settling rates
+./mod_sed.F:                  WSSNET (B) = WSSNET (B) + WSSSAV * SAVEFCT !increase of settling rate (m/d) to suspended solids
+./mod_sed.F:                  WSLNET (B) = WSLNET (B) + WSLSAV * SAVEFCT !increase of settling rate (m/d) to LPOM
+./mod_sed.F:                  WSRNET (B) = WSRNET (B) + WSRSAV * SAVEFCT !increase of settling rate (m/d) to RPOM
+./mod_sed.F:                  WS1NET (B) = WS1NET (B) + WS1SAV * SAVEFCT !increase of settling rate (m/d) to alg 1
+./mod_sed.F:                  WS2NET (B) = WS2NET (B) + WS2SAV * SAVEFCT !increase of settling rate (m/d) to alg 2
+./mod_sed.F:                  WS3NET (B) = WS3NET (B) + WS3SAV * SAVEFCT !increase of settling rate (m/d) to alg 3
+./mod_sed.F:                  WSUNET (B) = WSUNET (B) + WSUSAV * SAVEFCT !increase of settling rate (m/d) to particulate biogenic silicate (unavaiable)
+./mod_wqm.F:  !Water column settling rates
+./mod_wqm.F:     & WS2, WS3, WSU, WSSHI !fixed solids settling rate (m/day) when solids concentration is high
+./mod_wqm.F:     & WS1NET, WS2NET, WS3NET, WSUNET !settling rate of particulate biogenic (unavaiable) silica (m/d)
+```
+Does all of the above mean that these variables don't exist in the output and that I'd need to add them to the write out function in order for us to use them?
+
+### Notes on variables in file(s)
+
+**Removed**
+- h
+- zeta
+- NO3
+- NH4
+
+**Included**
+- B1 [6]: Algal group 1 (diatoms according to Ben in email 8/29/22. Confirmed as `G1` in [this reference](https://apps.ecology.wa.gov/publications/documents/1703010.pdf))
+- B2 [7]: Algal group 2 (dinoflagellates, in same email)
+- NetPP [11]:total net primary production
+- JPOC1-3 [46-48]: sed particulate organic carbon
+- JPON1-3 [49-51]: sed particulate organic nitrogen
+- JPOP1-3 [52-54]: sed particulate organic phosphate
+- JPOS [55]: sed particulate organic silica
+
+**General Information**
+Su Kyong shared [this very useful resource on the Sediment Diagenesis Module](https://apps.ecology.wa.gov/publications/documents/1703010.pdf). 
+
+**Sediment Diageneis**
+<blockquote>
+Internal sediment state variables for diagenesis are based on the multi-class G model, in which the organic forms are divided based on their reactivity into reactive (G1), refractory (G2), and inert (G3) forms (Figure A-1). Therefore, the fluxes of particulate organic carbon (oxygen equivalents), nitrogen, and phosphorus are subdivided into G-class fractions, based on user specified ratios. Due to the negligible thickness of the upper layer, deposition (as described later) is assumed to proceed directly from the water column to the lower (anoxic) sediment layer.
+</blockquote>
+
+and 
+- POC1 = G1 particulate organic carbon in layer 2 (mgO2/L)
+- POC2 = G2 particulate organic carbon in layer 2 (mgO2/L)
+- POC3 = G3 particulate organic carbon in layer 2 (mgO2/L)
+- PON1 = G1 particulate organic nitrogen in layer 2 (mg-N/L)
+- PON2 = G2 particulate organic nitrogen in layer 2 (mg-N/L)
+- PON3 = G3 particulate organic nitrogen in layer 2 (mg-N/L)
+- POP1 = G1 particulate organic phosphorus in layer 2 (mg-N/L)
+- POP2 = G2 particulate organic phosphorus in layer 2 (mg-N/L)
+- POP3 = G3 particulate organic phosphorus in layer 2 (mg-N/L)
+**Settling Rates**
+According to page 99 of [this very useful resource on the Sediment Diagenesis Module](https://apps.ecology.wa.gov/publications/documents/1703010.pdf), sediments are a constant defined in input. 
+
 
 ### Nov 10, 2022
 #### updates
