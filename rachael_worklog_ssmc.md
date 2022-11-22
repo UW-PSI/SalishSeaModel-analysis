@@ -5,6 +5,13 @@ Any questions on hardware or software from UW can be directed to:
 **Phone**: 253-692-4357 
 [Chat and website](https://www.tacoma.uw.edu/it)
 
+# NPP workshop focus
+(From Stefano's email 11/22)
+
+- First priority is showing  the audience when the model shows  bloom start, peaks are and dye off to see if this makes sense at a broad level. 
+- 2nd is giving context  to this regarding what is limiting growth of B1 and B2. In the way you see best e.g. comparative daily plots in the videos you have already been putting together eg N and DO with same timestep for B1 and B2 or NPP. I hope we can tell a story of what the model shows is potentially influencing these changes in these inlets over the year- and if this also makes sense.
+- 3rd is laying out what we can do with more detailed budget including exchange calculation.
+
 # HYAK setup
 Reccommended solution by Ryan McGregor:
 
