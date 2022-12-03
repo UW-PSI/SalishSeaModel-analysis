@@ -44,6 +44,15 @@ ln -s <target> <symlink name>
 ```
 ln -s /mmfs1/home/rdmseas/.conda  /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.conda
 ```
+### Install of seawater package
+Seawater package was cloned from [Bjorn's Git repo](https://github.com/bjornaa/seawater) and placed in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty`
+
+Do the following to use this package (as I don't yet have path permanently added):
+```
+sys.path.insert(1, '/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/seawater')
+from seawater import dens
+```
+
 # Sediment and NPP netcdf
 ### Message written to Ben
 I'm digging back into creating a netcdf using your yaml file technique and need to add "settling rate" variables. I'm seeing:
