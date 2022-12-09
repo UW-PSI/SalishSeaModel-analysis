@@ -5,6 +5,10 @@ Any questions on hardware or software from UW can be directed to:
 **Phone**: 253-692-4357 
 [Chat and website](https://www.tacoma.uw.edu/it)
 
+# New runs
+- Existing (replicate run as proof of concept)
+- 3j (move shallow loading to deep) as proof of concept for creating input file, running model and doing QAQC
+- 
 # NPP workshop focus
 (From Stefano's email 11/22)
 
@@ -121,6 +125,50 @@ and
 - POP3 = G3 particulate organic phosphorus in layer 2 (mg-N/L)
 **Settling Rates**
 According to page 99 of [this very useful resource on the Sediment Diagenesis Module](https://apps.ecology.wa.gov/publications/documents/1703010.pdf), sediments are a constant defined in input. 
+
+### Dec 8, 2022
+#### Creating consistent Whidbey labels
+The agreed upon labels are:
+```
+'wqm_baseline':'2014 conditions',
+    'wqm_reference':'Reference',
+    '3b':'3b: No Whidbey WWTPs',
+    '3c':'3f: No Whidbey Rivers',
+    '3e':'3c: No Small WWTPs < 100 TN Kg/day ',
+    '3f':'3d: No Medium WWTPs 100 to 1000 TN Kg/day',
+    '3g':'3e: No Everett North & South WWTPs',
+    '3h':'3h: No Everett North (River)',
+    '3i':'3i: No Everett South (Deep)',
+    '3l':'3l: 0.5x 2014 River Load',
+    '3m':'3g: 2x 2014 River Load'
+```
+NOTE: Management wants to change the run labels and this change will make the run labels different than the way they are organized/referenced on Hyak.  
+I am going to keep all references to the runs the same as they are on Hyak until the point of labeling graphics 
+
+For now, I'm just going to focus on the plotting routines.  These are:
+- plot_4panel_noncompliant_timeseries.py
+- plot_5panel_noncompliant_timeseries.py
+- plot_conc_graphics_for_movies.py
+- plot_noncompliance_timeseries.py
+- IGNORE [old]: plot_noncompliant_graphics4movie_SOGZoom.py
+- plot_noncompliant_graphics4movie_whidbeyZoom.py
+- plot_percentVolumeHypoxic_movie.py
+- plot_threshold_movie.py
+- calc_noncompliance.py
+- calc_DO_below_threshold.py
+
+Starting with the spreadsheets:
+- calc_noncompliance.py
+- calc_DO_below_threshold.py
+
+
+### Dec 5, 2022
+#### NPP Workshop 12/06/22
+Location of existing and reference output netcdf files:
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/SSM_model_output/NPP_workshop120622_WQM.nc
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/SSM_model_output/NPP_workshop120622_WQM_REF.nc
+```
 
 
 ### Nov 10, 2022
