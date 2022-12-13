@@ -51,21 +51,22 @@ paths:
     - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
     - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_reference/ssm_output.nc
     - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1b_all_sog_wwtp_off/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1c_all_sog_riv_off/ssm_output.nc
     - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1d_small_sog_wwtp_off/ssm_output.nc
     - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/1e_med_sog_wwtp_off/ssm_output.nc
     - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2a_sog_river_0.5times/ssm_output.nc
     - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/2b_sog_river_2times/ssm_output.nc
   movies: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/movies/
   processed_output: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/
-  shapefile: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/KingCounty-Rachael/kevin_shapefiles/SSMGrid2_tce_ecy_node_info_v2_09292022/SSMGrid2_tce_ecy_node_info_v2_09292022.shp
+  shapefile: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-grid/shapefiles/SSMGrid2_tce_ecy_node_info_v2_10102022/SSMGrid2_tce_ecy_node_info_v2_10102022.shp
 region:
   colors:
     ALL_REGIONS: black
     Hood: darkseagreen
     Main: mediumpurple
-    SJFAdmiralty: lightsteelblue
+    SJF_Admiralty: lightsteelblue
     SOG_Bellinghham: rosybrown
-    SouthSound: c
+    South_Sound: c
     Whidbey: cornflowerblue
 run_information:
   SOG_NB_WWTPs:
@@ -75,6 +76,7 @@ run_information:
     wqm_baseline: exist
     wqm_reference: ref
   SOG_NB_rivers:
+    1c_all_sog_riv_off: 1c
     2a_sog_river_0.5times: 2a
     2b_sog_river_2times: 2b
     wqm_baseline: exist
@@ -93,7 +95,7 @@ run_information:
       2b_sog_river_2times: '2b: 2.0x(River Loading)
 
         in SOG/NB'
-      wqm_baseline: Modern day nutrient loading
+      wqm_baseline: 2014 nutrient loading
       wqm_reference: Pre-industrial nutrient loading
   run_tag:
     SOG_NB:
