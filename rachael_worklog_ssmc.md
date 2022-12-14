@@ -8,13 +8,37 @@ Any questions on hardware or software from UW can be directed to:
 # New runs
 - Existing (replicate run as proof of concept)
 - 3j (move shallow loading to deep) as proof of concept for creating input file, running model and doing QAQC
-- 
-# NPP workshop focus
-(From Stefano's email 11/22)
+### Notes from Su Kyong
+These step-by-step instructions were prepared based on the scenario runs conducted by SSMC in collaboration with PSI during June-September in 2022. The models used for these scenarios are FVCOM_v2.7ecy (HYD) and FVCOM_ICM_v2 (WQM). 
+If you have any questions, please contact Su Kyong Yun at her new work address at sukyong.yun@pnnl.gov
+1. Setting up Input Files
+   1. All information and files needed for setting up input files is located in the ‘input_setting’ folder
+   2. Total of 7 files are needed to set up the input files (Table 1).  No need to update the first four, only the remiaining 3, `run_strategy` and `main*`
+      1. create_scenario_pnt_wq_v3_090622.py
+      2. exist_ref_diff_N-conc.xlsx
+      3. ssm_pnt_wq_header.txt
+      4. ssm_pnt_wq_exist.dat
+      5. run_strategy.xlsx
+      6.  main_create_scenario_pnt_wq.py
+      7.  main_create_scenario_pnt_wq.sh
+2. Running the model.`wqm_default` folder contains all needed files
+   1. run the `coldstart_setup.sh`
+      1. change working directory to the directory where you want to create the scenario list. wrk_dir=`/mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/retrial/`
+      2. change scenario id (e.g. `4c`)
+      3. change directory where `wqm_default/coldstart` is located
+         1. `cp -R /mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/PSI/wqm_default/coldstart $wrk_dir_temp`
+      4. change directory where scenario `ssm_pnt_wq.dat` is located
+         1. `cp
+/mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/PSI/input_settin g/ssm_pnt_wq_$scenario_index.dat $wrk_dir_temp/coldstart/inputs/ssm_pnt_wq.dat`
+   2. run the `hotstart_setup.sh`
+       1. change working directory to the directory that you want to create scenario list, wrk_dir=`/mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/retrial/`
+       2. change scenario id (e.g. `4c`)
+       3. change directory where `wqm_default/hotstart` is located
+          1. `cp -R /mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/PSI/wqm_defaul t/hotstart $wrk_dir_temp`
+       4. change directory where scenario `ssm_pnt_wq.dat` is located 
+          1. `cp
+/mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/PSI/input_settin g/ssm_pnt_wq_$scenario_index.dat $wrk_dir_temp/hotstart/inputs/ssm_pnt_wq.dat`
 
-- First priority is showing  the audience when the model shows  bloom start, peaks are and dye off to see if this makes sense at a broad level. 
-- 2nd is giving context  to this regarding what is limiting growth of B1 and B2. In the way you see best e.g. comparative daily plots in the videos you have already been putting together eg N and DO with same timestep for B1 and B2 or NPP. I hope we can tell a story of what the model shows is potentially influencing these changes in these inlets over the year- and if this also makes sense.
-- 3rd is laying out what we can do with more detailed budget including exchange calculation.
 
 # HYAK setup
 Reccommended solution by Ryan McGregor:
