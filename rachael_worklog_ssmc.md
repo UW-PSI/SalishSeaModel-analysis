@@ -8,9 +8,45 @@ Any questions on hardware or software from UW can be directed to:
 # New runs
 - Existing (replicate run as proof of concept)
 - 3j (move shallow loading to deep) as proof of concept for creating input file, running model and doing QAQC
-### Notes from Su Kyong
-These step-by-step instructions were prepared based on the scenario runs conducted by SSMC in collaboration with PSI during June-September in 2022. The models used for these scenarios are FVCOM_v2.7ecy (HYD) and FVCOM_ICM_v2 (WQM). 
-If you have any questions, please contact Su Kyong Yun at her new work address at sukyong.yun@pnnl.gov
+### Notes from Su Kyong (sukyong.yun@pnnl.gov)
+
+Su Kyong created a folder that I can access that contains the setup and run files.  
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/run_scenarios/
+```
+
+Her instructions below use a different folder that I do not have access to.  In order to simplify my process, I've copied this `run_scenario` directory to my local drive.
+
+```
+$ cd /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel
+$ cp -R /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/run_scenarios ./
+```
+I then created a `test_runs` folder and used this folder as my working directory in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/coldstart_setup.sh`:
+```
+wrk_dir=/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/test_runs/
+```
+The way `coldstart_setup.sh` is written, the default settings will be copied to `test_runs` from the `run_scenarios` folder that Su Kyong provided and that contains the directory `wqm_default`
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/wqm_default/
+```
+
+The way `coldstart_setup.sh` was written, the new input is copied to the scenario directory from:
+```
+##copy the default setting of coldstart to the working directory
+cp -R /mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/PSI/wqm_default/coldstart $wrk_dir_temp
+##copy the new input to the new scenario working directory
+cp /mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/PSI/input_setting/ssm_pnt_wq_$scenario_index.dat $wrk_dir_temp/coldstart/inputs/ssm_pnt_wq.dat
+```
+In my case, this reads as:
+```
+##copy the new input to the new scenario working directory
+cp -R /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/ssm_pnt_wq_exist.dat $wrk_dir_temp/coldstart/inputs/ssm_pnt_wq.dat
+```
+
+My case is `exist` but `ssm_pnt_wq_exist_index.dat` doesn't exist, so I presume this ought to be `ssm_pnt_wq_exist.dat` 
+
+but this file isn't located in the `coldstart` directory that I have.  
+
 1. Setting up Input Files
    1. All information and files needed for setting up input files is located in the ‘input_setting’ folder
    2. Total of 7 files are needed to set up the input files (Table 1).  No need to update the first four, only the remiaining 3, `run_strategy` and `main*`
