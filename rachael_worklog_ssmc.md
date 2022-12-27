@@ -21,31 +21,39 @@ Her instructions below use a different folder that I do not have access to.  In 
 $ cd /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel
 $ cp -R /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/run_scenarios ./
 ```
-I then created a `test_runs` folder and used this folder as my working directory in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/coldstart_setup.sh`:
+I then created a `exist` folder to use as my test case for the existing run and use this folder as my working directory in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/coldstart_setup.sh`:
 ```
-wrk_dir=/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/test_runs/
+wrk_dir=/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/exist/
 ```
-The way `coldstart_setup.sh` is written, the default settings will be copied to `test_runs` from the `run_scenarios` folder that Su Kyong provided and that contains the directory `wqm_default`
-```
-/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/wqm_default/
-```
-
-The way `coldstart_setup.sh` was written, the new input is copied to the scenario directory from:
+The way `coldstart_setup.sh` is written, the default settings will be copied to the scenario directory (in this case `exist`) from the `run_scenarios` folder that Su Kyong provided and that contains the directory `wqm_default`
 ```
 ##copy the default setting of coldstart to the working directory
-cp -R /mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/PSI/wqm_default/coldstart $wrk_dir_temp
+cp -R /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/wqm_default/coldstart $wrk_dir_temp
 ##copy the new input to the new scenario working directory
-cp /mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/PSI/input_setting/ssm_pnt_wq_$scenario_index.dat $wrk_dir_temp/coldstart/inputs/ssm_pnt_wq.dat
+cp /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/ssm_pnt_wq_$scenario_index.dat $wrk_dir_temp/coldstart/inputs/ssm_pnt_wq.dat
 ```
-In my case, this reads as:
-```
-##copy the new input to the new scenario working directory
-cp -R /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/ssm_pnt_wq_exist.dat $wrk_dir_temp/coldstart/inputs/ssm_pnt_wq.dat
-```
-
 My case is `exist` but `ssm_pnt_wq_exist_index.dat` doesn't exist, so I presume this ought to be `ssm_pnt_wq_exist.dat` 
+```
+##copy the new input to the new scenario working directory
+cp -R /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/ssm_pnt_wq_exist.dat $wrk_dir_temp/coldstart/inputs/ssm_pnt_wq_$scenario.dat
+```
+The result of running `coldstart_setup.sh` was the creation of `wqm` in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/exist`. 
 
-but this file isn't located in the `coldstart` directory that I have.  
+Within `wqm` was the following: 
+```
+fort.40  
+outputs/          
+slurm-9117151.out  
+slurm-9117169.out  
+slurm-9117207.out  
+wqm_con.npt
+inputs/  
+run_fv27_Hyak.sh  
+slurm-9117157.out  
+slurm-9117171.out  
+slurm-9117220.out  
+wqm_linkage.in
+```
 
 1. Setting up Input Files
    1. All information and files needed for setting up input files is located in the ‘input_setting’ folder
