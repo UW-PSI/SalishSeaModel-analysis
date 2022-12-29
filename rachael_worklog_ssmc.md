@@ -194,6 +194,45 @@ and
 **Settling Rates**
 According to page 99 of [this very useful resource on the Sediment Diagenesis Module](https://apps.ecology.wa.gov/publications/documents/1703010.pdf), sediments are a constant defined in input. 
 
+### Dec 28, 2022
+#### Re-creating DO and noncompliance graphics/movies with Whidbey re-labeling scheme
+- Re-created the Whidbey zoom movies
+- Re-created the full domain zoom.  This required some updates.  Updated output path to `pathlib.Path(ssm['paths']['graphics'])/case/processed_netcdf_dir/'noncompliance'/noncompliant_txt/'movies_full_region'/run_type`.  Changed language from `Impaired` to `noncompliant`, changed title so that it shows the corrected label, corrected a mistake in the calling script that led to bogus filenames
+- Created plots for DO<2 movie
+
+#### Next
+- Re-do Whidbey zoom non-compliance movie with the new labels (and find out why they didn't plot correctly today)
+- Create DO<2 movie
+- Create graphics and moview for DO<5,DO-standard
+
+
+### Dec 27, 2022:
+Returning to my "log book" after a too-long break from these recordings.  
+
+#### King County processing
+(didn't get around to entering work here)
+
+
+#### Running SSM
+Reached out to Adi about fixing the permission error that I sent to Su Kyong on 12/22:
+```
+One final update to say that my modifications were successful, but I lack permission to run the model.  
+This is what I get:
+
+starting the run
+Thu Dec 22 13:41:40 PST 2022
+starting the run
+Thu Dec 22 13:41:40 PST 2022
+[proxy:0:0@n3079] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:145): execvp error on file /mmfs1/gscratch/ssmc/GRPS/ssmc_dev/Share/Adi/Source_Codes/WQM/FVCOM-ICM_V2.0_ecy/wqmsrc_code_interpolation_gp01/wqm_pH_interp_TAinitialFromS_year1 (Permission denied)
+[proxy:0:0@n3079] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:145): execvp error on file /mmfs1/gscratch/ssmc/GRPS/ssmc_dev/Share/Adi/Source_Codes/WQM/FVCOM-ICM_V2.0_ecy/wqmsrc_code_interpolation_gp01/wqm_pH_interp_TAinitialFromS_year1 (Permission denied)
+[proxy:0:0@n3079] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:145): execvp error on file /mmfs1/gscratch/ssmc/GRPS/ssmc_dev/Share/Adi/Source_Codes/WQM/FVCOM-ICM_V2.0_ecy/wqmsrc_code_interpolation_gp01/wqm_pH_interp_TAinitialFromS_year1 (Permission denied)
+Thu Dec 22 13:41:40 PST 2022
+run ended
+```
+Received email response from Su Kyong that she will consult with Tarang on how to address this permission error.
+
+
+
 ### Dec 8, 2022
 #### Creating consistent Whidbey labels
 The agreed upon labels are:
