@@ -194,17 +194,70 @@ and
 **Settling Rates**
 According to page 99 of [this very useful resource on the Sediment Diagenesis Module](https://apps.ecology.wa.gov/publications/documents/1703010.pdf), sediments are a constant defined in input. 
 
+### Dec 29, 2022
+Next:
+- Re-do Whidbey zoom non-compliance movie with the new labels (and find out why they didn't plot correctly today) [done]
+- Create DO<2 movie
+- Create graphics and moview for DO<5,DO-standard
+
+#### Non-compliance
+Re-ran graphics and movies to fix indexing such that the first time frame is January 6th.  Sadly, my "fix" didn't fix the problem.  
+
+#### DO < threshold
+I updated the code so that the graphic extent is passed into the script.  The two options are Full extend or Regional extent.
+The graphics are output to:
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/{case}/DOXG/{scenario}/movies/threshold/Full
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/{case}/DOXG/{scenario}/movies/threshold/Region
+```
+Corrected typo in title and fixed movie speed to be consistent with noncompliant movies
+```
+apptainer exec --bind ${graphics_dir} --bind ${output_dir} ~/ffmpeg.sif ffmpeg -start_number 6 -framerate 6 -i ${graphics_dir}${case}_${frame}_${run_tags[${SLURM_ARRAY_TASK_ID}]}_threshold_2_wc_%d.png -c:v libx264 -pix_fmt yuv420p -vcodec mpeg4 ${output_dir}${case}_${frame}_${run_folders[${SLURM_ARRAY_TASK_ID}]}_threshold_2_wc.mp4
+```
+
+#### Housekeeping
+removed whidbey graphics with out-dated run labels 
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/DOXG
+```
+The newer graphics are located in
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/noncompliance/m0p25/movies_fullRegion/
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/noncompliance/m0p25/movies_whidbeyZoom/
+```
+Organized file structure for noncompliance movies.  The new locations are
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/movies/whidbey/noncompliance/FullDomain
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/movies/whidbey/noncompliance/RegionalZoom
+```
+Fixed paths in `create_noncompliance_movie_whidbeyZoom.sh` to use updated graphics and to save to the `movies_whidbeyZoom` directory above. 
+
+The paths for movies on `Hyak` are now a different structure than on my laptop, which uses: 
+```
+/Users/rdmseas/Projects/KingCounty/movies/RegionZoom/whidbey/noncompliance
+```
+I scrubbed folders for old, mis-labeled files and created a the following directory for whidbey movies
+```
+/Users/rdmseas/Projects/KingCounty/movies/whidbey
+```
+Transfered Whidbey movies from `Hyak` to local computer
+```
+rsync -auvrp --progress rdmseas@klone.hyak.uw.edu:/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/movies/whidbey/noncompliance ./
+```
+#### GAH!
+Well...I just deleted my entire `bash_script` folder in `SalishSeaModel-analysis` on `Hyak`.  A heart-stopper!  Thankfully, I don't think I lost too much.  Starting damage control:
+- cloned `SalishSeaModel-analysis` from GitHub to `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects`
+- copied the `bash_script` folder from this cloned version to the local "oops!" repo
+- managed my tracked files (add/commit)
+- pulled updates and then pushed local changes
+- Deleted the new, cloned repo
+- TBD on what was lost....  I don't think it is that bad but will definitely take time to fix. Sigh...
+
 ### Dec 28, 2022
 #### Re-creating DO and noncompliance graphics/movies with Whidbey re-labeling scheme
 - Re-created the Whidbey zoom movies
 - Re-created the full domain zoom.  This required some updates.  Updated output path to `pathlib.Path(ssm['paths']['graphics'])/case/processed_netcdf_dir/'noncompliance'/noncompliant_txt/'movies_full_region'/run_type`.  Changed language from `Impaired` to `noncompliant`, changed title so that it shows the corrected label, corrected a mistake in the calling script that led to bogus filenames
 - Created plots for DO<2 movie
-
-#### Next
-- Re-do Whidbey zoom non-compliance movie with the new labels (and find out why they didn't plot correctly today)
-- Create DO<2 movie
-- Create graphics and moview for DO<5,DO-standard
-
 
 ### Dec 27, 2022:
 Returning to my "log book" after a too-long break from these recordings.  
