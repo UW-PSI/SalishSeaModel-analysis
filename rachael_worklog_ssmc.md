@@ -194,6 +194,39 @@ and
 **Settling Rates**
 According to page 99 of [this very useful resource on the Sediment Diagenesis Module](https://apps.ecology.wa.gov/publications/documents/1703010.pdf), sediments are a constant defined in input. 
 
+### Jan 11, 2022
+Last: 
+- Completed Non-compliance `FullDomain` graphics for movies.`/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/noncompliance/m0p25/movies/FullDomain/`
+-  Fixed DO<2 start day
+Next:
+- Change DO<2 graphics to start with `_6` for January 6, 2014. 
+- Change DO<2 graphics for movie to save to `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/DOXG/threshold/movies/FullDomain/`
+- Run DO<2 graphics/movies for Full and regional extent
+- Create non-compliant and threshold Full/Regional movies
+- Create Oxygen graphics and movies
+- Create % volume hypoxic graphics and movies
+
+### Non-compliance
+Re-ran bash script for creating non-compliance graphics.  There had been an error with the use of capitolized `Whidbey` in referencing the configuration file.  
+
+Non-compliant movies start on January 6, 2014, e.g. `whidbey_3m_all_noncompliant_wc_6.png`
+Non-compliance graphics are saved to:
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/noncompliance/m0p25/movies/FullDomain/
+```
+
+### DO<2
+DO movies are saved to:
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/DOXG/3m/movies/threshold
+```
+
+Change to make the same as non-compliance:
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/DOXG/threshold/movies/FullDomain/
+```
+Movie graphics start on January 6, 2014, e.g. `whidbey_Region_3m_threshold_2_wc_5.png`
+
 ### Dec 29, 2022
 Next:
 - Re-do Whidbey zoom non-compliance movie with the new labels (and find out why they didn't plot correctly today) [done]
