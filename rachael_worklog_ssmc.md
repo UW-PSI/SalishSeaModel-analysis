@@ -194,6 +194,28 @@ and
 **Settling Rates**
 According to page 99 of [this very useful resource on the Sediment Diagenesis Module](https://apps.ecology.wa.gov/publications/documents/1703010.pdf), sediments are a constant defined in input. 
 
+### Jan 12, 2022
+
+Location of concentration movie graphics for parameter = DOXG, salinity, and NO3
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/{parameter}/concentration/movies/FullDomain/surface/
+```
+Location of movies:
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/movies/whidbey/{parameter}/FullDomain/
+```
+Last:
+- Submitted jobs to create concentration graphic movies for:
+   - Min, daily DO within water columnn for FullDomain and Region
+   - Mean, daily surface NO3 for FullDomain and Region
+   - Mean, daily surface salinigy for FullDomain and Region 
+
+Next: 
+- Review concentration movies
+- Create % volume hypoxic graphics and movies
+- Find cause of Table 1 total loading discrepency
+
+
 ### Jan 11, 2022
 Lots of code fiddling/fixing today.  Path defs were a mess.  Cleaned the up.  Added documentation about file location on Hyak. Continued to move toward more adaptable code for handling full domain vs. regional graphics for all desired graphic products. 
 Last: 
