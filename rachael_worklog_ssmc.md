@@ -195,16 +195,25 @@ and
 According to page 99 of [this very useful resource on the Sediment Diagenesis Module](https://apps.ecology.wa.gov/publications/documents/1703010.pdf), sediments are a constant defined in input. 
 
 ### Jan 11, 2022
+Lots of code fiddling/fixing today.  Path defs were a mess.  Cleaned the up.  Added documentation about file location on Hyak. Continued to move toward more adaptable code for handling full domain vs. regional graphics for all desired graphic products. 
 Last: 
-- Completed Non-compliance `FullDomain` graphics for movies.`/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/noncompliance/m0p25/movies/FullDomain/`
+- Completed Non-compliance `FullDomain` and `Region` graphics for movies.`/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/noncompliance/m0p25/movies/`
 -  Fixed DO<2 start day
+-  Changed output location of threshold graphics to match non-complianct
+-  Changed "Full" to "FullDomain" in threshold graphic scope to match non-compliance
+-  Created graphics and movies for non-compliance and DO < 2, both regional and full domain
+-  submitted bash scripts to create graphics for mean surface salinity(9294984), mean surface NO3(9294995) and min wc DO (9294973)
+
 Next:
-- Change DO<2 graphics to start with `_6` for January 6, 2014. 
-- Change DO<2 graphics for movie to save to `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/DOXG/threshold/movies/FullDomain/`
-- Run DO<2 graphics/movies for Full and regional extent
-- Create non-compliant and threshold Full/Regional movies
-- Create Oxygen graphics and movies
+- Change DO<2 graphics to start with `_6` for January 6, 2014. [done] 
+- Change DO<2 graphics for movie to save to `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/DOXG/threshold/movies/FullDomain/` from `ssm['paths']['graphics'])/case/DOXG/run_type/'movies'/'threshold'/frame` [done]
+- Run DO<2 graphics/movies for Full and regional extent [done]
+- Create non-compliant and threshold Full/Regional movies [done]
+- Create Oxygen graphics and movies [started].  
+- Check graphics for last item on above list. 
+- Create concentration movies
 - Create % volume hypoxic graphics and movies
+- Find cause of Table 1 total loading discrepency
 
 ### Non-compliance
 Re-ran bash script for creating non-compliance graphics.  There had been an error with the use of capitolized `Whidbey` in referencing the configuration file.  
@@ -214,7 +223,7 @@ Non-compliance graphics are saved to:
 ```
 /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/noncompliance/m0p25/movies/FullDomain/
 ```
-
+baseline and reference didn't create graphics.  re-doing.
 ### DO<2
 DO movies are saved to:
 ```
