@@ -194,6 +194,16 @@ and
 **Settling Rates**
 According to page 99 of [this very useful resource on the Sediment Diagenesis Module](https://apps.ecology.wa.gov/publications/documents/1703010.pdf), sediments are a constant defined in input. 
 
+### Jan 13, 2022
+Prepping for meeting with Sylvia Kantor at 11:30a. For some reason, the Region graphics and movies for NO3 and Salinity didn't process.  
+Last:
+- Submitted runs to create graphics for:
+   - Daily min DOXG for FullDomain (fixing title so it reads `Water Column` instead of `Wc`)
+   - Daily min DOXG for Region (fixing title so it reads `Water Column` instead of `Wc`)
+   - Mean, daily surface NO3 for Region ( `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/NO3/concentration/movies/Region/surface/`)
+   - Mean, daily surface salinigy for Region ( `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/salinity/concentration/movies/Region/surface/`)
+
+
 ### Jan 12, 2022
 
 Location of concentration movie graphics for parameter = DOXG, salinity, and NO3
