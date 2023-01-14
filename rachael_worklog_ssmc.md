@@ -201,11 +201,37 @@ Last:
    - Daily min DOXG for FullDomain (fixing title so it reads `Water Column` instead of `Wc`)
    - Daily min DOXG for Region (fixing title so it reads `Water Column` instead of `Wc`)
    - Mean, daily surface NO3 for Region ( `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/NO3/concentration/movies/Region/surface/`)
-   - Mean, daily surface salinigy for Region ( `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/salinity/concentration/movies/Region/surface/`)
+   - Mean, daily surface salinity for Region ( `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/salinity/concentration/movies/Region/surface/`)
+- Submitted runs to create movies for:
+   - Mean, daily surface salinity for Region (9325946)
+   - Mean, daily surface NO3 for Region (9325956, error below.  Resubmitted 9336186, success!)
+   ```(base) [rdmseas@klone-login01 bash_scripts]$ more slurm-9325956_8.out
+whidbey case
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/NO3/concentration/movies/Region/surfa
+ce/3i/
+slurmstepd: error: *** JOB 9325965 ON n3384 CANCELLED AT 2023-01-13T09:48:47 DUE TO TIME LIMIT ***
+slurmstepd: error: *** JOB 9325965 STEPD TERMINATED ON n3384 AT 2023-01-13T09:58:47 DUE TO JOB NOT ENDING WITH S
+IGNALS ***
+slurmstepd: error: Container 16875 in cgroup plugin has 1 processes, giving up after 607 sec```
+   - Daily min DOXG for FullDomain (9325969)
+   ```(base) [rdmseas@klone-login01 bash_scripts]$ more slurm-9325969_8.out
+whidbey case
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/DOXG/concentration/movies/FullDomain/
+wc/3i/
+slurmstepd: error: *** JOB 9325978 ON n3041 CANCELLED AT 2023-01-13T09:52:47 DUE TO TIME LIMIT ***
+slurmstepd: error: *** JOB 9325978 STEPD TERMINATED ON n3041 AT 2023-01-13T10:02:47 DUE TO JOB NOT ENDING WITH S
+IGNALS ***
+slurmstepd: error: Container 60211 in cgroup plugin has 1 processes, giving up after 607 sec
+   ```
+   - Daily min DOXG for Region (9326521, error.  Resubmitted REgion 9337318, and FullDomain 9337647)
 
 
+Next:
+- Transfer and look at movies for: 
+	- Daily min DOXG for Region & FullDomain
+	- Mean, daily surface NO3 for Region
+	- Mean, daily surface salinity for Region
 ### Jan 12, 2022
-
 Location of concentration movie graphics for parameter = DOXG, salinity, and NO3
 ```
 /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/whidbey/{parameter}/concentration/movies/FullDomain/surface/
@@ -219,6 +245,8 @@ Last:
    - Min, daily DO within water columnn for FullDomain and Region
    - Mean, daily surface NO3 for FullDomain and Region
    - Mean, daily surface salinigy for FullDomain and Region 
+- Create % volume hypoxic graphics and movies
+- Find cause of Table 1 total loading discrepency
 
 Next: 
 - Review concentration movies
