@@ -197,10 +197,22 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 ### Jan 16, 2022 (MLK day)
 Last:
 - Transfer and look at movies for: 
-	- Daily min DOXG for Region & FullDomain
+	- Daily min DOXG for Region & FullDomain.  Checked baseline movies title now fixed with "Water Column" in place of "Wc", Starting Jan 06.  Region DOXG only shows non-masked nodes where non-compliance is estimated.  This ought to be fixed to show all model nodes. Also, it looks to me like the shapefile needs to be corrected as there are nodes that are likely considered masked nodes by ECY.   
 	- Mean, daily surface NO3 for Region
 	- Mean, daily surface salinity for Region
 Next:
+- Ask group what is wanted for concentration graphics.  I use the region name to plot nodes and it looks like this only selects unmasked values.  Do I use x-/y-limits to zoom into region, do we fix the shapefile, or do we leave as-is?   Here is the plotting code for if Regions is selected
+```
+if frame=="Region":
+            gdf.loc[(gdf['Regions']==case.capitalize())].plot(
+               ax=axs,
+               column=model_var,
+               scheme="User_Defined",
+               legend=True,
+               classification_kwds=dict(bins=upper_bounds[model_var]),
+               cmap=mpl.colors.ListedColormap(color_list[model_var])
+            )
+```
 - Create % volume hypoxic graphics and movies
 - Find cause of Table 1 total loading discrepency
 - Start new SSM runs!
