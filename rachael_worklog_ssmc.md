@@ -194,6 +194,17 @@ and
 **Settling Rates**
 According to page 99 of [this very useful resource on the Sediment Diagenesis Module](https://apps.ecology.wa.gov/publications/documents/1703010.pdf), sediments are a constant defined in input. 
 
+### Jan 16, 2022 (MLK day)
+Last:
+- Transfer and look at movies for: 
+	- Daily min DOXG for Region & FullDomain
+	- Mean, daily surface NO3 for Region
+	- Mean, daily surface salinity for Region
+Next:
+- Create % volume hypoxic graphics and movies
+- Find cause of Table 1 total loading discrepency
+- Start new SSM runs!
+
 ### Jan 13, 2022
 Prepping for meeting with Sylvia Kantor at 11:30a. For some reason, the Region graphics and movies for NO3 and Salinity didn't process.  
 Last:
