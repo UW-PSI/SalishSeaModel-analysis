@@ -194,6 +194,258 @@ and
 **Settling Rates**
 According to page 99 of [this very useful resource on the Sediment Diagenesis Module](https://apps.ecology.wa.gov/publications/documents/1703010.pdf), sediments are a constant defined in input. 
 
+### ASK TEAM
+- How to fix regional zoom for concentration movies: 
+	-  Do I use x-/y-limits to zoom into region, 
+	-  do we fix the shapefile, or
+	-  do we leave as-is?   
+
+### Jan 19th, 2023
+
+Last: 
+- review submissions from yesterday (cranky HYAK)
+- 
+Next:
+- Find cause of Table 1 total loading discrepency
+- Create Table 2: days hypoxic
+- Start new SSM runs!
+
+#### Last: Running the Salish Sea Model (NOTES written as I go)
+- Modified `run_strategy.xlsx` to put shallow Everett loadings to deep in new tab labeled `3j`.
+- Decided to go with old fashioned version controll (not backup and not safe if HYAK dies) by moving `SSM-run_scenarios` to `run_scenarios_18jan2023`
+- Transfered `run_strategy.xlsx` from my local machine to HYAK and wrote over the file in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/`
+
+- Review runs from yesterday for 0.5 river loading cases
+```
+(base) [rdmseas@klone-login01 run_scenarios]$ more slurm-9709205.out 
+starting the run
+Wed Jan 18 14:48:39 PST 2023
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/wqm
+cp: cannot stat '/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_sett
+ing/ssm_pnt_wq_wqm.dat': No such file or directory
+Submitted batch job 9709277
+Wed Jan 18 14:48:53 PST 2023
+run ended
+```
+The runs didn't work.  The bash for loop was setup as follows:
+```
+wqm=(
+   "3l"
+   "4k"
+   )
+for scenario_index in wqm do....
+```
+I fixed it so that the array values of wqm are actually used!
+```
+wqm=(
+   "3l"
+   "4k"
+   )
+for scenario_index in "${wqm[@]}" do....
+```
+The runs appear to have submitted! 
+```
+(base) [rdmseas@klone-login01 run_scenarios]$ sbatch coldstart_setup.sh 
+Submitted batch job 9746593
+(base) [rdmseas@klone-login01 run_scenarios]$ more slurm-9746593.out
+starting the run
+Thu Jan 19 14:34:21 PST 2023
+3l
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/3l
+Submitted batch job 9746594
+4k
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/4k
+Submitted batch job 9746595
+Thu Jan 19 14:34:23 PST 2023
+run ended
+```
+
+Now to run the `3j` case....
+
+Start with modifying `main_create_scenario_pnt_wq.py` in `run_scenarios/input_setting`.  Changed the following lines to read values from the `3j` tab of `run_strategy.xlsx` and to create the run files for the `3j` case
+```
+scenario_sheet_name='3j'
+scenario_name=np.array(['3j'])
+```
+Ran script
+```
+(base) [rdmseas@klone-login01 input_setting]$ sbatch main_create_scenario_pnt_wq.sh
+Submitted batch job 9747435
+```
+Modified `coldstart_setup.sh` to run `3j` and submitted the script
+```
+(base) [rdmseas@klone-login01 run_scenarios]$ sbatch coldstart_setup.sh 
+Submitted batch job 9747556
+
+(base) [rdmseas@klone-login01 run_scenarios]$ more slurm-9747556.out
+starting the run
+Thu Jan 19 14:49:13 PST 2023
+3j
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/3j
+Submitted batch job 9747557
+Thu Jan 19 14:49:14 PST 2023
+run ended
+
+(base) [rdmseas@klone-login01 run_scenarios]$ squeue -u rdmseas
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+           9747557   compute ssm_WQ14  rdmseas  R       0:37      2 n[3389,3399]
+           9746595   compute ssm_WQ14  rdmseas  R      15:28      2 n[3386,3398]
+           9746594   compute ssm_WQ14  rdmseas  R      15:30      2 n[3248-3249]
+```
+Success!  
+
+#### Running the Salish Sea Model (NOTES refined from the `written as I go`)
+
+Start with files in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting`
+```
+      5. run_strategy.xlsx
+      6.  main_create_scenario_pnt_wq.py
+      7.  main_create_scenario_pnt_wq.sh
+```
+
+### Jan 18th, 2023
+
+#### Running the Salish Sea Model (NOTES written as I go)
+Running cold start for a 0.5 river case. 
+They code is setup to copy a `ssm_pnt_wq_$scenario.dat` file from `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/wqm_default/coldstart/inputs/` to `$wrk_dir_temp/coldstart/inputs/`.  My test case scenario was `exist`.  My best guess is that this `.dat` file is a saved version of the worksheets in [NO3NO2_load_timeseries](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B95401A95-2A77-41DE-84E8-9D7D8E363C37%7D&file=NO3NO2_load_timeseries.xlsx&action=default&mobileredirect=true).  I transfered the `ssm_pnt_wq_exist.dat` locally to check.  I opened the file in textEdit and found that this is NOT the same.  Definitely machine-made.  I need to find/learn the recipe for making it.  
+
+Following SK's instructions that I only need to modify:
+```
+      5. run_strategy.xlsx
+      6.  main_create_scenario_pnt_wq.py
+      7.  main_create_scenario_pnt_wq.sh
+```
+
+Run strategy is an excel spreadsheet with Columns that have headers related to run IDs, e.g. `3l`. `3l` has `0.5` for rivers, rows 126-132. 
+These files are located in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting`
+
+The code in `main_create_scenario_pnt_wq.py` is as follows:
+```
+#!/usr/bin/env python
+# coding: utf-8
+
+import numpy as np
+import pandas as pd
+import datetime
+import os
+import create_scenario_pnt_wq_v3_090622
+import create_scenario_pnt_wq_v2_090122
+
+#scenario_muptipliers_file='Municipal  model runs and scripting task list_0803.xlsx'
+#scenario_muptipliers_file='Municipal  model runs and scripting task list_0829.xlsx'
+
+scenario_muptipliers_file='run_strategy.xlsx'
+scenario_sheet_name='update_090622'
+
+scenario_name=np.array(['4c','4d','4e','4f','4g','4h','4i','4j','4k','4l'])
+
+for si in scenario_name:
+    create_scenario_pnt_wq_v3_090622.create_scenario_pnt_wq_v3(scenario_sheet_name,si)
+```
+Review script `create_scenario_pnt_wq_v3_090622.py` to see how it handles values of `0.5`. 
+In this code, `run_strategy.xlsx` is read in as follows:
+```
+scenario_setting=pd.read_excel('run_strategy.xlsx',index_col=0,sheet_name=scenario_sheet_name)
+```
+where `scenario_sheet_name='update_090622'`, in calling function.
+
+Great news!  It looks like the files are setup to run the 0.5 river cases!  
+
+
+##### Run the 0.5 river scenario cases
+Modify `main_create_scenario_pnt_wq.py` so `scenario_name` reflects river cases
+```
+scenario_name=np.array(['3l','4k'])
+```
+Oops. STOP.  Initiate a Git repo before going any further
+
+Cloned `SSM-run_scenarios` to HYAK: 
+```
+ git clone git@github.com:RachaelDMueller/SSM-run_scenarios.git
+```
+copied and added all files from `run_scenarios` except the 157MB file `wqm_default/coldstart/inputs/ssm_obc_wq.dat`
+
+Despite removing the large file, Git rejects my push
+```
+(base) [rdmseas@klone-login01 SSM-run_scenarios]$ git push
+Enter passphrase for key '/mmfs1/home/rdmseas/.ssh/id_ed25519': 
+Enumerating objects: 61, done.
+Counting objects: 100% (61/61), done.
+Delta compression using up to 48 threads
+Compressing objects: 100% (59/59), done.
+Writing objects: 100% (60/60), 13.43 MiB | 1.46 MiB/s, done.
+Total 60 (delta 15), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (15/15), done.
+remote: error: Trace: 5a8f197d2bcd1dab20648229a21b40a439c3fa8029456b6079f81bafd7225737
+remote: error: See http://git.io/iEPt8g for more information.
+remote: error: File wqm_default/coldstart/inputs/ssm_obc_wq.dat is 156.94 MB; this exceeds GitHub's file size limit of 100.00 MB
+remote: error: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.
+To github.com:RachaelDMueller/SSM-run_scenarios.git
+ ! [remote rejected] main -> main (pre-receive hook declined)
+error: failed to push some refs to 'github.com:RachaelDMueller/SSM-run_scenarios.git'
+```
+Not sure why.  Need to figure this out.  For now, I'm going to use this file copy as my version control. 
+
+
+Moving on....
+
+1. Submitted job to run `main_create_scenario_pnt_wq.sh`
+```
+(base) [rdmseas@klone-login01 input_setting]$ sbatch main_create_scenario_pnt_wq.sh
+Submitted batch job 9708621
+```
+With the following output 
+```
+starting the run
+Wed Jan 18 13:48:59 PST 2023
+Wed Jan 18 13:49:12 PST 2023
+run ended
+```
+Two new files were created in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting`
+- ssm_pnt_wq_3l.dat
+- ssm_pnt_wq_4k.dat
+
+2. Run `coldstart_setup.sh`
+I removed `scenario` and instead use `scenario_index` for `.dat` filename, i.e.:
+```
+cp /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/wqm_default/coldstart/inputs/ssm_pnt_wq_$scenario_index.dat $wrk_dir_temp/coldstart/inputs/ssm_pnt_wq.dat
+```
+but these files were saved to `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting`, so I changed the directory name to this one:
+```
+##copy the new input to the new scenario working directory
+cp /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/ssm_pnt_wq_$scenario_index.dat $wrk_dir_temp/coldstart/inputs/ssm_pnt_wq.dat
+```
+Submitted run.  
+```
+(base) [rdmseas@klone-login01 run_scenarios]$ sbatch coldstart_setup.sh 
+Submitted batch job 9709205
+```
+
+Hyak is getting an emergency maintence and no runs are allowed.  We shall have to wait to see if these worked. 
+
+Meanwhile...How to address moving all loading from Everett North (OF015) to Everett South (OF100).  I created a new worksheet in `run_strategy.xlsx` called `3j`, which is a duplicate of `update_090622`.  `3j` will be similar to `3h` except the loading for OF015 is added to OF100. In `run_strategy.xlsx`, `Everett North` is called `Everett Snohomish` (i.e., this is the WWTP turned off in `3h`. I removed all but the `3h` column and re-named `3h` to `3j`. 
+
+### Jan 17, 2022
+Next:
+- Upload concentration movies to OneDrive and update excel spreadsheet
+- Make movies for DOXG Full Domain and Region, transfer to Mac (check), and uploadt to OneDrive 
+- DO < 2 movie?
+- Find cause of Table 1 total loading discrepency
+- Start new SSM runs!
+
+Last (I ended up needing to make changes and repeat these to get them right): 
+- Re-did the DOXG concentration movies for FullDomain and Region b/c the title were wrong
+- created percent hypoxic graphics and movies
+	- updated file paths to match other graphics/movies
+	- updated titles to account for whidbey run name changes
+	- updated graphic asthetic to match other products (e.g. remove city names from land)
+	- added capability to plot either full domain or region (where region is defined by shapefile)
+- re-do the concentration movies so that titles show updated run IDs rather than Hyak run IDs
+	- DO (min wc). SLURM ID 9626940, 9627125(Region), 9627110(FullDomain). 
+	- NO3 (mean surface). SLURM ID 9627014
+	- salinity (mean surface). SLURM ID 9626954.
+
+
 ### Jan 16, 2022 (MLK day)
 Last:
 - Transfer and look at movies for: 
