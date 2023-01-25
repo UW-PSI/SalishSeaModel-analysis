@@ -200,15 +200,118 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 	-  do we fix the shapefile, or
 	-  do we leave as-is?   
 
+### Jan 20th, 2023
+Next:
+
+Last:
+- Coldstart runs finished at ~6:30a.  Total storage is ~1TB each scenario!  Scenarios run are 3j, 3l, 4k, and exist (from before).  Output located at `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/[scenario_ID]/coldstart/outputs`. 4k run started `Thu Jan 19 14:34:25 PST 2023` and ended `Fri Jan 20 06:26:29 PST 2023`. 
+- Run hot-start for 3j, 3l, 4k and exist.  Changed the following lines in `hotstart_setup.sh`
+```
+##working directory (place where to save the scenario runs)
+wrk_dir=/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/
+
+##scenario id
+for scenario_index in exist 3j 3l 4k
+
+##copy the default setting of hotstart to the working directory
+cp -R /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/wqm_default/hotstart $wrk_dir_temp
+    
+##copy the new input to the new scenario working directory
+cp /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/ssm_pnt_wq_$scenario_index.dat $wrk_dir_temp/hotstart/inputs/ssm_pnt_wq.dat    
+```
+
+Submitted `hotstart` batch
+```
+(base) [rdmseas@klone-login01 run_scenarios]$ sbatch hotstart_setup.sh
+Submitted batch job 9759942
+
+(base) [rdmseas@klone-login01 run_scenarios]$ squeue -u rdmseas
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+           9759955   compute ssm_WQ14  rdmseas CG       0:02      2 n[3368-3369]
+           9759958   compute ssm_WQ14  rdmseas PD       0:00      1 (None)
+           9759957   compute ssmhist2  rdmseas PD       0:00      1 (None)
+           9759942   compute ssm_WQ14  rdmseas  R       0:53      2 n[3357,3359]
+	   
+```
+
+Error(s) with the hotstart in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/exist/hotstart/slurm-9759948.out`
+```
+(base) [rdmseas@klone-login01 hotstart]$ more slurm-9759948.out
+starting the run
+Fri Jan 20 11:45:57 PST 2023
+python: can't open file 'ssm_station_postprocessing.py': [Errno 2] No such file or directory
+Fri Jan 20 11:45:57 PST 2023
+run ended
+```
+Error(s) with the hotstart in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/exist/hotstart/slurm-9759947.out`
+```
+(base) [rdmseas@klone-login01 hotstart]$ more slurm-9759947.out
+--------------------------------------------------------------------------
+mpirun was unable to find the specified executable file, and therefore
+did not launch the job.  This error was first reported for process
+rank 0; it may have occurred for other processes as well.
+
+NOTE: A common cause for this error is misspelling a mpirun command
+      line parameter option (remember that mpirun interprets the first
+      unrecognized command line token as the executable).
+
+Node:       n3396
+Executable: ssmhist2cdf-par
+--------------------------------------------------------------------------
+4 total processes failed to start
+
+real	0m0.385s
+user	0m0.030s
+sys	0m0.084s
+```
+ 
+And...probably the source of all errors, in `more slurm-9759947.out`: The code is looking for files in Adi's directory that I don't have permission to access
+```
+(base) [rdmseas@klone-login01 hotstart]$ more slurm-9759946.out
+starting the run
+Fri Jan 20 11:45:51 PST 2023
+starting the run
+Fri Jan 20 11:45:51 PST 2023
+[proxy:0:0@n3368] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:145): execvp error on file /mmfs1/gscratch/ssmc/GRPS/ssmc
+_dev/Share/Adi/Source_Codes/WQM/FVCOM-ICM_V2.0_ecy/wqmsrc_code_interpolation_gp01/wqm_pH_interp_TAinitialFromInput_year2 (Permission denied)
+[proxy:0:0@n3368] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:145): execvp error on file /mmfs1/gscratch/ssmc/GRPS/ssmc
+_dev/Share/Adi/Source_Codes/WQM/FVCOM-ICM_V2.0_ecy/wqmsrc_code_interpolation_gp01/wqm_pH_interp_TAinitialFromInput_year2 (Permission denied)
+[proxy:0:0@n3368] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:145): execvp error on file /mmfs1/gscratch/ssmc/GRPS/ssmc
+_dev/Share/Adi/Source_Codes/WQM/FVCOM-ICM_V2.0_ecy/wqmsrc_code_interpolation_gp01/wqm_pH_interp_TAinitialFromInput_year2 (Permission denied)
+Submitted batch job 9759947
+Submitted batch job 9759948
+Fri Jan 20 11:45:52 PST 2023
+run ended
+
+```
+
+I need to point the code to `/mmfs1/gscratch/ssmc/USRS/PSI/Adi/Source_Codes/WQM/FVCOM-ICM_V2.0_ecy/wqmsrc_code_interpolation_gp01` instead. 
+This path is set on line 39 of `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/wqm_default/hotstart`
+
+```
+MPI_BIN="/mmfs1/gscratch/ssmc/GRPS/ssmc_dev/Share/Adi/Source_Codes/WQM/FVCOM-ICM_V2.0_ecy/wqmsrc_code_interpolation_gp01/wqm_pH_interp_TAinitialFromInput_year2";
+```
+I changed this line to read:
+```
+MPI_BIN="/mmfs1/gscratch/ssmc/USRS/PSI/Adi/Source_Codes/WQM/FVCOM-ICM_V2.0_ecy/wqmsrc_code_interpolation_gp01/wqm_pH_interp_TAinitialFromInput_year2";
+```
+
+resubmitted the runs (a few times with some more editing bloopers)
+```
+(base) [rdmseas@klone-login01 run_scenarios]$ sbatch hotstart_setup.sh 
+Submitted batch job 9763515q
+```
+
 ### Jan 19th, 2023
 
 Last: 
 - review submissions from yesterday (cranky HYAK)
-- 
+- submitted coldstarts of 3j, 3l, 4k
 Next:
+- Unpack the nutrient loading code in jupyter lab and create method for adding seasonal variability to ` /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/create_scenario_pnt_wq_v3_090622.py`
 - Find cause of Table 1 total loading discrepency
 - Create Table 2: days hypoxic
-- Start new SSM runs!
+- Do hotstart of existing case and other runs and make sure existing looks good
 
 #### Last: Running the Salish Sea Model (NOTES written as I go)
 - Modified `run_strategy.xlsx` to put shallow Everett loadings to deep in new tab labeled `3j`.
@@ -293,6 +396,16 @@ run ended
            9746594   compute ssm_WQ14  rdmseas  R      15:30      2 n[3248-3249]
 ```
 Success!  
+
+
+##### Now toward the seasonal runs
+Nutrient loading arrays are created in ` /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/create_scenario_pnt_wq_v3_090622.py`.  NH4 is line2 25, 26
+```
+updated_pnt_wq_exist=pd.read_csv('ssm_pnt_wq_exist.dat',skiprows=522, header=None,delimiter=' ')
+updated_exist_nh4     =np.array([updated_pnt_wq_exist.iloc[36*k+13,1:].values for k in range(0,366)])
+updated_exist_no3no2  =np.array([updated_pnt_wq_exist.iloc[36*k+14,1:].values for k in range(0,366)])
+```
+Add an `if-statement` for scenario name to modify values based on time of year. 
 
 #### Running the Salish Sea Model (NOTES refined from the `written as I go`)
 
