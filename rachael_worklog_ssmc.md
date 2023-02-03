@@ -200,6 +200,197 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 	-  do we fix the shapefile, or
 	-  do we leave as-is?   
 
+### Feb 3, 2023
+Next: 
+- Investigate the Everette Surface to deep TS to make sure that the run is correct
+- Figure out how to calculate total nitrogen loading for 3j and 3l for Regression plot
+- [in process] Re-create whidbey graphics/tables with the two new runs included (hold-off on regional zoom/concentration movies until Stefano updates shapefile)
+- Housekeeping: commit/push new changes to Git (WAY overdue!) 
+- Find cause of Table 1 total loading discrepency
+- Create method for 3k and 4b (then run and analyze)
+
+
+### Feb 2, 2023
+Next: 
+- Figure out how to calculate total nitrogen loading for 3j and 3l for Regression plot
+- [in process] Re-create whidbey graphics/tables with the two new runs included (hold-off on regional zoom/concentration movies until Stefano updates shapefile)
+- Housekeeping: commit/push new changes to Git (WAY overdue!) 
+- Find cause of Table 1 total loading discrepency
+- Create method for 3k and 4b (then run and analyze)
+
+Last:
+- Updated mapping for run_ids. Documented in both configuration file and [Municipal model run spreadsheet](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B417ABADA-C061-4340-9D09-2A23A26727E6%7D&file=Municipal%20%20model%20runs%20and%20scripting%20task%20list.xlsx&action=default&mobileredirect=true&cid=5c877fcc-6093-4206-b420-ba670ef6481d) 
+- Updated the order of runs in spreadsheet so that the river runs and WWTP runs are grouped together 
+- Updated Tables 4 and 6
+
+
+##### Updated spreadsheet order
+Set the order in the short description
+```
+ssm['run_information']['run_description_short']['whidbey']={
+    'wqm_baseline':'2014 conditions',
+    'wqm_reference':'Reference',
+    '3b':'3a: No Whidbey WWTPs',
+    '3e':'3b: No Small WWTPs < 100 TN Kg/day ',
+    '3f':'3c: No Medium WWTPs 100 to 1000 TN Kg/day',
+    '3g':'3d: No Everett North & South WWTPs',
+    '3h':'3e: No Everett North WWTP',
+    '3i':'3f: No Everett South WWTP',
+    '3j':'3g: Everett Shallow to Deep',
+    '3c':'3i: No Whidbey Rivers',
+    '3l':r'3j: 0.5x $\Delta$ River Load',
+    '3m':'3k: 2x 2014 River Load'
+}
+```
+and 
+```
+ssm['run_information']['run_tag']['whidbey']={
+    'wqm_baseline':'2014 Conditions',
+    'wqm_reference':'Reference',
+    '3b':'3a',    
+    '3e':'3b',
+    '3f':'3c',
+    '3g':'3d',
+    '3h':'3e',
+    '3i':'3f',
+    '3j':'3g',
+    '3c':'3i',
+    '3l':'3j',
+    '3m':'3k'
+}
+```
+I'm not sure the order of the second is important (and I didn't take the time to look) so I matched to `run_description_short` in case it is important. 
+
+Set `sort_keys` to `False` when saving `.yaml`
+```
+document = yaml.safe_dump(ssm, file,sort_keys=False)
+```
+
+
+### Feb 1, 2023
+
+Last:
+- Sent 2014 DO map files to Sylvia Kantor and Emily Eng for EOPS.  
+	- Created with: `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/plot_conc_graphics_for_EOPS.py`
+	- Saved to, e.g.: `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/EOPS/whidbey_baseline_DOXG_min_conc_wc_141.png`
+- Housekeeping
+	- committed/pushed new changes to Git (WAY overdue!) 	  	
+### Jan 31st, 2023
+Next:
+- [done] The non-compliant spreadsheet I made yesterday is identical to the original, i.e. no new runs.  Figure out why!
+- [done] Create raw image files for Sylvia Kantor and Emily
+- Create method for 3k and 4b (then run and analyze)
+- Find cause of Table 1 total loading discrepency
+
+Last:
+Changed the `processed_netcdf_dir` to:
+```
+processed_netcdf_dir =pathlib.Path(
+        '/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/SSM_model_output/rdm_test'
+    )
+```
+and output file name to:
+```
+excel_output_path/f'{case}_{scope}_noncompliant_{noncompliant_txt}_rdmtestJan2023.xlsx', mode='w') as writer:
+```
+with output path as:
+```
+excel_output_path = pathlib.Path(
+        '/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/SSM_model_output'
+    )
+```
+     
+### Jan 30th, 2023
+Next:
+- Post process SSM runs
+- Analyze 2014 case and validate results
+- Create method for 3k and 4b (then run and analyze)
+- Find cause of Table 1 total loading discrepency
+
+Last: 
+Created netcdf files for the four new runs: 3j, 4k, 3l, exist using Ben's script. 
+
+NetCDF were saved here: `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/SSM_model_output/rdm_test/`
+Names are:
+```
+3j_hotstart_rdm.nc  
+3l_hotstart_rdm.nc  
+4k_hotstart_rdm.nc  
+exist_hotstart_rdm.nc
+```
+Now to create minimum dissolved oxygen from these `netcdf`.  My code is based on a different file structure/system.  It assumes that the
+above netcdf are in folders `3j`, `3l`, etc. and that the run_type can be identified with: 
+```
+run_type = netcdf_file_path.split('/')[-2]
+```
+
+In order to not mess with my code, I'm going to create this file structure in 
+`/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/SSM_model_output/`, as follows:
+```
+(base) [rdmseas@klone-login01 SSM_model_output]$ mv rdm_test/3j_hotstart_rdm.nc 3j/hotstart_rdm.nc
+(base) [rdmseas@klone-login01 SSM_model_output]$ mv rdm_test/3l_hotstart_rdm.nc 3l/hotstart_rdm.nc
+(base) [rdmseas@klone-login01 SSM_model_output]$ mv rdm_test/4k_hotstart_rdm.nc 4k/hotstart_rdm.nc
+(base) [rdmseas@klone-login01 SSM_model_output]$ mv rdm_test/exist_hotstart_rdm.nc exist/hotstart_rdm.nc
+```
+Now the files are in individual folders:
+```
+(base) [rdmseas@klone-login01 SSM_model_output]$ ls
+3j/  exist/                       NPP_workshop120622_WQM_REF.nc  ssm_output_NPP_WQM.nc
+3l/  exist_hotstart_rdm_first.nc  NPP_workshop120622_WQM_sm2.nc  ssm_output_sediments_WQM.nc
+4k/  NPP_workshop120622_WQM.nc    NPP_workshop120622_WQM_sm.nc   ssm_output_sediments_WQM_REF.nc
+```
+
+I created `process_test_runs.sh` and included `4k` as a `whidbey` run...because...why not? The result will end up in the whidbey directory but I can move it.  
+```
+#!/bin/bash
+ 
+## job name 
+#SBATCH --job-name=process_netcdf
+#SBATCH --account=ssmc
+#SBATCH --partition=compute
+#SBATCH --nodes=1       
+#SBATCH --ntasks-per-node=1
+#SBATCH --array=0-3
+#SBATCH --time=0:30:00 
+#SBATCH --mem=175G 
+#SBATCH --mail-user=rdmseas@uw.edu
+
+## Modules needed to run
+module purge
+module load foster/python/miniconda/3.8
+source /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/miniconda3/etc/profile.d/conda.sh
+conda activate klone_jupyter
+
+param="DOXG"
+case="whidbey"
+stat_type="min"
+
+folder_names=(
+   "exist"
+   "4k"
+   "3l"
+   "3j"
+   )
+
+py_path="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/py_scripts/"
+
+file_path="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/SSM_model_output/rdm_test/\
+${folder_names[${SLURM_ARRAY_TASK_ID}]}/hotstart_rdm.nc"
+
+python ${py_path}/process_netcdf.py ${file_path} ${param} ${case} ${stat_type} 1 1 
+```
+Running these all as `whidbey` also simplifies things as I can just process all the runs together now for `whidbey`, since the directories are all in the same place, e.g.
+```
+(base) [rdmseas@klone-login01 bash_scripts]$ ls /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/whidbey/DOXG/
+3b/  3c/  3e/  3f/  3g/  3h/  3i/  3j/  3l/  3m/  4k/  exist/  wqm_baseline/  wqm_reference/
+```
+I will just need to compare `exist` with `wqm_baseline`. 
+
+I modified `calc_noncompliance.py` to save the spreadsheet to a new name: 
+```
+excel_output_path/f'{case}_{scope}_noncompliant_{noncompliant_txt}_rdmtestJan2023.xlsx', mode='w') as writer: 
+```
+
 ### Jan 20th, 2023
 Next:
 
