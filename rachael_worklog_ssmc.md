@@ -210,19 +210,6 @@ Next:
 
 Last: 
 
-
-# Feb 6, 2023
-Next: 
-- Quantify nutrient loading for `3j`, `3l`, and `4k`
-- Figure out how to calculate total nitrogen loading for 3j and 3l for Regression plot
-- [in process] Re-create whidbey graphics/tables with the two new runs included (hold-off on regional zoom/concentration movies until Stefano updates shapefile)
-- Housekeeping: commit/push new changes to Git (WAY overdue!) 
-- Find cause of Table 1 total loading discrepency
-- Create method for 3k and 4b (then run and analyze)
-
-Last:
-- Evaluate nutrient loading input files
-
 ### Evaluate nutrient loading input files
 `create_scenario_pnt_wq_v3_090622.py` is "Python script for creating the river and point source scenario loading `ssm_pnt_wq.dat` input files"
 The files that I am working with are:
@@ -296,9 +283,20 @@ print(loading[run]['  Agate East'].iloc[36*np.arange(0,366)+14].sum())
 Same answer!
 
 
-
-
 [36*np.arange(0,366)+13]
+
+
+# Feb 6, 2023
+Next: 
+- Quantify nutrient loading for `3j`, `3l`, and `4k`
+- Figure out how to calculate total nitrogen loading for 3j and 3l for Regression plot
+- [in process] Re-create whidbey graphics/tables with the two new runs included (hold-off on regional zoom/concentration movies until Stefano updates shapefile)
+- Housekeeping: commit/push new changes to Git (WAY overdue!) 
+- Find cause of Table 1 total loading discrepency
+- Create method for 3k and 4b (then run and analyze)
+
+Last:
+- Evaluate nutrient loading input files
 
 Last: 
 - Corrected labeling of columns in noncompliance spreadsheet
