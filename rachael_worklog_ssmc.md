@@ -199,16 +199,152 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 	-  Do I use x-/y-limits to zoom into region, 
 	-  do we fix the shapefile, or
 	-  do we leave as-is?   
-
-### Feb 3, 2023
+### Feb 7, 2023
 Next: 
-- Investigate the Everette Surface to deep TS to make sure that the run is correct
+- Quantify nutrient loading for `3j`, `3l`, and `4k`
+- Figure out how to calculate total nitrogen loading for 3j and 3l for Regression plot
+- Create regional zoom/concentration movies 
+- Housekeeping: commit/push new changes to Git (WAY overdue!) 
+- Find cause of Table 1 total loading discrepency
+- Create method for 3k and 4b (then run and analyze)
+
+Last: 
+
+
+# Feb 6, 2023
+Next: 
+- Quantify nutrient loading for `3j`, `3l`, and `4k`
 - Figure out how to calculate total nitrogen loading for 3j and 3l for Regression plot
 - [in process] Re-create whidbey graphics/tables with the two new runs included (hold-off on regional zoom/concentration movies until Stefano updates shapefile)
 - Housekeeping: commit/push new changes to Git (WAY overdue!) 
 - Find cause of Table 1 total loading discrepency
 - Create method for 3k and 4b (then run and analyze)
 
+Last:
+- Evaluate nutrient loading input files
+
+### Evaluate nutrient loading input files
+`create_scenario_pnt_wq_v3_090622.py` is "Python script for creating the river and point source scenario loading `ssm_pnt_wq.dat` input files"
+The files that I am working with are:
+```
+loading ssm_pnt_wq_3j.dat
+loading ssm_pnt_wq_3l.dat
+loading ssm_pnt_wq_4k.dat
+```
+
+The first 261 lines of these files look like:
+```
+13429 ! FVCOM ID/Node: 442 / 13429, nodes/distribution : 1/Surface3,  Cushman No 2, River,  Hood_Canal,  United States
+```
+The next 259 lines looks like:
+```
+1 0.2000 0.4000 0.4000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000
+```
+There are 259 sources, which suggests this section is related to loadings, but I'm not sure why only 10 columns of data
+
+This section is followed by numbers in the form of:
+```
+ 1.528E-01 2.818E-02 4.085E-02 1.265E-01 2.426E-01 3.057E-01 8.026E-02 1.992E-01 1.919E+00 4.318E-01 1.074E+00 7.290E-02 9.995E-02
+```
+This latter section looks like the one with loading information and starts at `522`. 
+
+Importing nutrient loading from `ssm_pnt_wq_3j.dat` starting at row `522` provides a `(13175, 259)` matrix of values.  If I sum all values for, e.g. `Agate East`, I get:
+```
+$ loading[run]['  Agate East'].sum()
+518611
+```
+The `node_id` for `Agate East' is `15634`
+
+Looking at `create_scenario_pnt_wq_v3_090622.py`, I see:
+```
+updated_exist_flow    =np.array([updated_pnt_wq_exist.iloc[36*k,1:].values for k in range(0,366)])
+updated_exist_temp    =np.array([updated_pnt_wq_exist.iloc[36*k+1,1:].values for k in range(0,366)])
+updated_exist_sali    =np.array([updated_pnt_wq_exist.iloc[36*k+2,1:].values for k in range(0,366)])
+updated_exist_tss     =np.array([updated_pnt_wq_exist.iloc[36*k+3,1:].values for k in range(0,366)])
+updated_exist_algal1  =np.array([updated_pnt_wq_exist.iloc[36*k+4,1:].values for k in range(0,366)])
+updated_exist_algal2  =np.array([updated_pnt_wq_exist.iloc[36*k+5,1:].values for k in range(0,366)])
+updated_exist_algal3  =np.array([updated_pnt_wq_exist.iloc[36*k+6,1:].values for k in range(0,366)])
+updated_exist_zoop1   =np.array([updated_pnt_wq_exist.iloc[36*k+7,1:].values for k in range(0,366)])
+```
+36 x 366 = 13176.  My guess is I'm missing a variable, but I get an error when I try to skip 521 lines instead of 522.
+Lines 13-14 (starting at zero) are:
+```
+updated_exist_nh4     =np.array([updated_pnt_wq_exist.iloc[36*k+13,1:].values for k in range(0,366)])
+updated_exist_no3no2  =np.array([updated_pnt_wq_exist.iloc[36*k+14,1:].values for k in range(0,366)])
+```
+These are the lines that I'm guessing I need to add to get the nitrogen loading.  So...I'd need to grab the values in rows `36*k+13` and `36*k+14`.
+Adding results from NO3/NO2 and NH4 gives
+```
+$ np.array([loading[run]['  Agate East'].iloc[36*k+13] for k in range(0,366)]).sum()
+5.9919400000000005
+$ np.array([loading[run]['  Agate East'].iloc[36*k+14] for k in range(0,366)]).sum()
+132.20239999999998
+```
+~ 128, not 4926.  Go fish!  Try indexing in code:
+```
+updated_pnt_wq_exist_temp.iloc[36*np.arange(0,366)+13,1:]=updated_exist_nh4_temp
+updated_pnt_wq_exist_temp.iloc[36*np.arange(0,366)+14,1:]=updated_exist_no3no2_temp
+```
+
+using the following
+```
+print(loading[run]['  Agate East'].iloc[36*np.arange(0,366)+13].sum())
+print(loading[run]['  Agate East'].iloc[36*np.arange(0,366)+14].sum())
+5.9919400000000005
+132.20239999999998
+```
+Same answer!
+
+
+
+
+[36*np.arange(0,366)+13]
+
+Last: 
+- Corrected labeling of columns in noncompliance spreadsheet
+- Recreated figures/tables for Whidbey report 
+- Updated report docs (complete except for last graphic, which requires that I quantify loading inputs)
+- Verified loading setup for 3j,3l, and 4k
+- Updated Git
+
+
+
+### Feb 3, 2023
+Next: 
+- Quantify nutrient loading for `3j`, `3l`, and `4k`
+- Figure out how to calculate total nitrogen loading for 3j and 3l for Regression plot
+- [in process] Re-create whidbey graphics/tables with the two new runs included (hold-off on regional zoom/concentration movies until Stefano updates shapefile)
+- Housekeeping: commit/push new changes to Git (WAY overdue!) 
+- Find cause of Table 1 total loading discrepency
+- Create method for 3k and 4b (then run and analyze)
+
+Last:
+- Updated naming convention for runs (to WtpX, WrX)
+- Plotted non-compliance timeseries
+- Compare inputs between `No Everett North`(`3h`,on Hyak) and `Everett N. -> S.` (`3j`, on Hyak) runs
+
+
+
+##### Compare inputs between `No Everett North`(`3h`,on Hyak) and `Everett N. -> S.` (`3j`, on Hyak) runs
+
+SK's result folder for `3h`:`/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3h/inputs`
+My result folder for `3j`: `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/3j/hotstart/inputs
+`
+
+file diff for `updated_ssm_pnt_wq.dat`
+```
+(base) [rdmseas@klone-login01 inputs]$ diff ./updated_ssm_pnt_wq.dat /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3h/inputs/updated_ssm_pnt_wq.dat
+```
+No difference.  Try comparing two other runs. 
+```
+(base) [rdmseas@klone-login01 inputs]$ diff ./updated_ssm_pnt_wq.dat /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3l/inputs/updated_ssm_pnt_wq.dat
+```
+same result.  I'm looking at the wrong file.  trying a different file
+```
+(base) [rdmseas@klone-login01 inputs]$ cp /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3h/inputs/ssm_initial_wq_hotstart_364.dat ./ssm_initial_wq_hotstart_364_sk.dat
+(base) [rdmseas@klone-login01 inputs]$ diff ssm_initial_wq_hotstart_364_sk.dat ssm_initial_wq_hotstart_364_rdm.dat
+```
+these are different.  They are way different if I compare the 0.5 river run and less different if I compare 3h...so I think my method worked....
 
 ### Feb 2, 2023
 Next: 
