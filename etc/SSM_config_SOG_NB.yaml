@@ -1,3 +1,19 @@
+WWTP_names:
+- '  Bellingham'
+- '  Anacortes'
+- '  Birch Bay'
+- '  Blaine'
+- '  Friday Harbor'
+- '  Lummi Goose Pt'
+- '  Whidbey Naval Station'
+- '  Makah'
+- '  Lummi Sandy Pt'
+- '  Eastsound Water District'
+- '  Roche Harbor'
+- '  Fisherman Bay'
+- '  Rosario Utilities'
+- '  Larrabee State Park'
+- '  Eastsound Orcas Village'
 bar:
   colors:
     DOXG: deepskyblue
@@ -6,7 +22,7 @@ bar:
 bw_line:
   color:
     baseline: black
-    reference: black
+    reference: slategrey
     scenario: grey
   style:
     baseline: solid
@@ -15,35 +31,35 @@ bw_line:
   width:
     baseline: 1
     reference: 1.5
-    scenario: 1.5
+    scenario: 2
 line:
   color:
-    1b_all_sog_wwtp_off: palevioletred
-    1d_small_sog_wwtp_off: mediumpurple
-    1e_med_sog_wwtp_off: indigo
-    2a_sog_river_0.5times: cadetblue
-    2b_sog_river_2times: darkslategrey
+    1b_all_sog_wwtp_off: teal
+    1d_small_sog_wwtp_off: darkslategrey
+    1e_med_sog_wwtp_off: steelblue
+    2a_sog_river_0.5times: sienna
+    2b_sog_river_2times: brown
     deviation: royalblue
-    wqm_baseline: grey
-    wqm_reference: black
+    wqm_baseline: darkviolet
+    wqm_reference: rebeccapurple
   style:
-    1b_all_sog_wwtp_off: dashed
+    1b_all_sog_wwtp_off: solid
     1d_small_sog_wwtp_off: dashdot
-    1e_med_sog_wwtp_off: solid
+    1e_med_sog_wwtp_off: dashed
     2a_sog_river_0.5times: dashdot
     2b_sog_river_2times: dashed
     deviation: solid
     wqm_baseline: solid
     wqm_reference: solid
   width:
-    1b_all_sog_wwtp_off: 2.5
+    1b_all_sog_wwtp_off: 1.5
     1d_small_sog_wwtp_off: 2.0
-    1e_med_sog_wwtp_off: 1.5
+    1e_med_sog_wwtp_off: 3.0
     2a_sog_river_0.5times: 2.0
     2b_sog_river_2times: 3.0
     deviation: 1
     wqm_baseline: 1.5
-    wqm_reference: 1.0
+    wqm_reference: 1.5
 paths:
   graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/
   model_output:
@@ -65,9 +81,19 @@ region:
     Hood: darkseagreen
     Main: mediumpurple
     SJF_Admiralty: lightsteelblue
-    SOG_Bellinghham: rosybrown
+    SOG_Bellingham: rosybrown
     South_Sound: c
     Whidbey: cornflowerblue
+river_names:
+- '  Nooksack R_1'
+- '  Nooksack R_2'
+- '  Whatcom_Bell north'
+- '  Birch Bay R'
+- '  Samish_Bell south_1'
+- '  Samish_Bell south_2'
+- '  Orcas Island'
+- '  San Juan Island'
+- '  Lopez Island'
 run_information:
   SOG_NB_WWTPs:
     1b_all_sog_wwtp_off: 1b
@@ -88,13 +114,9 @@ run_information:
       1b_all_sog_wwtp_off: '1b: No SOG/NB WWTP'
       1c_all_sog_riv_off: '1c: No SOG/NB River Loading'
       1d_small_sog_wwtp_off: '1d: No SOG/NB WWTP<100'
-      1e_med_sog_wwtp_off: '1e: No SOG/NB WWTP>100'
-      2a_sog_river_0.5times: '2a: 0.5x(River Loading)
-
-        in SOG/NB'
-      2b_sog_river_2times: '2b: 2.0x(River Loading)
-
-        in SOG/NB'
+      1e_med_sog_wwtp_off: '1e: No SOG/NB WWTP>100 (Bellingham)'
+      2a_sog_river_0.5times: '2a: 0.5x River Loading in SOG/NB'
+      2b_sog_river_2times: '2b: 2x River Loading in SOG/NB'
       wqm_baseline: 2014 nutrient loading
       wqm_reference: Pre-industrial nutrient loading
   run_tag:
