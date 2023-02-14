@@ -199,7 +199,245 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 	-  Do I use x-/y-limits to zoom into region, 
 	-  do we fix the shapefile, or
 	-  do we leave as-is?   
-### Feb 7, 2023
+
+# Feb 10, 2023 
+Next:
+- Run hotstarts for 3j and 3k
+- Review coldstart runs for 3j and 3k
+- Create regional zoom/concentration movies 
+- Housekeeping: commit/push new changes to Git (WAY overdue!) 
+- Find cause of Table 1 total loading discrepency
+- Create method for 3k and 4b (then run and analyze)
+- Find area comparison/validation work
+
+### Fix the seasonal loading run (3k)
+From yesterday: 
+I've coded the 3k inputs such that:
+1. Everett North has no nitrogen loading from July 01 - Nov 30
+2. OF100 has OF100 + Everett North nitrogen loading from July 01 - Nov 30
+My print statements check out:
+```
+# These are values of NO2/NO3 before modification
+NO3NO2[Everett]:  821.4785999999999
+NO3NO2[OF100-old]:  2749.165
+# Total loading in Everett North after applying the 100% reduction
+NO3NO2[Everett-temp]:  0.0
+NH4[Everett-temp]:  0.0
+# The new Everett North NO2/NO3 with removal of North summer load
+NO3NO2[EverettNorth-new]:  149.04499999999996
+# The new Everett South NO2/NO3 with addition of North summer load
+NO3NO2[OF100-new]:  3420.8366
+```
+Note: I only printed NO3NO2 but also applied the same changes to NH4. The difference in values at Everette north before and after modification (821-149) is the summer loading. When this amount is added to the Everett South loading (2749.165), I get the new loading (3421). i.e. the print statements show that my method works. 
+`821-149+2749 = 3421`
+
+Sadly, I'm not happy with my total loading value for 3k that I'm estimating from the resulting input file, as it's greater than the baseline case (should be identical and same as 3j). I'm puzzled. I'm going to have to take a closer look tomorrow
+```
+{'wqm_baseline': 51748970.95235588,
+ 'wqm_reference': 34182950.28326734,
+ '3b': 50536639.020824924,
+ '3e': 51711117.47875005,
+ '3f': 51310140.5532341,
+ '3g': 51013186.90394756,
+ '3h': 51384372.397241,
+ '3i': 51377785.45906244,
+ '3j': 51729091.85001668,
+ '3c': 45359842.21098727,
+ '3l': 50739039.79951296,
+ '3m': 58138095.43265276,
+ '3k': 51817668.65008196}
+ 
+ I found the problem and am going to track my versions with A, B, etc. 
+ 1. `ssm_pnt_wq_4k_A.dat` resulted in the numbers above.  The code for this run was in `create_scenario_pnt_wq_3k.py`: 
+ ```
+# Reduce loading by percent_change_values, which in this case is 100% for Everett North
+updated_exist_nh4_temp=updated_exist_nh4-(updated_exist_nh4*percent_change_values)
+updated_exist_no3no2_temp=updated_exist_no3no2-(updated_exist_no3no2*percent_change_values)
+# Add Everett North (index 201) to Everett South (index 212) from July 1 (day 181) - Nov 30 (day 333)
+updated_exist_nh4_temp[181:333,212]+=updated_exist_nh4[181:333,201]
+updated_exist_no3no2_temp[181:333,212]+=updated_exist_no3no2[181:333,201]
+# Add back loading values to Everett North for all other days
+# Jan 01 - Jun 30
+updated_exist_nh4_temp[0:180,201]+=updated_exist_nh4[0:180,201]
+updated_exist_no3no2_temp[0:180,201]+=updated_exist_no3no2[0:180,201]
+# Dec 01 - end
+updated_exist_nh4_temp[334:,201]+=updated_exist_nh4[334:,201]
+updated_exist_no3no2_temp[334:,201]+=updated_exist_no3no2[334:,201]
+ ```
+ Nothing in the above jumps out as being wrong...but it is!  So, I'm trying something different
+ This time, I explicitely add the baseline values at the two everett locations, during summer
+ ```
+ # Add Everett North (index 201) to Everett South (index 212) from July 1 (day 181) - Nov 30 (day 333)
+ updated_exist_nh4_temp[181:333,212]=updated_exist_nh4[181:333,212]+updated_exist_nh4[181:333,201]
+ updated_exist_no3no2_temp[181:333,212]=updated_exist_no3no2[181:333,212]+updated_exist_no3no2[181:333,201]
+ ```
+ Same result.  
+ 
+ I figured out the problem and now that I understand what it is I feel like an idiot that I didn't see it sooner.  
+ In a nutshell, the model inputs are concentrations, not loading, and we are not changing the discharge; 
+ we only want to change the loading amount.  
+ I needed to scale the northern concentrations by the ratio of discharges, i.e.
+ ```
+ # We want to move Everett North (index 201) loading to Everett South (index 212) loading.     
+ # We have concentration and discharge to work with   
+ # Cn*Qn + Cs*Qs = Cx*Qx    
+ # We want the southern discharge to stay the same so Qx = Qs, and we need to figure out Cx    
+ # Cx = Cn*Qn/Qs + Cs
+ ```
+ 
+ 
+# Feb 9, 2023
+Next:
+- Fix and re-run 3j
+- Find area comparison/validation work
+
+
+Last:
+- Created method to quantify nutrient loading from input files (QuantifyLoading.ipynb)[]
+- Finished updating report
+- Reviewed `3j` setup
+	- confirmed that the `3j` tab of `run_strategy.xlsx` has the shallow loading added to it
+	- Added print statement to confirm that I'm reading in the right sheet (I am)
+	```def create_scenario_pnt_wq_v3(scenario_sheet_name,scenario_name):
+    print('scenario_sheet_name:', scenario_sheet_name)```
+
+
+### 3j setup
+
+I created a sheet called "3j" that had the south loading as south + north and then provided this sheet name "3j" to the program, see:
+`/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/main_create_scenario_pnt_wq.py`
+```
+scenario_muptipliers_file='run_strategy.xlsx'
+scenario_sheet_name='3j'
+
+scenario_name=np.array(['3j'])
+
+for si in scenario_name:
+    create_scenario_pnt_wq_v3_090622.create_scenario_pnt_wq_v3(scenario_sheet_name,si)
+```
+First, cleaned up `main_create_scenario_pnt_wq.py` by removing old import call for `import create_scenario_pnt_wq_v2_090122`
+```
+import create_scenario_pnt_wq_v3_090622
+##import create_scenario_pnt_wq_v2_090122
+```
+Load this sheet into python to confirm information.  Code in `create_scenario_pnt_wq_v3_090622.py` the read-in line looks like:
+```
+scenario_setting=pd.read_excel('run_strategy.xlsx',index_col=0,sheet_name=scenario_sheet_name)
+```
+re-ran code to generate input .dat file
+```
+(base) [rdmseas@klone-login01 input_setting]$ sbatch main_create_scenario_pnt_wq.sh
+Submitted batch job 10167605
+(base) [rdmseas@klone-login01 input_setting]$ more slurm-10167605.out
+starting the run
+Thu Feb  9 14:52:06 PST 2023
+scenario_sheet_name: 3j
+Thu Feb  9 14:52:24 PST 2023
+run ended
+```
+File created `-rw-r--r-- 1 rdmseas all  32M Feb  9 14:52 ssm_pnt_wq_3j.dat`
+
+In reviewing `run_strategy.xlsx`, I confirmed that I added nitrogen concentrations (not just loadings)...but also noticed that I 
+added discharge from shallow to deep.  I fixed discharge to be the same and am re-running `main_create_scenario_pnt_wq.sh`
+
+No change.  Same answer.  Go fish!
+
+I think I figured it out....  
+There are three files for createing the input .dat files:
+```
+create_scenario_pnt_wq.py
+create_scenario_pnt_wq_v2_090122.py
+create_scenario_pnt_wq_v3_090622.py
+```
+
+The last one `create_scenario_pnt_wq_v3_090622.py` is modified so that percent change is based on anthropogenic loading.  
+It assumes that the scenario settings are either 1 or %-anthropogenic value
+```
+percent_change_values=1-scenario_setting[scenario_name].values
+
+updated_exist_nh4_temp=updated_exist_nh4-(diff_nh4*percent_change_values)
+updated_exist_no3no2_temp=updated_exist_no3no2-(diff_no3no2*percent_change_values)
+```
+I'm seeing two things wrong with my "3j" setup: 
+1. I modified the wrong file ( I modified "run_strategy.xlsx".  
+2. I need to modify "updated_pnt_wq_exist"I need to use a version of this code that makes changes based on 2014 run rather than "diff_nh4"
+
+
+### Runs with percent change in anthropogenic loading 
+- Use `create_scenario_pnt_wq_v3_090622.py`
+- `sbatch main_create_scenario_pnt_wq.sh` calls `main_create_scenario_pnt_wq.py`, which is hard-coded to call either: `create_scenario_pnt_wq.py`, `create_scenario_pnt_wq_v2_090122.py`, `create_scenario_pnt_wq_v3_090622.py`
+
+### Changing shallow loading to deep
+
+copied `create_scenario_pnt_wq_v3_090622.py`  to `create_scenario_pnt_wq_3j.py`
+Renamed function to `create_scenario_pnt_wq_3j`
+Removed `diff_nh4` and `diff_no3no2`
+Explicitly added Everett North to Everett South in code using the indices
+```
+# Add Everett North (index 201) to Everett South (index 212)
+    print('NO3NO2[Everett]: ', updated_exist_no3no2[:,201].sum())
+    print('NO3NO2[OF100-old]: ', updated_exist_no3no2[:,212].sum())
+    updated_exist_nh4_temp[:,212]+=updated_exist_nh4[:,201]
+    updated_exist_no3no2_temp[:,212]+=updated_exist_no3no2[:,201]
+    print('NO3NO2[OF100-new]: ', updated_exist_no3no2_temp[:,212].sum())
+    print(updated_exist_no3no2_temp[:,212].shape)
+```
+Renamed calling script to `main_create_scenario_pnt_wq_3j.py`
+
+So far so good!  Here are the print statement outputs for NO3NO2
+```
+starting the run
+Thu Feb  9 19:25:10 PST 2023
+scenario_sheet_name: 3j
+size nh4: (366, 259)
+size no3no2: (366, 259)
+NO3NO2[Everett]:  821.4785999999999
+NO3NO2[OF100-old]:  2749.165
+NO3NO2[OF100-new]:  3570.6436
+(366,)
+Thu Feb  9 19:25:20 PST 2023
+run ended
+```
+Submitted the coldstart for `3j`
+```
+(base) [rdmseas@klone-login01 run_scenarios]$ sbatch coldstart_setup.sh
+Submitted batch job 10171360
+```
+
+### Seasonal loading 3k
+Created a new file for seasonal loadings in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting`
+```
+$ cp create_scenario_pnt_wq_3j.py create_scenario_pnt_wq_3k.py
+```
+I added `3j` and duplicated `3j` to `3k` in `run_settings.xlsx`
+I then manually adjusted the seasonal load in `create_scenario_pnt_wq_3k.py`
+
+```
+# Add back loading values to Everett North for all other days
+# Jan 01 - Jun 30
+updated_exist_nh4_temp[0:180,201]+=updated_exist_nh4[0:180,201]
+updated_exist_no3no2_temp[0:180,201]+=updated_exist_no3no2[0:180,201]
+# Dec 01 - end
+updated_exist_nh4_temp[334:,201]+=updated_exist_nh4[334:,201]
+updated_exist_no3no2_temp[334:,201]+=updated_exist_no3no2[334:,201]
+```
+
+The initial debug statements look right
+```
+# These are values before modification
+NO3NO2[Everett]:  821.4785999999999
+NO3NO2[OF100-old]:  2749.165
+# Total loading in Everett North after applying the percent change (100% reduction)
+NO3NO2[Everett-temp]:  0.0
+NH4[Everett-temp]:  0.0
+# The new Everett North with removal of North summer load
+NO3NO2[EverettNorth-new]:  149.04499999999996
+# The new Everett South with addition of North summer load
+NO3NO2[OF100-new]:  3420.8366
+```
+821-149+2749 = 3421.  These sums match up.  
+
+# Feb 7, 2023
 Next: 
 - Quantify nutrient loading for `3j`, `3l`, and `4k`
 - Figure out how to calculate total nitrogen loading for 3j and 3l for Regression plot
@@ -639,7 +877,7 @@ Next:
 - Do hotstart of existing case and other runs and make sure existing looks good
 
 #### Last: Running the Salish Sea Model (NOTES written as I go)
-- Modified `run_strategy.xlsx` to put shallow Everett loadings to deep in new tab labeled `3j`.
+- Modified `:q` to put shallow Everett loadings to deep in new tab labeled `3j`.
 - Decided to go with old fashioned version controll (not backup and not safe if HYAK dies) by moving `SSM-run_scenarios` to `run_scenarios_18jan2023`
 - Transfered `run_strategy.xlsx` from my local machine to HYAK and wrote over the file in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/`
 
