@@ -6,8 +6,6 @@ Any questions on hardware or software from UW can be directed to:
 [Chat and website](https://www.tacoma.uw.edu/it)
 
 # New runs
-- Existing (replicate run as proof of concept)
-- 3j (move shallow loading to deep) as proof of concept for creating input file, running model and doing QAQC
 ### Notes from Su Kyong (sukyong.yun@pnnl.gov)
 
 Su Kyong created a folder that I can access that contains the setup and run files.  
@@ -199,6 +197,32 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 	-  Do I use x-/y-limits to zoom into region, 
 	-  do we fix the shapefile, or
 	-  do we leave as-is?   
+# Feb 15, 2023
+Next:
+- Find cause of Table 1 total loading discrepency
+
+Last: 
+- Verified 3j and 3k loadings
+- Submitted 3j and 3k coldstart runs (~10:15a).  Hyak was down on Sunday and wouldn't let me submit Monday due to Maintenance Tuesday (which ended at 5:35p).  Estimated time is 16 hours, or 2a.   
+
+### Table 1 nutrient loading
+The only number that is off is the total loading for WWTPs.  
+#### Hypothesis 1: WWTPs not labeled as `Point Source`
+I've checked my selections and find that the number of rows with `Point Source` as a selection criteria (i.e. WWTPs) plus those with `River` designation equals the total number of point sources in the file: `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/spreadsheets/ssm_pnt_wq_station_info.xlsx`
+```
+shape of original file:  (259, 8)
+shape of river sub-sample:  (160, 8)
+shape of point source sub-sample:  (99, 8)
+```
+The sum of N-load matches the sum of NO3NO2 + NH4 and is the same as in the SOG report: 26,237,733.60
+
+The value that is in my spreadsheet is calculated as follows.
+```
+# Add up nitrogen in each scenario across ALL wwtp and rivers in model
+    all_wwtp= nitrogen_df.index.isin(all_wwtps_list)
+    nitrogen_df[all_wwtp]['exist'].sum()
+```
+This sum is wrong.
 
 # Feb 10, 2023 
 Next:
