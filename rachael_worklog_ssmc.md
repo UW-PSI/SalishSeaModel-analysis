@@ -197,9 +197,75 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 	-  Do I use x-/y-limits to zoom into region, 
 	-  do we fix the shapefile, or
 	-  do we leave as-is?   
+- Do we want to flag date of maximum area non-compliance or maximum volume non-compliance? 
+
+# Steps for creating report graphics
+1. [30 minutes] Post-process the raw output (.out) files.  I have been using the configuration file called [history_npp_wksp120622_sm_A8.yml](/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/bash_scripts/BenRoberts_postprocessing/history_npp_wksp120622_sm_A8.yml](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/BenRoberts_postprocessing/history_npp_wksp120622_sm_A8.yml) and Ben's post-processing script [make_netcdf_output_klone.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/BenRoberts_postprocessing/make_netcdf_output_klone.sh). 
+2. [10 minutes] Update `file_path` in  [process_netcdf.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) with the different paths to output (now in different folders for SK's and my runs) and run `process_netcdf.sh` for `min DOXG`
+3. [25 minutes] Run [calc_noncompliance.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance.sh) to generate the table for days non-compliance for each scenario and region
+4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
+5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
+
+
+# Feb 24th, 2023
+Trying to be better with documentation today!
+
+Next:
+1. Regional graphics and movies
+2. SOG loading vs. non-compliance graphics for each region (per your request, Stefano)
+3. Flesh out the story of why SOG noncompliance is affected by Whidbey river loading
+4. Update OneDrive
+
+Last:
+1. Created mean NO3 data files for wc, sfc, bottom
+2. Created mean salinity files for wc, sfc, bottom
+3. Created DOXG min graphics for movie (/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/EOPS/3i_DOXG_min_conc_wc_364_nolegend)
+4. Repeated the above using the function call for `plot_conc_graphics_for_movies.py` instead of `plot_conc_graphics_for_EOPS.py`
+5. Created surface salinity graphics for movies
+6. Created surface NO3 graphics for movies
+7. Created min DOXG movies (Full Domain)
+8. Debug issue of why not all movies were created....
+9. Created movies for min DO, NO3, salinity and non-compliance
+
+
+# Feb 23, 2023
+
+Next:
+- a plot for the whidbey (and SOG) results and shows how the changes in whidbey (and SOG) affect different regions by have different lines for the normalized changes in each region,
+- update OneDrive files and links (if needed) in graphics spreadsheet 
+- process and plot NO3
+- create surface, mean salinity graphics
+- 
+Last: 
+- Updated method in [plot_nutrient_loading_whidbey.ipynb)](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_nutrient_loading_whidbey.ipynb) so that the loadings come from input files rather than `NO3NO2_load_timeseries.xlsx` and `NH4_load_timeseries.xlsx`.
+- created non-compliance movies
+- processed mean salinity for bottom layer, surface and water column
+
+
+# Feb 22, 2023
+
+Next:
+- Answer question of why changing Whidbey rivers affects SOG noncompliance 
+	- Check non_whidbey river loadings for this case
+- update OneDrive files and links (if needed) in graphics spreadsheet 
+- Update method in [plot_nutrient_loading_whidbey.ipynb)](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_nutrient_loading_whidbey.ipynb) so that the loadings come from input files rather than `NO3NO2_load_timeseries.xlsx` and `NH4_load_timeseries.xlsx`.
+
+Last:
+- Created netcdf for new runs
+- run process_netcdf.sh
+
+
+### Create netcdf for new runs
+`/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/bash_scripts/BenRoberts_postprocessing/make_netcdf_output_klone.sh`
+```
+CONFIG="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/bash_scripts/BenRoberts_postprocessing/history_npp_wksp120622_sm_A8.yml"
+OUTFILE="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/${RUNID}/ssm_hotstart_rdm.nc" 
+```
 # Feb 15, 2023
 Next:
 - Find cause of Table 1 total loading discrepency
+- Fix DO graphics for movie so the lower range is `0-2` rather than `-inf-2`
+- Run `4k` and create KC graphics
 
 Last: 
 - Verified 3j and 3k loadings
@@ -224,6 +290,17 @@ The value that is in my spreadsheet is calculated as follows.
 ```
 This sum is wrong.
 
+The information for these two come from different files.  
+The information that matches with the SOG_NB report is from this file:
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/spreadsheets/ssm_pnt_wq_station_info.xlsx
+```
+
+While the information that doesn't match is from these files:
+```
+no3_f = in_dir/'NO3NO2_load_timeseries.xlsx'
+nh4_f = in_dir/'NH4_load_timeseries.xlsx'
+```
 # Feb 10, 2023 
 Next:
 - Run hotstarts for 3j and 3k
