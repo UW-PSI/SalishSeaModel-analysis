@@ -206,6 +206,15 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
+# March 7th, 2023
+Next: 
+1. Update "secret sauce" repository (https://github.com/UWModeling/SalishSeaModel-privateanalysis)	
+	- move python "util" script there
+	- Update code that uses the util script to use new path
+2. Develop KC loading and run KC run. 
+3. Modify "plot_DOXG[NO3]_3panel_timeseries.ipynb" by: (a) calculating median of weighted concentration for each time step, (b) dividing by number of days to get [mg/l]
+4. Repeat volume weighted mean for DO (find mistake in DO and Reference)
+5. Develop answer to "What is contributing to impaired days in whidbey?" by plotting DO and NO3 differences from 2014 at one or a few nodes for all available runs (SOG through KC).  Roll up to get a annual median?  Or plot time series?  Or both.  Play with it....  Focus on Penn Cove and Port Susan.   
 
 # Feb 24th, 2023
 Trying to be better with documentation today!
