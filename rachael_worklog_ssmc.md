@@ -206,6 +206,11 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
+# Mar 16, 2023
+Next: 
+1. Update Figure 3 region to show region names w/o underscore
+
+
 # March 7th, 2023
 Next: 
 1. Update "secret sauce" repository (https://github.com/UWModeling/SalishSeaModel-privateanalysis)	
