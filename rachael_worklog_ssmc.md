@@ -6,6 +6,11 @@ Any questions on hardware or software from UW can be directed to:
 [Chat and website](https://www.tacoma.uw.edu/it)
 
 # New runs
+These are my abbreviated notes for running 4b and 4c
+1. Update run_strategy with column with new run label
+2. Run `sbatch main_create_scenario_pnt_wq.sh` to setup input.dat files
+3. Run `coldstart_setup.sh` to get coldstart files in the right place and run coldstart
+
 ### Notes from Su Kyong (sukyong.yun@pnnl.gov)
 
 Su Kyong created a folder that I can access that contains the setup and run files.  
@@ -206,9 +211,66 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
+# Mar 21, 2023
+Next: 
+1. Update Figure 3 region to show region names w/o underscore
+2. create a "how to" for setting up new input files. 
+
+Last:
+- Submitted jobs for `4b` and `4c`
+
+Notes for running SSM:
+
+
+### Submitting `4b` and `4c`
+Created:
+- `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/create_scenario_pnt_wq_4.py`
+- `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/run_scenarios/input_setting/main_create_scenario_pnt_wq_4.py`
+
+Ran:
+```
+(base) [rdmseas@n3314 input_setting]$ sbatch main_create_scenario_pnt_wq.sh
+Submitted batch job 11079201
+```
+Playing "wack-a-mole" with error `SyntaxError: invalid character in identifier`.  The error seems to be caused by invisible characters.  Ugh.
+Commented out all lines to get
+
+```
+Every 5.0s: more slurm-11079596.out                                                       n3314: Tue Mar 21 10:50:33 2023
+
+starting the run
+Tue Mar 21 10:49:40 PDT 2023
+scenario_sheet_name: update_090622
+writing to nh4_no3no2-exist.xlsx
+(366, 259)
+(259,)
+writing to ssm_exist_load.xlsx
+size nh4: (366, 259)
+size no3no2: (366, 259)
+(366, 259)
+(366, 259)
+Tue Mar 21 10:49:47 PDT 2023
+run ended
+```
+
+Submitted `4b` and `4c`
+```
+(base) [rdmseas@klone-login01 run_scenarios]$ sbatch coldstart_setup.sh 
+Submitted batch job 11083348
+```
+
+### Check `4b` and `4c` loadings
+The runs aren't running and there appears to be an issue with the loading files. 
+The problem was zero concentration values and NaN values.  I fixed by setting min concentraitno to 1e-15
+
+Updating the [configuration file](https://github.com/UW-PSI/SalishSeaModel-analysis/blob/main/etc/SSM_config_KingCounty.ipynb)
+
+
+
 # Mar 16, 2023
 Next: 
 1. Update Figure 3 region to show region names w/o underscore
+2. create a "how to" for setting up new input files. 
 
 
 # March 7th, 2023
@@ -298,7 +360,6 @@ The sum of N-load matches the sum of NO3NO2 + NH4 and is the same as in the SOG 
 
 The value that is in my spreadsheet is calculated as follows.
 ```
-# Add up nitrogen in each scenario across ALL wwtp and rivers in model
     all_wwtp= nitrogen_df.index.isin(all_wwtps_list)
     nitrogen_df[all_wwtp]['exist'].sum()
 ```
@@ -332,15 +393,15 @@ I've coded the 3k inputs such that:
 2. OF100 has OF100 + Everett North nitrogen loading from July 01 - Nov 30
 My print statements check out:
 ```
-# These are values of NO2/NO3 before modification
+#These are values of NO2/NO3 before modification
 NO3NO2[Everett]:  821.4785999999999
 NO3NO2[OF100-old]:  2749.165
-# Total loading in Everett North after applying the 100% reduction
+#Total loading in Everett North after applying the 100% reduction
 NO3NO2[Everett-temp]:  0.0
 NH4[Everett-temp]:  0.0
-# The new Everett North NO2/NO3 with removal of North summer load
+#The new Everett North NO2/NO3 with removal of North summer load
 NO3NO2[EverettNorth-new]:  149.04499999999996
-# The new Everett South NO2/NO3 with addition of North summer load
+#The new Everett South NO2/NO3 with addition of North summer load
 NO3NO2[OF100-new]:  3420.8366
 ```
 Note: I only printed NO3NO2 but also applied the same changes to NH4. The difference in values at Everette north before and after modification (821-149) is the summer loading. When this amount is added to the Everett South loading (2749.165), I get the new loading (3421). i.e. the print statements show that my method works. 
@@ -364,41 +425,41 @@ Sadly, I'm not happy with my total loading value for 3k that I'm estimating from
  
  I found the problem and am going to track my versions with A, B, etc. 
  1. `ssm_pnt_wq_4k_A.dat` resulted in the numbers above.  The code for this run was in `create_scenario_pnt_wq_3k.py`: 
- ```
-# Reduce loading by percent_change_values, which in this case is 100% for Everett North
+```
+#Reduce loading by percent_change_values, which in this case is 100% for Everett North
 updated_exist_nh4_temp=updated_exist_nh4-(updated_exist_nh4*percent_change_values)
 updated_exist_no3no2_temp=updated_exist_no3no2-(updated_exist_no3no2*percent_change_values)
-# Add Everett North (index 201) to Everett South (index 212) from July 1 (day 181) - Nov 30 (day 333)
+#Add Everett North (index 201) to Everett South (index 212) from July 1 (day 181) - Nov 30 (day 333)
 updated_exist_nh4_temp[181:333,212]+=updated_exist_nh4[181:333,201]
 updated_exist_no3no2_temp[181:333,212]+=updated_exist_no3no2[181:333,201]
-# Add back loading values to Everett North for all other days
-# Jan 01 - Jun 30
+#Add back loading values to Everett North for all other days
+#Jan 01 - Jun 30
 updated_exist_nh4_temp[0:180,201]+=updated_exist_nh4[0:180,201]
 updated_exist_no3no2_temp[0:180,201]+=updated_exist_no3no2[0:180,201]
-# Dec 01 - end
+#Dec 01 - end
 updated_exist_nh4_temp[334:,201]+=updated_exist_nh4[334:,201]
 updated_exist_no3no2_temp[334:,201]+=updated_exist_no3no2[334:,201]
- ```
- Nothing in the above jumps out as being wrong...but it is!  So, I'm trying something different
- This time, I explicitely add the baseline values at the two everett locations, during summer
- ```
- # Add Everett North (index 201) to Everett South (index 212) from July 1 (day 181) - Nov 30 (day 333)
- updated_exist_nh4_temp[181:333,212]=updated_exist_nh4[181:333,212]+updated_exist_nh4[181:333,201]
- updated_exist_no3no2_temp[181:333,212]=updated_exist_no3no2[181:333,212]+updated_exist_no3no2[181:333,201]
- ```
+```
+Nothing in the above jumps out as being wrong...but it is!  So, I'm trying something different
+This time, I explicitely add the baseline values at the two everett locations, during summer
+```
+#Add Everett North (index 201) to Everett South (index 212) from July 1 (day 181) - Nov 30 (day 333)
+updated_exist_nh4_temp[181:333,212]=updated_exist_nh4[181:333,212]+updated_exist_nh4[181:333,201]
+updated_exist_no3no2_temp[181:333,212]=updated_exist_no3no2[181:333,212]+updated_exist_no3no2[181:333,201]
+```
  Same result.  
  
  I figured out the problem and now that I understand what it is I feel like an idiot that I didn't see it sooner.  
  In a nutshell, the model inputs are concentrations, not loading, and we are not changing the discharge; 
  we only want to change the loading amount.  
  I needed to scale the northern concentrations by the ratio of discharges, i.e.
- ```
- # We want to move Everett North (index 201) loading to Everett South (index 212) loading.     
- # We have concentration and discharge to work with   
- # Cn*Qn + Cs*Qs = Cx*Qx    
- # We want the southern discharge to stay the same so Qx = Qs, and we need to figure out Cx    
- # Cx = Cn*Qn/Qs + Cs
- ```
+```
+ #We want to move Everett North (index 201) loading to Everett South (index 212) loading.     
+ #We have concentration and discharge to work with   
+ #Cn*Qn + Cs*Qs = Cx*Qx    
+ #We want the southern discharge to stay the same so Qx = Qs, and we need to figure out Cx    
+ #Cx = Cn*Qn/Qs + Cs
+```
  
  
 # Feb 9, 2023
