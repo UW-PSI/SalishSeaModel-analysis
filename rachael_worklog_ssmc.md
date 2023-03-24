@@ -11,6 +11,8 @@ These are my abbreviated notes for running 4b and 4c
 2. Run `sbatch main_create_scenario_pnt_wq.sh` to setup input.dat files
 3. Run `coldstart_setup.sh` to get coldstart files in the right place and run coldstart
 
+I reach run limit with three runs.  The fourth gets queued with reason of `(QOSGrpCpuLimit)`
+
 ### Notes from Su Kyong (sukyong.yun@pnnl.gov)
 
 Su Kyong created a folder that I can access that contains the setup and run files.  
@@ -211,6 +213,17 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
+# Mar 22, 2023
+Next:
+1. Upload input files to OneDrive `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/exist/hotstart/inputs`
+2. Update Figure 3 region to show region names w/o underscore
+3. create a "how to" for setting up new input files. 
+4. organize git repo into public and private repos
+
+Last:
+- Updated King County configuration to get input loading files from `/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs`
+
+
 # Mar 21, 2023
 Next: 
 1. Update Figure 3 region to show region names w/o underscore
@@ -218,6 +231,7 @@ Next:
 
 Last:
 - Submitted jobs for `4b` and `4c`
+- submitted `3n` and `3o` (no Snohomish loading and 0.5 Snohomish loading)
 
 Notes for running SSM:
 
@@ -265,6 +279,11 @@ The problem was zero concentration values and NaN values.  I fixed by setting mi
 
 Updating the [configuration file](https://github.com/UW-PSI/SalishSeaModel-analysis/blob/main/etc/SSM_config_KingCounty.ipynb)
 
+### Add Snohomish River cases
+Add 3n and 3o to `run_strategy.xlsx`
+1. 3n: Snohomish loading to reference
+2. 3o: Snohomish loading to half anthropogenic
+Use `vi create_scenario_pnt_wq_v3_090622.py` to create input files b/c it's already setup for this job
 
 
 # Mar 16, 2023
