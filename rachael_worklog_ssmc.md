@@ -213,15 +213,91 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
-# Mar 22, 2023
-Next:
-1. Upload input files to OneDrive `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/exist/hotstart/inputs`
+# Mar 25, 2023
+
+Next: 
+1. organize git repo into public and private repos
 2. Update Figure 3 region to show region names w/o underscore
 3. create a "how to" for setting up new input files. 
+4. Find a way to run Ben's post-processing script using SLURM array.  I tried this approach already but my initial attempt didn't work, so I went with quick and easy. 
+
+Last:
+- Created netcdf for new hotstart results for 4b and 4c
+- Started hotstart runs for 3n and 3o
+- created yaml file for pers meeting runs 
+- updated yaml for `main` runs (mostly with hotstart paths). 
+ 
+### Post-process 4b and 4c
+
+Updated post-proccessing script to loop through runs.  
+
+Started interaction node (required) and submitted run
+```
+(base) [rdmseas@klone-login01 BenRoberts_postprocessing]$ allocate1
+salloc: Pending job allocation 11102620
+salloc: job 11102620 queued and waiting for resources
+salloc: job 11102620 has been allocated resources
+salloc: Granted job allocation 11102620
+salloc: Waiting for resource configuration
+salloc: Nodes n3263 are ready for job
+-- 4b -- [submitted twice because I tried to be clever but ended up overlapping output]
+(base) [rdmseas@n3263 BenRoberts_postprocessing]$ sbatch make_netcdf_output_klone.sh
+Submitted batch job 11102625 [11102687]
+-- 4c -- [submitted twice because I tried to be clever but ended up overlapping output]
+(base) [rdmseas@n3263 BenRoberts_postprocessing]$ sbatch make_netcdf_output_klone.sh
+Submitted batch job 11102647 [11102665 second submission]
+-- 4k -- 
+(base) [rdmseas@n3263 BenRoberts_postprocessing]$ sbatch make_netcdf_output_klone.sh
+Submitted batch job 11102672
+
+```
+
+I renamed first `4b` netcdf to `ssm_hotstart_4b_first.nc` in case it was completed good and I can use it to start post-processing
+
+
+# Mar 24, 2023
+
+Last:
+- Clarified question about node area
+
+### Asked Su Kyong about the difference between GIS and her node area values
+
+Following up Stefano's share of 
+[my QAQC_days_noncompliant notebook](https://github.com/UW-PSI/SalishSeaModel-analysis/blob/main/notebooks/QAQC/QAQC_days_noncompliant.ipynb)
+
+```
+Hi Su Kyong,
+
+Unfortunately, I don't think you'll be able to see the notebook that Stefano directed you to because it's a private repository and you're not a collaborator.  I can add you if you send me your git tag.  Alternatively, I will share this screen capture to help explain.
+
+What you will see in the screencapture is In[23] with "sk_out".  These are values from a spreadsheet that you provided:
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/spreadsheets/noncompliance_calc_baseline.xlsx
+Out[23] shows some of the columns from this spreadsheet, for node 14845.
+
+The next line, In[24], shows "gdf_out".  These are values from the shapefile that Kevin downloaded from ECY and imported some of your information to in order for us to use in our analyses.  
+
+You may recall that my initial Area Non-compliance values were very different from yours by about 2x.  When I dug into it further, I noticed that the Area_km2 values that I was using in my calculations differs from Area_m2*1e-6 and "km2" (see Out[24]).  Both "km2", "AREA" * 1e-6, and "Area_m2" * 1e-6 compare with your "area" (cf. Out[23] and Out[24]).  At the time, I assumed that this difference meant that there is/was a mistake with "Area_km2" and that I ought to use the value of area that matched your numbers.  
+
+A couple of months ago, Stefano and I talked about "cleaning up" the shapefile, and I revisited this decision with him.  What I've learned from Stefano is that the "Area_km2" is actually from the GIS calculation and is correct...which leaves open the question of why is there a difference between the two values?  I don't know enough about GIS to know how the area is calculated in the GIS and how this might compare or differ from node area (in a way that doesn't seem obvious or make sense from my "way back" view).  
+
+Does it make sense to you that the GIS area might differ from the area that you provided (by about a factor of 2) and, if so, could you please explain this difference to us?  We are trying to figure out if this is a mistake that needs to be fixed or a growth horizon in our learning more about the model cell area calculation and shapefile.  
+
+Hope you have a great weekend!
+
+Thank you!
+Rachael
+```
+
+# Mar 22, 2023
+Next:
+1. Update Figure 3 region to show region names w/o underscore
+3. create a "how to" for setting up new input files. 
 4. organize git repo into public and private repos
+5. Find a way to run Ben's post-processing script using SLURM array.  I tried this but my initial attempt didn't work, so I went with quick and easy. 
 
 Last:
 - Updated King County configuration to get input loading files from `/mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs`
+- Upload input files to OneDrive `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/exist/hotstart/inputs`
 
 
 # Mar 21, 2023
