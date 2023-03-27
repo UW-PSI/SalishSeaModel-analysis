@@ -213,6 +213,35 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
+# Mar 27, 2023
+Next: 
+1. Fix problem with `ssm['paths']['processed_output'])/case/model_var` fro main case
+2. organize git repo into public and private repos
+3. Update Figure 3 region to show region names w/o underscore
+4. create a "how to" for setting up new input files. 
+5. Find a way to run Ben's post-processing script using SLURM array.  I tried this approach already but my initial attempt didn't work, so I went with quick and easy. 
+
+Last: 
+- Created netcdf for `3n` (batch job 11108401) and `3o` (batch job 11108403) output
+- 
+
+### Debug calc_noncompliance.py
+
+Error, e.g.:
+```
+(base) [rdmseas@klone-login01 bash_scripts]$ more slurm-11108425_0.out
+noncompliance threshold:  -0.25
+Calculating DO volume days non-compliant for:  benthic
+Calling calc_noncompliant
+[]
+Benthic case
+```
+what is "[]"? : 
+```
+processed_netcdf_dir = pathlib.Path(ssm['paths']['processed_output'])/case/model_var
+dir_list = os.listdir(processed_netcdf_dir)
+```
+
 # Mar 25, 2023
 
 Next: 
