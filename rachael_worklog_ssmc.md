@@ -238,6 +238,32 @@ Last:
 - Calculate DO < 2 for percent hypoxic movies (Region)```Submitted batch job 11128320```
 - plot graphics for percent volume hypoxic (FullDomain)```Submitted batch job 11128370``` (divide by zero error flagged but movies still made) 
 - plot graphics for percent volume hypoxic (Region)```Submitted batch job 11128615```
+- create percent hypoxic movie (FullDomain) ```Submitted batch job 11129243``` (Three times a charm?) 
+- create percent hypoxic movie (Region)```Submitted batch job 11129229```(Three times a charm?) 
+- create min DO (wc) graphics for movie (FullDomain) ```Submitted batch job 11130635```
+- create min DO (wc) graphics for movie (Region) ```Submitted batch job 11130653```
+- create graphics for surface mean salinity concentration (Region) ```Submitted batch job 11130732```
+- create graphics for surface mean salinity concentration (FullDomain)```Submitted batch job 11130741```
+- create min DO concentration movie (FullDomain) ```Submitted batch job 11130908```
+- create min DO concentration movie (Region) ```Submitted batch job 11130935```
+***
+- hotstart of `3n` and `3o`, ```Submitted batch job 11128737```
+- Deleted SOG graphic files for movies to avoid running into my file quota limit again
+
+
+### deleting SOG_NB graphic files to avoid hitting file quota limit
+
+```
+pushd /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/SOG_NB
+(base) [rdmseas@klone-login01 SOG_NB]$ ls
+DOXG/  noncompliance/  salinity/
+(base) [rdmseas@klone-login01 SOG_NB]$ rm -rf salinity/
+(base) [rdmseas@klone-login01 SOG_NB]$ ls DOXG/
+1b_all_sog_wwtp_off/  1d_small_sog_wwtp_off/  1e_med_sog_wwtp_off/  2b_sog_river_2times/  wqm_baseline/  wqm_reference/
+(base) [rdmseas@klone-login01 SOG_NB]$ ls DOXG/wqm_reference/
+movies_SOGZoom/  wc_for_movie/
+(base) [rdmseas@klone-login01 SOG_NB]$ rm -rf DOXG/
+```
 ### noncompliance movies
 graphics us `4x` in name but movie script wants `Mtpx`.
 Changing script back to using Hyak labeling. 
