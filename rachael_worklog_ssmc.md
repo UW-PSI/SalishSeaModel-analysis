@@ -216,6 +216,7 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 # Mar 29th, 2023
 Next: 
 - Complete [main region figures and tables](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7BA78A9065-FCB6-40B4-8839-9C16DB32DEF4%7D&file=Main_Figures%26Tables.xlsx&action=default&mobileredirect=true)
+- debug code for plotting percent_volume_noncompliant 
 - organize git repo into public and private repos
 - Update Figure 3 region to show region names w/o underscore
 - create a "how to" for setting up new input files. 
@@ -231,9 +232,27 @@ Last:
 - mean NO3 daily graphics ```Submitted batch job 11127235```
 - plot noncompliance graphics for movie (Full Domain) ```Submitted batch job 11127203```
 - plot noncompliance graphics for movie (Region) ```Submitted batch job 11127406```
-- create noncompliance movie ```Submitted batch job 11127593```
+- create noncompliance movie (Full Domain) ```Submitted batch job 11127788```
+- create noncompliance movie (Region) ```Submitted batch job 11127833```
+- plot percent volume noncompliant (FullDomain) ```Submitted batch job 11128203```
+- Calculate DO < 2 for percent hypoxic movies (Region)```Submitted batch job 11128320```
+- plot graphics for percent volume hypoxic (FullDomain)```Submitted batch job 11128370``` (divide by zero error flagged but movies still made) 
+- plot graphics for percent volume hypoxic (Region)```Submitted batch job 11128615```
+### noncompliance movies
+graphics us `4x` in name but movie script wants `Mtpx`.
+Changing script back to using Hyak labeling. 
 
+### percent volume hypoxic
 
+Divide by zero error is being flagged.  zero volume?  Need to debug.
+```
+(base) [rdmseas@klone-login01 bash_scripts]$ more slurm-11128203_6.out
+Processing: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/main/DOXG/4g/wc/daily_min_DOXG_wc.nc
+Processing: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/main/DOXG/4g/wc/daily_min_DOXG_wc.nc
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.conda/envs/klone_jupyter/lib/python3.10/site-packages/xarray/core/computation.py:72
+7: RuntimeWarning: invalid value encountered in true_divide
+  result_data = func(*input_data)
+```
 
 # Mar 28, 2023
 
