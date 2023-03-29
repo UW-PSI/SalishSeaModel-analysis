@@ -213,6 +213,66 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
+# Mar 29th, 2023
+Next: 
+- Complete [main region figures and tables](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7BA78A9065-FCB6-40B4-8839-9C16DB32DEF4%7D&file=Main_Figures%26Tables.xlsx&action=default&mobileredirect=true)
+- organize git repo into public and private repos
+- Update Figure 3 region to show region names w/o underscore
+- create a "how to" for setting up new input files. 
+- Find a way to run Ben's post-processing script using SLURM array.  I tried this approach already but my initial attempt didn't work, so I went with quick and easy. 
+- Respond to Stefano's request: 
+	- Where do we document the folder structure  where we store the major large files in hyak ie  history, and various netcdf extracts as well as protocol we do already have in place ie this, I think, is just leaving history files on for each new run until we collectively decide to delete them as Sukyong did with earlier runs.
+	- Briefly, great if you could remind me of ball park size of files (within a few hundred GB) for each step in a single run from history file through to final netcdf files etc. used, before you put outputs on  our shared onedrive. That would be enough to go through what we need to plan for backups.
+	- Presuming the actual steps for each stage of a new run are all in the updated git section you shared on running the model which expanded on Su Kyongs pdf some time back (but tell me if there are other places where there are further documentation also): https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/rachael_worklog_ssmc.md#new-runs
+
+Last: 
+- noncompliance graphics for movies
+- mean salinity daily graphics ```Submitted batch job 11126984```
+- mean NO3 daily graphics ```Submitted batch job 11127235```
+- plot noncompliance graphics for movie (Full Domain) ```Submitted batch job 11127203```
+- plot noncompliance graphics for movie (Region) ```Submitted batch job 11127406```
+- create noncompliance movie ```Submitted batch job 11127593```
+
+
+
+# Mar 28, 2023
+
+Last: 
+- Fixed `3n` and `3o`
+- Fix problem with `ssm['paths']['processed_output'])/case/model_var` fro main case
+- ran graphics scripts
+
+### 3n
+```
+Every 5.0s: tail slurm-11119964.out                               klone-login01: Tue Mar 28 12:13:42 2023
+
+Tue Mar 28 12:13:48 PDT 2023
+scenario_sheet_name: update_090622
+size nh4: (366, 259)
+size no3no2: (366, 259)
+Snohomish 1 (old):  77.80187
+Snohomish 2 (old):  77.80187
+Snohomish 1 (new):  39.071
+Snohomish 2 (new):  39.071
+Tue Mar 28 12:14:00 PDT 2023
+run ended
+```
+### 3o
+```
+Every 5.0s: tail slurm-11119970.out                               klone-login01: Tue Mar 28 12:15:27 2023
+
+Tue Mar 28 12:15:23 PDT 2023
+scenario_sheet_name: update_090622
+size nh4: (366, 259)
+size no3no2: (366, 259)
+Snohomish 1 (old):  77.80187
+Snohomish 2 (old):  77.80187
+Snohomish 1 (new):  58.436435
+Snohomish 2 (new):  58.436435
+Tue Mar 28 12:15:34 PDT 2023
+run ended
+```
+
 # Mar 27, 2023
 Next: 
 1. Fix problem with `ssm['paths']['processed_output'])/case/model_var` fro main case
@@ -220,10 +280,14 @@ Next:
 3. Update Figure 3 region to show region names w/o underscore
 4. create a "how to" for setting up new input files. 
 5. Find a way to run Ben's post-processing script using SLURM array.  I tried this approach already but my initial attempt didn't work, so I went with quick and easy. 
+6. Respond to Stefano's request: 
+	- Where do we document the folder structure  where we store the major large files in hyak ie  history, and various netcdf extracts as well as protocol we do already have in place ie this, I think, is just leaving history files on for each new run until we collectively decide to delete them as Sukyong did with earlier runs.
+	- Briefly, great if you could remind me of ball park size of files (within a few hundred GB) for each step in a single run from history file through to final netcdf files etc. used, before you put outputs on  our shared onedrive. That would be enough to go through what we need to plan for backups.
+	- Presuming the actual steps for each stage of a new run are all in the updated git section you shared on running the model which expanded on Su Kyongs pdf some time back (but tell me if there are other places where there are further documentation also): https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/rachael_worklog_ssmc.md#new-runs
 
 Last: 
 - Created netcdf for `3n` (batch job 11108401) and `3o` (batch job 11108403) output
-- 
+- Ran `process_netcdf.py` for Main Region 
 
 ### Debug calc_noncompliance.py
 
@@ -241,7 +305,11 @@ what is "[]"? :
 processed_netcdf_dir = pathlib.Path(ssm['paths']['processed_output'])/case/model_var
 dir_list = os.listdir(processed_netcdf_dir)
 ```
-
+GAH!  Human error!  I need to `process_netcdf.sh` first
+```
+(base) [rdmseas@klone-login01 bash_scripts]$ sbatch process_netcdf.sh
+Submitted batch job 11109412
+```
 # Mar 25, 2023
 
 Next: 
