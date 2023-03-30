@@ -213,6 +213,24 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
+# Mar 30th, 2023
+Next: 
+- Re-run to include the 50% Green River reduction scenario with the updated names
+- Compile the videos for salinity and NO3 
+- Estimate the concentration in terms of mg/L for each plant in the scenarios that are based on a % reduction
+- If time - create a video that shows the change in the minimum dissolved oxygen concentration between the scenario and reference condition  
+
+
+Last:
+- created movies for surface, mean NO3 (Full Domain) ```Submitted batch job 11147338```
+- created movies for surface, mean NO3 (Region) ```Submitted batch job 11147342```
+- created movies for surface, mean salinity (Full Domain) ```Submitted batch job 11147456```
+- created movies for surface, mean salinity (Region) ```Submitted batch job 11147451```
+- transferred NO3, DOXG, and salinity movies to OneDrive
+- calculated non-compliance with `4k` ```Submitted batch job 11150424```
+- non-compliance time-series ```Submitted batch job 11150461```
+- Noncompliance graphics for movies (Region) ```Submitted batch job 11150510```
+
 # Mar 29th, 2023
 Next: 
 - Complete [main region figures and tables](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7BA78A9065-FCB6-40B4-8839-9C16DB32DEF4%7D&file=Main_Figures%26Tables.xlsx&action=default&mobileredirect=true)
@@ -227,6 +245,8 @@ Next:
 	- Presuming the actual steps for each stage of a new run are all in the updated git section you shared on running the model which expanded on Su Kyongs pdf some time back (but tell me if there are other places where there are further documentation also): https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/rachael_worklog_ssmc.md#new-runs
 
 Last: 
+(I'm going to be more detailed here b/c this is the kind of work that really helps to have a record of to know
+what I've submitted/completed and where I am in the process)
 - noncompliance graphics for movies
 - mean salinity daily graphics ```Submitted batch job 11126984```
 - mean NO3 daily graphics ```Submitted batch job 11127235```
@@ -246,6 +266,9 @@ Last:
 - create graphics for surface mean salinity concentration (FullDomain)```Submitted batch job 11130741```
 - create min DO concentration movie (FullDomain) ```Submitted batch job 11130908```
 - create min DO concentration movie (Region) ```Submitted batch job 11130935```
+- create graphics for mean, surface NO3 (Region) ```Submitted batch job 11134611```
+- create graphics for mean, surface NO3 (FullDomain) ```Submitted batch job 11134598```
+- 
 ***
 - hotstart of `3n` and `3o`, ```Submitted batch job 11128737```
 - Deleted SOG graphic files for movies to avoid running into my file quota limit again
