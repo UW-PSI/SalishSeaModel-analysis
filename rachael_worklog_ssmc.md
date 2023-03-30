@@ -227,9 +227,18 @@ Last:
 - created movies for surface, mean salinity (Full Domain) ```Submitted batch job 11147456```
 - created movies for surface, mean salinity (Region) ```Submitted batch job 11147451```
 - transferred NO3, DOXG, and salinity movies to OneDrive
-- calculated non-compliance with `4k` ```Submitted batch job 11150424```
-- non-compliance time-series ```Submitted batch job 11150461```
-- Noncompliance graphics for movies (Region) ```Submitted batch job 11150510```
+- calculated non-compliance with `4k` ```Submitted batch job 11150724```
+- non-compliance time-series ```Submitted batch job 11150728```
+- Noncompliance graphics for movies (Region) ```Submitted batch job 11150651```
+- Noncompliance graphics for movies (FullDomain) ```Submitted batch job 11150706```
+- calc DO < 2, 5, DO_standard ```Submitted batch job 11150749```
+- plot percent volume hypoxic (Region) ```Submitted batch job 11150775```
+- NO3, mean, surface graphics for movie (Region) ```Submitted batch job 11150898```
+- NO3, mean, surface graphics for movie (FullDomain) ```Submitted batch job 11150913```
+- salinity, mean, surface graphics for movie (FullDomain) ```Submitted batch job 11150915```
+- salinity, mean, surface graphics for movie (Region) ```Submitted batch job 11150982```
+- DOXG, mean, surface graphics for movie (Region) ```Submitted batch job 11151063```
+- DOXG, mean, surface graphics for movie (FullDomain) ```Submitted batch job 11151073```
 
 # Mar 29th, 2023
 Next: 
