@@ -239,6 +239,21 @@ Last:
 - salinity, mean, surface graphics for movie (Region) ```Submitted batch job 11150982```
 - DOXG, mean, surface graphics for movie (Region) ```Submitted batch job 11151063```
 - DOXG, mean, surface graphics for movie (FullDomain) ```Submitted batch job 11151073```
+- Create movies salinity (FullDomain) ```11153869```
+- Create movies salinity (Region) ```11153897```
+- Create movies NO3 (Region) ```11153913```
+- Create movies NO3 (FullDomain) ```11153935```
+- Create movies DOXG (FullDomain) ```11154016``` (x2: Needed to create directory)
+- Create movies DOXG (Region) ```11153982```
+
+Needed to re-do reference graphis
+- Create movie graphics for DOXG (FullDomain) ```11154075```
+- Create movie graphics for DOXG (Region)```11154083```
+- Create movie graphics for salinity (Region)```11154088```
+- Create movie graphics for salinity (FullDomain)```11154094```
+- Create movie graphics for salinity (Region)```11154124```
+- Create movie graphics for NO3 (Region)```11154107```
+- Create movie graphics for NO3 (FullDomain)```11154114```
 
 # Mar 29th, 2023
 Next: 
