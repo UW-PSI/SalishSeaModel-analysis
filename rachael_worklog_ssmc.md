@@ -213,6 +213,26 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
+# Mar 31st, 2023
+Next:
+- IF REDOING MAIN GRAPHICS: Remove "_" from, e.g. "M-tp2"
+- If time - create a video that shows the change in the minimum dissolved oxygen concentration between the scenario and reference condition  
+
+Last:
+- Re-did DOXG graphics for movies to include all water column (Region)```11160570```
+- Re-did DOXG graphics for movies to include all water column (FullDomain)```11160943```
+- DOXG min wc movies (Region) ```11160987```
+- DOXG min wc movies (FullDomain) ```11161425```
+- Create noncompliance timeseries (with new labels) ```11162285```
+- Create noncompliance graphics for movies (FullDomain)```11163289```
+- Create %vol hypoxic graphics for movies (Region)```11163381```
+- Create %vol hypoxic graphics for movies (FullDomain) ```11163413```
+- Create noncompliance graphics for movies (Region)```11163417```
+- Create DO<2 graphics for movies (Region) ```11163440```
+- Create DO<2 graphics for movies (FullDomain)```11163447```
+- Create noncompliance movies (FullDomain)```11163476```
+- Create noncompliance movies (Region)```11163744```
+- 
 # Mar 30th, 2023
 Next: 
 - Re-run to include the 50% Green River reduction scenario with the updated names
