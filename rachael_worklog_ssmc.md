@@ -207,11 +207,69 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 - Do we want to flag date of maximum area non-compliance or maximum volume non-compliance? 
 
 # Steps for creating report graphics
-1. [30 minutes] Post-process the raw output (.out) files.  I have been using the configuration file called [history_npp_wksp120622_sm_A8.yml](/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/bash_scripts/BenRoberts_postprocessing/history_npp_wksp120622_sm_A8.yml](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/BenRoberts_postprocessing/history_npp_wksp120622_sm_A8.yml) and Ben's post-processing script [make_netcdf_output_klone.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/BenRoberts_postprocessing/make_netcdf_output_klone.sh). 
+1. [80 minutes] Post-process the raw output (.out) files.  I have been using the configuration file called [history_npp_wksp120622_sm_A8.yml](/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-analysis/bash_scripts/BenRoberts_postprocessing/history_npp_wksp120622_sm_A8.yml](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/BenRoberts_postprocessing/history_npp_wksp120622_sm_A8.yml) and Ben's post-processing script [make_netcdf_output_klone.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/BenRoberts_postprocessing/make_netcdf_output_klone.sh). 
 2. [10 minutes] Update `file_path` in  [process_netcdf.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) with the different paths to output (now in different folders for SK's and my runs) and run `process_netcdf.sh` for `min DOXG`
 3. [25 minutes] Run [calc_noncompliance.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance.sh) to generate the table for days non-compliance for each scenario and region
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
+
+# Apr 6, 2023
+
+# Apr 5, 2023
+- Debug 4k
+	- Review 4k_blowup coldstart netcdf
+	- debug 4k_blowup hotstart? (not working)
+	- re-evalute input file (to make sure I'm pulling the right file)
+	- compare input loading file for 50% case with 200% case
+	- compare setup between working runs and this run to see what's different 
+- debug code for plotting percent_volume_noncompliant 
+- organize git repo into public and private repos
+- [Low priority: Update Figure 3 region to show region names w/o underscore]
+- create a "how to" for setting up new input files. 
+- Find a way to run Ben's post-processing script using SLURM array.  I tried this approach already but my initial attempt didn't work, so I went with quick and easy. 
+- Respond to Stefano's request: 
+	- Where do we document the folder structure  where we store the major large files in hyak ie  history, and various netcdf extracts as well as protocol we do already have in place ie this, I think, is just leaving history files on for each new run until we collectively decide to delete them as Sukyong did with earlier runs.
+	- Briefly, great if you could remind me of ball park size of files (within a few hundred GB) for each step in a single run from history file through to final netcdf files etc. used, before you put outputs on  our shared onedrive. That would be enough to go through what we need to plan for backups.
+	- Presuming the actual steps for each stage of a new run are all in the updated git section you shared on running the model which expanded on Su Kyongs pdf some time back (but tell me if there are other places where there are further documentation also): https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/rachael_worklog_ssmc.md#new-runs
+- IF REDOING MAIN GRAPHICS: Remove "_" from, e.g. "M-tp2"
+- If time - create a video that shows the change in the minimum dissolved oxygen concentration between the scenario and reference condition  
+- Fix the title hard-code of `Water Column` in `plot_conc_graphics_for_movies.py`
+
+### 4k debug
+Reveiw `4k coldstart` netcdf (based on "blowup" results). Coldstart results look good. Max DO at `15888` is a reasonable number (13.2).  
+
+Restarted `4k hotstart` with new run.
+```
+(base) [rdmseas@klone-login01 run_scenarios]$ sbatch hotstart_setup.sh
+Submitted batch job 11276101
+```
+Create netcdf from new `coldstart` results and confirm that values look OK. 
+```
+(base) [rdmseas@klone-login01 BenRoberts_postprocessing]$ sbatch make_netcdf_output_klone.sh
+Submitted batch job 11276118
+```
+GAH! I keep forgetting that I need to start an interactive node to run this script.  Take two.
+```
+(base) [rdmseas@klone-login01 BenRoberts_postprocessing]$ allocate1
+salloc: Pending job allocation 11276146
+salloc: job 11276146 queued and waiting for resources
+salloc: job 11276146 has been allocated resources
+salloc: Granted job allocation 11276146
+salloc: Waiting for resource configuration
+salloc: Nodes n3138 are ready for job
+(base) [rdmseas@n3138 BenRoberts_postprocessing]$ sbatch make_netcdf_output_klone.sh
+Submitted batch job 11276155
+```
+This took around an hour and a half!
+
+Submitted `process_netcdf.sh` for min DO across water column. 
+
+I initiated a copy of  `hotstart` to `hotstart_clipped` to run Ben's post-processing script w/o running into the problem of the file sizes being different (from an active i/o processing) BUT copying is taking forever.  As an alternative, I just selected DO in `history_DOXG.yml`
+```
+(base) [rdmseas@n3263 BenRoberts_postprocessing]$ sbatch make_netcdf_output_klone.sh 
+Submitted batch job 11282682
+```
+
 
 # Apr 4, 2023
 Next: 
