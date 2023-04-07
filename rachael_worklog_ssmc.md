@@ -214,6 +214,12 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
 # Apr 7, 2023
+## Next:
+- create spreadsheets with loading, discharge, and concentrations
+- start reference run 
+
+### Reminders
+- I created the loading/noncompliance graphic in `create_loading_spreadsheets_main`
 
 # Apr 6, 2023
 
