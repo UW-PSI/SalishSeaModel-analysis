@@ -75,10 +75,10 @@ wqm_linkage.in
       1. change working directory to the directory where you want to create the scenario list. wrk_dir=`/mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/retrial/`
       2. change scenario id (e.g. `4c`)
       3. change directory where `wqm_default/coldstart` is located
-         1. `cp -R /mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/PSI/wqm_default/coldstart $wrk_dir_temp`
+         1. `cp -R /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_default/coldstart $wrk_dir_temp`
       4. change directory where scenario `ssm_pnt_wq.dat` is located
          1. `cp
-/mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/PSI/input_settin g/ssm_pnt_wq_$scenario_index.dat $wrk_dir_temp/coldstart/inputs/ssm_pnt_wq.dat`
+(base) [rdmseas@klone-login01 KingCounty]$ ls /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_default/input_setting/ssm_pnt_wq_$scenario_index.dat $wrk_dir_temp/coldstart/inputs/ssm_pnt_wq.dat`
    2. run the `hotstart_setup.sh`
        1. change working directory to the directory that you want to create scenario list, wrk_dir=`/mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/retrial/`
        2. change scenario id (e.g. `4c`)
@@ -86,7 +86,7 @@ wqm_linkage.in
           1. `cp -R /mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/PSI/wqm_defaul t/hotstart $wrk_dir_temp`
        4. change directory where scenario `ssm_pnt_wq.dat` is located 
           1. `cp
-/mmfs1/gscratch/ssmc/GRPS/ssmc_dev/SuKyong/KingCounty/PSI/input_settin g/ssm_pnt_wq_$scenario_index.dat $wrk_dir_temp/hotstart/inputs/ssm_pnt_wq.dat`
+(base) [rdmseas@klone-login01 KingCounty]$ ls /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_default/input_setting/ssm_pnt_wq_$scenario_index.dat $wrk_dir_temp/hotstart/inputs/ssm_pnt_wq.dat`
 
 
 # HYAK setup
@@ -213,7 +213,37 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
+# Apr 7, 2023
+
 # Apr 6, 2023
+
+## Next (graphics):
+- Submit coldstart for Reference run (to create netcdf with NPP) 
+- Video of Net Primary Production (what to do with the limitation that SK did not save NPP to output netcdf?)
+- Video showing volume days non-compliant 
+- Video that shows the change in the minimum dissolved oxygen concentration between the scenario and reference condition
+
+## Next (maintenance):
+- organize git repo into public and private repos
+- Respond to Stefano's request: 
+	- Where do we document the folder structure  where we store the major large files in hyak ie  history, and various netcdf extracts as well as protocol we do already have in place ie this, I think, is just leaving history files on for each new run until we collectively decide to delete them as Sukyong did with earlier runs.
+	- Briefly, great if you could remind me of ball park size of files (within a few hundred GB) for each step in a single run from history file through to final netcdf files etc. used, before you put outputs on  our shared onedrive. That would be enough to go through what we need to plan for backups.
+	- Presuming the actual steps for each stage of a new run are all in the updated git section you shared on running the model which expanded on Su Kyongs pdf some time back (but tell me if there are other places where there are further documentation also): https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/rachael_worklog_ssmc.md#new-runs
+- Fix the title hard-code of `Water Column` in `plot_conc_graphics_for_movies.py`
+
+## Next (other):
+- debug code for plotting percent_volume_noncompliant (divide by zero error)
+- [Low priority: Update Figure 3 region to show region names w/o underscore]
+- create a "how to" for setting up new input files. 
+- Find a way to run Ben's post-processing script using SLURM array.  I tried this approach already but my initial attempt didn't work, so I went with quick and easy. 
+- IF REDOING MAIN GRAPHICS: Remove "_" from, e.g. "M-tp2"
+
+## Last:
+- submitted `4k` hotstart output -> netcdf
+- submitted `process_netcdf.sh` for `4k` hotstart (11295887)
+- updated `4x` runs to show as `M.x` in labels
+- running non-compliance bash script (11295999)[time: 11 minutes]
+- runing non-compliance time-series bash script (11296675) [time: 6 minutes ], x2 b/c of 4g label mess-up (11298352)
 
 # Apr 5, 2023
 - Debug 4k
