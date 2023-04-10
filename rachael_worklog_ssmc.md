@@ -213,10 +213,20 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
+# Apr 8, 2023
+## Last:
+- Started coldstarts for 4b and 4c
+```
+(base) [rdmseas@klone-login01 run_scenarios]$ sbatch coldstart_setup.sh 
+Submitted batch job 11346605
+```
 # Apr 7, 2023
 ## Next:
 - create spreadsheets with loading, discharge, and concentrations
-- start reference run 
+- start reference run
+- change in the minimum dissolved oxygen concentration between each scenario and the reference condition for: 
+	- M.tp2 W(85%) S&B(3mg/L)
+	- M.tp5 No West 
 
 ### Reminders
 - I created the loading/noncompliance graphic in `create_loading_spreadsheets_main`
