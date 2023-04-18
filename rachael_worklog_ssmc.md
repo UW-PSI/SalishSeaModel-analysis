@@ -213,6 +213,66 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
+# Apr 17, 2023
+
+Email of next steps with an estimate of timeline. 
+
+## Next (graphics):
+- Create NPP netcdfs for 2014 and Reference 
+	- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/WQM_REF/WQM_REF/hotstart/outputs/
+	- /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/WQM/WQM/hotstart/outputs/
+- Video of Net Primary Production for Reference and 2014
+- Video showing volume days non-compliant (2014)  
+- [Non-contractural] Video that shows the change in the minimum dissolved oxygen concentration between the scenario and reference condition (2014)
+- [Non-contractural] annual representation of DO difference (Scenario - Reference), e.g. max or 90% Quantile
+
+## Next (QAQC);
+- See if there is a process process for graphing up 8 ECY nodes (ORCA buoys?) and document it if there is
+	-  Look at scripts in /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/WQM/WQM/hotstart/outputs/
+	-  Where is the data location for the ECY data locations?  
+
+## Next (maintenance):
+- organize git repo into public and private repos
+- Document the proccess of running SalishSeaModel (for 2014 scenario)
+- Respond to Stefano's request: 
+	- Where do we document the folder structure  where we store the major large files in hyak ie  history, and various netcdf extracts as well as protocol we do already have in place ie this, I think, is just leaving history files on for each new run until we collectively decide to delete them as Sukyong did with earlier runs.
+	- Briefly, great if you could remind me of ball park size of files (within a few hundred GB) for each step in a single run from history file through to final netcdf files etc. used, before you put outputs on  our shared onedrive. That would be enough to go through what we need to plan for backups.
+	- Presuming the actual steps for each stage of a new run are all in the updated git section you shared on running the model which expanded on Su Kyongs pdf some time back (but tell me if there are other places where there are further documentation also): https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/rachael_worklog_ssmc.md#new-runs
+- Fix the title hard-code of `Water Column` in `plot_conc_graphics_for_movies.py`
+
+## Next (other):
+- debug code for plotting percent_volume_noncompliant (divide by zero error)
+- [Low priority: Update Figure 3 region to show region names w/o underscore]
+- create a "how to" for setting up new input files. 
+- Find a way to run Ben's post-processing script using SLURM array.  I tried this approach already but my initial attempt didn't work, so I went with quick and easy. 
+- IF REDOING MAIN GRAPHICS: Remove "_" from, e.g. "M-tp2"
+
+
+## Last:
+- I processed `4b` and `4c` during spring break 
+- Submitted `process_netcdf.sh` for `4b` and `4c` (11505688)
+- Submitted `calc_noncompliance.sh` (11505724)
+- Submitted `calc_noncompliance_timeseries.sh` (11506133)
+- Submitted `calc_DO_below_threshiold.sh` (11510526)
+- Updated Main Report doc
+- Submitted `plot_NonCompliance_graphics4movie.sh` for M.tp1 & tp2 (Region, 11548927)
+- Submitted `plot_NonCompliance_graphics4movie.sh` for M.tp1 & tp2 (FullDomain, 11548996)
+- Submitted `plot_percentVolumeHypoxic_movie.sh` for M.tp1 & tp2 (FullDomain, 11549336)
+- Submitted `plot_percentVolumeHypoxic_movie.sh` for M.tp1 & tp2 (Region, 11549551)
+- Submitted `plot_threshold_movie.sh` for M.tp1 & tp2 (Full Domain, 11550475)
+- Submitted `plot_threshold_movie.sh` for M.tp1 & tp2 (Region, 11550417)
+- Submitted `create_noncompliance_movie.sh` for all runs to correct tag from, e.g. M_tp1 to M.tp1 (Region, 11551166)
+- Submitted `create_noncompliance_movie.sh` for all runs, same as above (FullDomain, 11551228)
+- Submitted `create_percentHypoxic_movie.sh` (FullDomain, 11552045)
+- Submitted `create_percentHypoxic_movie.sh`(Region, 11551986)
+- Submitted min DO concentration `plot_conc_graphics_for_movies.sh` (Region, 11553502)
+- Submitted min DO concentration `plot_conc_graphics_for_movies.sh` (FullDomain, 11553519)
+
+
+Documentation
+- Main graphics plot of normalized non-compliance to normalized loading: notebooks/reports/create_loading_spreadsheets_main.ipynb
+- Delta DO graphics: notebooks/QAQC/Evaluate_DO_NO3_differences_Main.ipynb
+- 
 # Apr 8, 2023
 ## Last:
 - Started coldstarts for 4b and 4c
