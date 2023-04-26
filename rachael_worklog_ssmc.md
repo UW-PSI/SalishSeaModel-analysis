@@ -213,8 +213,109 @@ According to page 99 of [this very useful resource on the Sediment Diagenesis Mo
 4. [10 minutes] Run [calc_noncompliance_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh) to create timeseries of non-compliance in excel spreadsheets.  
 5. [30-60] Create time series graphics using []().  This always seems to take more time than I think it will.  Haven't yet refined this step. 
 
-# Apr 17, 2023
+# Apr 26, 2023
 
+## Next Documentation: 
+- Document  the process of running SalishSeaModel (for 2014 scenario), updating existing notes and referring any relevant scripts used in QA
+- QA documentation:  Add to documentation any measured/modeled comparison scripts if available (see Su Kyong scripts).  
+- Share current documentation on steps and scripts  for post-processing and plotting and walk through with Stefano 
+	- Report graphics
+	- Workshop timeseries
+ 
+## Next videos and graphics: 
+- Create NPP netcdfs for 2014 and Reference 
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/WQM_REF/WQM_REF/hotstart/outputs/
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/WQM/WQM/hotstart/outputs/
+- Create Video of Net Primary Production for Reference and 2014
+- Create Video showing volume days non-compliant (2014)  
+- [Non-contractural] Video that shows the change in the minimum dissolved oxygen concentration between the scenario and reference condition (2014)
+- [Non-contractural] annual representation of DO difference (Scenario - Reference), e.g. max or 90% Quantile
+
+## Next (maintenance):
+- organize git repo into public and private repos
+- Mention SK as code contributor in  `QAQC_stations.py` and `QAQC_stations.sh`
+- Add code for running SSM to Git repo and loop in the `QAQC_stations.py` script so excel spreadsheet is automatically created for each run
+- Document the proccess of running SalishSeaModel (for 2014 scenario)
+- Respond to Stefano's request: 
+	- Where do we document the folder structure  where we store the major large files in hyak ie  history, and various netcdf extracts as well as protocol we do already have in place ie this, I think, is just leaving history files on for each new run until we collectively decide to delete them as Sukyong did with earlier runs.
+	- Briefly, great if you could remind me of ball park size of files (within a few hundred GB) for each step in a single run from history file through to final netcdf files etc. used, before you put outputs on  our shared onedrive. That would be enough to go through what we need to plan for backups.
+	- Presuming the actual steps for each stage of a new run are all in the updated git section you shared on running the model which expanded on Su Kyongs pdf some time back (but tell me if there are other places where there are further documentation also): https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/rachael_worklog_ssmc.md#new-runs
+- Fix the title hard-code of `Water Column` in `plot_conc_graphics_for_movies.py`
+
+## Next (other):
+- debug code for plotting percent_volume_noncompliant (divide by zero error)
+- [Low priority: Update Figure 3 region to show region names w/o underscore]
+- create a "how to" for setting up new input files. 
+- Find a way to run Ben's post-processing script using SLURM array.  I tried this approach already but my initial attempt didn't work, so I went with quick and easy. 
+- IF REDOING MAIN GRAPHICS: Remove "_" from, e.g. "M-tp2"
+
+
+## Last:
+- creates a python and shell script to QAQC stations b/c the code is too compute intensive for a jupyterlab notebook (https://github.com/UW-PSI/SalishSeaModel-analysis/blob/main/py_scripts/QAQC_stations.sh)
+
+
+
+### Point validation of SSM model (discussion with Su Kyong)
+Errors:
+- Jupyter Lab notebook SLOWW!!!  (like...hours....)
+- Created my version of sript and ran.  Debuged variable naming error.  
+- Success!
+
+
+# Apr 25, 2023
+## Last
+- Spoke to SK about profile validation
+
+### Point validation of SSM model (discussion with Su Kyong)
+SK wasn't sure if she can share the ECY data for point comparison of DO.  She reccomended that we file a request for the data with ECY directly.  It took over a month for them to get the data from ECY so she suggests that asking for this information sooner is better. 
+
+We discussed the erroneous runs and she shares my hunch that they are from MPI hiccups on Hyak. I (unfortunately) deleted most files already but we know the runs kept running throught the error because non-compliance varied over time, so I'm doubtful that an error would show in the output file.  Looking at variable profiles and comparing to 2014 seems like the best option.  
+
+## Next
+- Work on documentation until Thursday
+- Work on NPP videos
+
+# Apr 24, 2023
+
+Documentation: 
+1) Document  the process of running SalishSeaModel (for 2014 scenario), updating existing notes and referring any relevant scripts used in QA
+2) QA documentation:  Add to documentation any measured/modeled comparison scripts if available (see Su Kyong scripts).  
+3) Share current documentation on steps and scripts  for post-processing and plotting and walk through with Stefano 
+	- Report graphics
+	- Workshop timeseries
+ 
+Videos for website (time permitting): -Rachael lets leave below as you said before, and send with updated timeline next Monday
+4) Create NPP netcdfs for 2014 and Reference 
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/WQM_REF/WQM_REF/hotstart/outputs/
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/WQM/WQM/hotstart/outputs/
+5) Create Video of Net Primary Production for Reference and 2014
+6) Create Video showing volume days non-compliant (2014)  
+
+
+# Apr 18, 2023
+## Last:
+- Submitted min DO concentration `plot_conc_graphics_for_movies.sh` (Region, 11577983)
+- Submitted min DO concentration `plot_conc_graphics_for_movies.sh` (FullDomain, 11577978)
+- Submitted mean surface salinity concetration `plot_conc_graphics_for_movies.sh` (Region, 11577882) 
+- Submitted mean surface salinity concetration `plot_conc_graphics_for_movies.sh` (FullDomain, 11577958)
+- Submitted mean surface NO3 concetration `plot_conc_graphics_for_movies.sh` (Region, 11578002)
+- Submitted mean surface NO3 concetration `plot_conc_graphics_for_movies.sh` (FullDomain, 11578013)*
+- Create min DO movie with `create_conc_movies.sh` (Region, 11579928)
+- Create min DO movie with `create_conc_movies.sh` (FullDomain, 11579942)
+- Create mean, surface salinity movie with `create_conc_movies.sh` (Region, 11579971)
+- Create mean, surface salinity movie with `create_conc_movies.sh` (FullDomain, 11579988)
+- Create mean, surface NO3 movie with `create_conc_movies.sh` (FullDomain, 11580009)
+- Create mean, surface NO3 movie with `create_conc_movies.sh` (Region, 11580026)
+- resubmitted plots for non-compliance so titles have same format (Region, 11580168)
+- resubmitted plots for non-compliance so titles have same format (FullDomain, 11580140)
+- resubmitted plots for percent volume hypoxic for same reason as above (FullDomain, 11580224)
+- resubmitted plots for percent volume hypoxic for same reason as above (Region, 11580204)
+- Create noncompliance movie (FullDomain, 11581316)
+- Create noncompliance movie (Region, 11581393)
+- Create percent volume hypoxic movie (FullDomain, 11581420)
+- Create percent volume hypoxic movie (Region, 11581453)
+
+# Apr 17, 2023
 Email of next steps with an estimate of timeline. 
 
 ## Next (graphics):
