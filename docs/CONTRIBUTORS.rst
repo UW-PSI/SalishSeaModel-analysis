@@ -9,8 +9,8 @@ at the University of Washington's `Puget Sound Institute`_ and `PNNL`_.
 
 The following people have contributed to code development:
 
-* Rachael Mueller <rdmseas@uw.edu> (development lead for this post-processing system, code, and repository)
-* Sukyong Yun <sukyong@uw.edu> (Provided Salish Sea Model run output, an understanding of output file structure, and insight to post-processing methods.)
+* Rachael Mueller <RachaelDMueller@gmail.com> (development lead for creating this SalishSeaModel post-processing system, the code, and the repository.  Setup and ran some of the model results evaluated here.)
+* Sukyong Yun <sukyong.yun@pnnl.gov> (Provided Salish Sea Model run output, an understanding of output file structure, and insight to post-processing methods.)
 * Ben Roberts <bedaro@uw.edu> (Shared knowledge on Salish Sea Model output forma and inspired the method of using a shapefile to organize model information and to plot output.  Provided code for converting Salish Sea Model output files to netcdf.)
 * Kevin Bogue <kbogue13@uw.edu> (Created the shapefiles.)
 
