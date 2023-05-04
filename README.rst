@@ -1,7 +1,7 @@
 ************************
 Salish Sea Model analysis at Puget Sound Institute 
 ************************
-This repository contains a collection of post-processing files designed to create tables, graphics, and movies from Salish Sea Model output. This post-processing system relies on a `.yaml` configuration file for organizing file paths (as well as other information) and a `shapefile` that provides information for each model node (e.g. depth, region name, etc).  See `Project Contributors`_ for a list of those who have contributed to this system and `Cookbook`_ for recipes on how to use the files in this repository to cook up graphics, tables, and movies.   
+This repository contains a collection of post-processing files designed to create tables, graphics, and movies from Salish Sea Model output. I was hired to run existing scripts to create baseline graphics and then develop more advanced analysis methods; however, the scripts weren't provided, so I needed to develop my own.  The advantage of doing so was that it allowed me to develop a system from the ground up.  My system relies on `bash scripts` running `SLURM arrays` that facilitate batch processing of multiple runs.  In addition, I use `.yaml` configuration files to organizing file paths and run information as well as a `shapefile` as the source of information for each model node (e.g. depth, region name, etc). The shapefile was developed by Kevin Bogue and is version controled in a different repository (`SalishSeaModel-grid` in [UW-PSI](https://github.com/UW-PSI/)).  See `Project Contributors`_ for a list of those who have contributed to this system and `Cookbook`_ for recipes on how to use the files in this repository to cook up graphics, tables, and movies.   
 
 Licenses
 ========
