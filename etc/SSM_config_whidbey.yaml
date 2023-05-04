@@ -1,0 +1,217 @@
+variables:
+  name_list:
+  - time
+  - depth
+  - DOXG
+  - LDOC
+  - B1
+  - B2
+  - NH4
+  - NO3
+  - PO4
+  - temp
+  - salinity
+  - RDOC
+  - LPOC
+  - RPOC
+  - TDIC
+  - TALK
+  - pH
+  - pCO2
+siglev_diff:
+- 3.2
+- 5.7
+- 7.5
+- 8.9
+- 10.1
+- 11.1
+- 12.1
+- 13.0
+- 13.8
+- 14.6
+WWTP_names:
+- '  Coupeville'
+- '  Everett Snohomish'
+- '  La Conner'
+- '  Lake Stevens 002'
+- '  Langley'
+- '  Marysville'
+- '  Mt Vernon'
+- '  Mukilteo'
+- '  Oak Harbor Lagoon'
+- '  OF100'
+- '  Penn Cove'
+- '  Skagit County 2 Big Lake'
+- '  Snohomish'
+- '  Stanwood'
+- '  Swinomish'
+- '  Tulalip'
+- '  Warm Beach Campground'
+river_names:
+- '  Skagit R_1'
+- '  Skagit R_2'
+- '  Snohomish R_1'
+- '  Snohomish R_2'
+- '  Stillaguamish R_1'
+- '  Stillaguamish R_2'
+- '  Whidbey east'
+unique_river_names:
+- Skagit
+- Snohomish
+- Stillaguamish
+- Whidbey east
+line:
+  color:
+    wqm_baseline: purple
+    wqm_reference: teal
+    deviation: royalblue
+    3b: blue
+    3c: darkslategrey
+    3e: steelblue
+    3f: sienna
+    3g: brown
+    3h: brown
+    3i: brown
+    3j: brown
+    3l: brown
+    3m: brown
+  width:
+    wqm_baseline: 1.5
+    wqm_reference: 1.5
+    deviation: 1
+    3b: 1.5
+    3c: 2.0
+    3e: 3.0
+    3f: 2.0
+    3g: 3.0
+    3h: 3.0
+    3i: 3.0
+    3j: 3.0
+    3l: 3.0
+    3m: 3.0
+  style:
+    wqm_baseline: solid
+    wqm_reference: solid
+    deviation: solid
+    3b: solid
+    3c: dashdot
+    3e: dashed
+    3f: dashdot
+    3g: dashed
+    3h: dashed
+    3i: dashed
+    3j: dashed
+    3l: dashed
+    3m: dashed
+bw_line:
+  color:
+    scenario: grey
+    baseline: black
+    reference: black
+  width:
+    scenario: 1.5
+    baseline: 1
+    reference: 1.5
+  style:
+    scenario: dashed
+    baseline: solid
+    reference: dashdot
+bar:
+  colors:
+    DOXG: deepskyblue
+    NO3: y
+    NH4: darkolivegreen
+region:
+  colors:
+    Hood: darkseagreen
+    Main: mediumpurple
+    SJF_Admiralty: lightsteelblue
+    SOG_Bellingham: rosybrown
+    South_Sound: c
+    Whidbey: cornflowerblue
+    ALL_REGIONS: black
+paths:
+  model_output:
+    Whidbey:
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_reference/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3b/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3c/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3e/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3f/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3g/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3h/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3i/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/3j/hotstart_rdm.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/3k/hotstart_rdm.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/3l/hotstart_rdm.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3m/ssm_output.nc
+  processed_output: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/
+  graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/
+  movies: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/movies/
+  shapefile: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-grid/shapefiles/SSMGrid2_tce_ecy_node_info_v2_10102022/SSMGrid2_tce_ecy_node_info_v2_10102022.shp
+  nutrient_loading_inputs:
+    wqm_baseline: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/WQM/WQM/hotstart/inputs/ssm_pnt_wq.dat
+    wqm_reference: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/WQM_REF/WQM_REF/hotstart/inputs/ssm_pnt_wq.dat
+    3b: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3b/inputs/ssm_pnt_wq.dat
+    3e: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3e/inputs/ssm_pnt_wq.dat
+    3f: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3f/inputs/ssm_pnt_wq.dat
+    3g: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3g/inputs/ssm_pnt_wq.dat
+    3h: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3h/inputs/ssm_pnt_wq.dat
+    3i: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3i/inputs/ssm_pnt_wq.dat
+    3j: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/3j/hotstart/inputs/ssm_pnt_wq.dat
+    3k: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/3k/hotstart/inputs/ssm_pnt_wq.dat
+    3c: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3c/inputs/ssm_pnt_wq.dat
+    3l: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/3l/hotstart/inputs/ssm_pnt_wq.dat
+    3m: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/3m/inputs/ssm_pnt_wq.dat
+run_information:
+  spin_up_days: 5
+  baseline: wqm_baseline
+  reference: wqm_reference
+  Whidbey_rivers:
+    wqm_baseline: 2014 conditions
+    wqm_reference: Reference conditions
+    3c: Wr1
+    3l: Wr2
+    3m: Wr3
+  Whidbey_WWTPs:
+    wqm_baseline: 2014 conditions
+    wqm_reference: Reference conditions
+    3b: Wtp1
+    3e: Wtp2
+    3f: Wtp3
+    3g: Wtp4
+    3h: Wtp5
+    3i: Wtp6
+    3j: Wtp7
+    3k: Wtp8
+  run_description_short:
+    whidbey:
+      wqm_baseline: 2014 conditions
+      wqm_reference: Reference
+      3b: No Whidbey WWTPs
+      3e: 'No Small WWTPs < 100 TN Kg/day '
+      3f: No Medium WWTPs 100 to 1000 TN Kg/day
+      3g: No Everett Shallow & Deep WWTPs
+      3h: No Everett Shallow (OF015) WWTP
+      3i: No Everett Deep (OF100) WWTP
+      3j: Everett OF015 to OF100 WWTP
+      3k: Everett July-Nov OF015 to OF100 WWTP
+      3c: No Whidbey Rivers
+      3l: 0.5x Industrial River Load
+      3m: 2x 2014 River Load
+  run_tag:
+    whidbey:
+      wqm_baseline: 2014 Conditions
+      wqm_reference: Reference
+      3b: Wtp1
+      3e: Wtp2
+      3f: Wtp3
+      3g: Wtp4
+      3h: Wtp5
+      3i: Wtp6
+      3j: Wtp7
+      3k: Wtp8
+      3c: Wr1
+      3l: Wr2
+      3m: Wr3

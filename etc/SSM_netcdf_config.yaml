@@ -1,0 +1,124 @@
+2D:
+- netPP
+- IAVG
+- zeta
+cb_limits_median:
+  B1:
+  - 0
+  - 1.1
+  B2:
+  - 0
+  - 0.2
+  DOXG:
+  - 2
+  - 15
+  IAVG: fill in
+  NO3:
+  - 0
+  - 0.5
+  depth: '[m]'
+  netPP: '[g m$^{-2}$]'
+  salinity:
+  - 20
+  - 30
+  temp:
+  - 5
+  - 15
+  zeta: '[m]'
+cb_limits_range:
+  B1:
+  - 0
+  - 1
+  B2:
+  - 0
+  - 0.2
+  DOXG:
+  - 0
+  - 8
+  IAVG: fill in
+  NO3:
+  - 0
+  - 0.4
+  depth: '[m]'
+  netPP: '[g m$^{-2}$]'
+  salinity:
+  - 0
+  - 20
+  temp:
+  - 0
+  - 5
+  zeta: '[m]'
+inlet_area_km2:
+  Bellingham Bay: 62.5
+  Case Inlet: 31.5
+  Sinclair Inlet: 6.2
+inlet_colors:
+  Bellingham Bay: mediumseagreen
+  Case Inlet: darksalmon
+  Sinclair Inlet: steelblue
+inlet_label:
+  Bellingham Bay: Bellingham Bay (<20m)
+  Case Inlet: Sinclair Inlet (<17m)
+  Sinclair Inlet: Case Inlet (<50m)
+inlet_nodes:
+  Bellingham Bay: 22
+  Case Inlet: 100
+  Sinclair Inlet: 12
+label_dict:
+  B1: Diatoms
+  B2: Dinoflagellates
+  DOXG: Dissolved Oxygen
+  IAVG: PAR
+  NO3: Nitrate and Nitrite
+  depth: Level Thickness
+  netPP: Depth-integrated Primary Productivity
+  salinity: Salinity
+  temp: Temperature
+  zeta: SSH
+label_dict_with_units:
+  B1: Diatoms [g m$^{-3}$]
+  B2: Dinoflagellates [g m$^{-3}$]
+  DOXG: Dissolved Oxygen [mg/L]
+  IAVG: PAR [Einstein m$^{-2}$ day$^{-1}$]
+  NO3: NO$_3$ [mg/L]
+  depth: Level Thickness [m]
+  netPP: Depth-integrated Primary Productivity [g m$^{-2}$]
+  salinity: Salinity [ppt]
+  temp: Temperature [$^o$C]
+  zeta: SSH [m]
+units:
+  B1: '[g m$^{-3}$]'
+  B2: '[g m$^{-3}$]'
+  DOXG: '[mg/L]'
+  IAVG: '[Einstein m$^{-2}$ day$^{-1}$]'
+  NO3: '[mg/L]'
+  depth: '[m]'
+  netPP: '[g m$^{-2}$]'
+  salinity: '[ppt]'
+  temp: '[$^o$C]'
+  zeta: '[m]'
+y_limits_median:
+  B1:
+  - 0
+  - 8
+  B2:
+  - 0
+  - 2
+  DOXG:
+  - 0
+  - 12
+  NO3:
+  - 0
+  - 4.5
+  netPP:
+  - 0
+  - 4
+  salinity:
+  - 10
+  - 30
+  temp:
+  - 0
+  - 16
+  zeta:
+  - -3
+  - 4.5

@@ -1,0 +1,199 @@
+WWTP_names:
+- '  Brightwater'
+- '  South King'
+- '  West Point'
+bar:
+  colors:
+    DOXG: deepskyblue
+    NH4: darkolivegreen
+    NO3: y
+bw_line:
+  color:
+    baseline: black
+    reference: black
+    scenario: grey
+  style:
+    baseline: solid
+    reference: dashdot
+    scenario: dashed
+  width:
+    baseline: 1
+    reference: 1.5
+    scenario: 1.5
+line:
+  color:
+    4b: darkslategrey
+    4c: darkslategrey
+    4d: cyan
+    4e: steelblue
+    4f: sienna
+    4g: teal
+    4h: royalblue
+    4i: brown
+    4j: olive
+    4k: orchid
+    4l: midnightblue
+    deviation: royalblue
+    wqm_baseline: darkviolet
+    wqm_reference: rebeccapurple
+  style:
+    4b: dashdot
+    4c: dashdot
+    4d: dashdot
+    4e: dashed
+    4f: dashdot
+    4g: dashed
+    4h: dashed
+    4i: dashed
+    4j: dashed
+    4k: dashed
+    4l: dashed
+    deviation: solid
+    wqm_baseline: solid
+    wqm_reference: solid
+  width:
+    4b: 2.0
+    4c: 2.0
+    4d: 2.0
+    4e: 3.0
+    4f: 2.0
+    4g: 3.0
+    4h: 3.0
+    4i: 3.0
+    4j: 3.0
+    4k: 3.0
+    4l: 3.0
+    deviation: 1
+    wqm_baseline: 1.5
+    wqm_reference: 1.5
+paths:
+  graphics: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/
+  model_output:
+    main:
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_baseline/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/wqm_reference/ssm_output.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/4b/ssm_hotstart_4b.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/4c/ssm_hotstart_4c.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/4d/ssm_output_4d.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/4e/ssm_output_4e.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/4f/ssm_output_4f.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/4g/ssm_output_4g.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/4h/ssm_output_4h.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/4i/ssm_output_4i.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/4j/ssm_output_4j.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/4k/ssm_hotstart_4k.nc
+    - /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/4l/ssm_output_4l.nc
+  movies: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/movies/
+  nutrient_loading_inputs:
+    4b: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/4b/hotstart/inputs/ssm_pnt_wq.dat
+    4c: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/4c/hotstart/inputs/ssm_pnt_wq.dat
+    4csk: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/ssm_pnt_wq_4c.dat
+    4d: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/ssm_pnt_wq_4d.dat
+    4e: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/ssm_pnt_wq_4e.dat
+    4f: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/ssm_pnt_wq_4f.dat
+    4g: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/ssm_pnt_wq_4g.dat
+    4h: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/ssm_pnt_wq_4h.dat
+    4i: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/ssm_pnt_wq_4i.dat
+    4j: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/ssm_pnt_wq_4j.dat
+    4k: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel/4k/hotstart/inputs/ssm_pnt_wq.dat
+    4l: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/4x_inputs/ssm_pnt_wq_4l.dat
+    wqm_baseline: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/WQM/WQM/hotstart/inputs/ssm_pnt_wq.dat
+    wqm_reference: /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/kingcounty/WQM_REF/WQM_REF/hotstart/inputs/ssm_pnt_wq.dat
+  processed_output: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/
+  shapefile: /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/SalishSeaModel-grid/shapefiles/SSMGrid2_tce_ecy_node_info_v2_10102022/SSMGrid2_tce_ecy_node_info_v2_10102022.shp
+region:
+  colors:
+    ALL_REGIONS: black
+    Hood: darkseagreen
+    Main: mediumpurple
+    SJF_Admiralty: lightsteelblue
+    SOG_Bellingham: rosybrown
+    South_Sound: c
+    Whidbey: cornflowerblue
+river_names:
+- '  Green R_1'
+- '  Green R_2'
+run_information:
+  Main_WWTPs:
+    4b: M.tp1
+    4c: M.tp2
+    4d: M.tp3
+    4e: M.tp4
+    4f: M.tp5
+    4g: M.tp6
+    4h: M.tp7
+    4i: M.tp8
+    4j: M.tp9
+    wqm_baseline: 2014 conditions
+    wqm_reference: Reference conditions
+  Main_rivers:
+    4k: M.r1
+    4l: M.r2
+    wqm_baseline: 2014 conditions
+    wqm_reference: Reference conditions
+  baseline: wqm_baseline
+  reference: wqm_reference
+  run_description_short:
+    main:
+      4b: "M.tp1: West, South, and Brightwater(3 mg/L, April \u2013 October)"
+      4c: 'M.tp2: West(85%); South and Brightwater(3 mg/L)'
+      4d: 'M.tp3: West, South, and Brightwater(85%)'
+      4e: 'M.tp4: West(50%)'
+      4f: 'M.tp5: No West'
+      4g: 'M.tp6: South(50%)'
+      4h: 'M.tp7: No South'
+      4i: 'M.tp8: Brightwater(50%)'
+      4j: 'M.tp9: No Brightwater'
+      4k: 'M.r1: Green R.(50%)'
+      4l: 'M.r2: Green R.(200%)'
+      wqm_baseline: 2014 conditions
+      wqm_reference: Reference
+  run_tag:
+    main:
+      4b: M.tp1
+      4c: M.tp2
+      4d: M.tp3
+      4e: M.tp4
+      4f: M.tp5
+      4g: M.tp6
+      4h: M.tp7
+      4i: M.tp8
+      4j: M.tp9
+      4k: M.r1
+      4l: M.r2
+      wqm_baseline: 2014 Conditions
+      wqm_reference: Reference
+  spin_up_days: 5
+siglev_diff:
+- 3.2
+- 5.7
+- 7.5
+- 8.9
+- 10.1
+- 11.1
+- 12.1
+- 13.0
+- 13.8
+- 14.6
+unique_river_names:
+- Green
+variables:
+  name_list:
+  - time
+  - depth
+  - DOXG
+  - LDOC
+  - B1
+  - B2
+  - NH4
+  - NO3
+  - PO4
+  - temp
+  - salinity
+  - RDOC
+  - LPOC
+  - RPOC
+  - TDIC
+  - TALK
+  - pH
+  - pCO2
