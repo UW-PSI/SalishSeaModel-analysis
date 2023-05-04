@@ -7,12 +7,12 @@ Licenses
 ========
 :License: Apache License, Version 2.0
 
-All contents in this repository copyright 2022 by the `Project Contributors`_ and the `University of Washington`_.
+All contents in this repository copyright 2022 by Rachael Mueller and the `Project Contributors`_ at `University of Washington`_.  Please cite Rachael Mueller and this repository if using or adapting any of this work in publications, presentations, or reports. 
 
 They are licensed under the Apache License, Version 2.0.
 http://www.apache.org/licenses/LICENSE-2.0
 Please see the LICENSE file for details of the license.
 
-.. _Project Contributors: https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/docs/CONTRIBUTORS.rst
+.. _Project Contributors: https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/CONTRIBUTORS.rst
 .. _University of Washington: https://www.pugetsoundinstitute.org
-.. _Cookbook: https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/docs/creating_graphics_movies.md
+.. _Cookbook: https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/creating_graphics_movies.md
