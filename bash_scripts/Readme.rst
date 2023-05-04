@@ -2,7 +2,7 @@ Licenses
 ========
 :License: Apache License, Version 2.0
 
-All contents in this repository copyright 2022 by the `Project Contributors`_ and the `University of Washington`_.
+All contents in this repository copyright 2022 by Rachael Mueller and the `Project Contributors`_ at the `University of Washington`_.
 
 They are licensed under the Apache License, Version 2.0.
 http://www.apache.org/licenses/LICENSE-2.0
