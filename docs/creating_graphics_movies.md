@@ -19,7 +19,7 @@
 5. [Reference links](#references)
 
 # Introduction <a name="intro"></a>
-The goal of this file is to provide an overview of the setup and resources required to develop the tables, graphics, and animations provided to King County for the evaluation of nutrient loading impacts. It is currently in development.  Please email [Rachael Mueller](mailto:rdmseas@uw.edu) with comments, suggestions, and/or corrections.  
+The goal of this file is to provide an overview of the setup and resources required to develop the tables, graphics, and animations provided to King County for the evaluation of nutrient loading impacts. It is currently in development.  Please email [Rachael Mueller](mailto:RachaelDMueller@gmail.com) with comments, suggestions, and/or corrections.  
 
 # Setup <a name="setup"></a>
 ## Requirements <a name="requirements"></a>
@@ -60,27 +60,30 @@ dependencies:
  - xarray
  - geopandas
 ```
-2. An Apptainer "Container" in which to run FFMPEG.  See, FFMPEG section of [HyakOnboarding.md](https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/docs/HyakOnboarding.md#ffmpeg) in my personal Git folder (future updates will port over here). 
+2. An Apptainer "Container" in which to run FFMPEG.  See, FFMPEG section of [HyakOnboarding.md](https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/docs/HyakOnboarding.md](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/HyakOnboarding.md#ffmpeg). 
 
 ## Create run configuration file <a name="configuration"></a>
-1. Define run and model output file locations using the `2_Scenarios Runs` tab in the OneDrive spreadsheet [Municiap model runs and scripting task list.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/Shared%20Documents/Nutrient%20Science/9.%20Modeling/Municipal%20%20model%20runs%20and%20scripting%20task%20list.xlsx?d=w417abadac06143409d092a23a26727e6&csf=1&web=1&e=tgJY69)
-2. Create [SSM_config_whidbey](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/etc/SSM_config_whidbey.ipynb) file with file paths and tag names for this set of model runs.
+1. Define run and model output file locations. 
+2. Create [SSM_config_whidbey](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/etc/SSM_config_whidbey.ipynb) file with file paths and tag names for this set of model runs.
 
 # Tables <a name="tables"></a>
 ## Create table of noncompliant (days, volume, and percent volume) <a name="noncompliantTable"></a>
 The code for non-compliance uses a threshold value that can be passed in.  The default values for the `scenario - reference` difference is -0.25 mg/L, which is equivalent to the Department of Ecology (DOE) `rounding method` based on a -0.2 mg/L threshold.  See pp. 49 and 50 of Appendix F of [Optimization Report Appendix](https://www.ezview.wa.gov/Portals/_1962/Documents/PSNSRP/Appendices%20A-G%20for%20Tech%20Memo.pdf) for more details.  
-1. Run [process_netcdf.py](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/py_scripts/process_netcdf.py) to generate minimum dissolved oxygen in water column and bottom level.
-Change lines 27 and 231 of `process_netcdf.py` and `calc_DO_noncompliant`, respectively, to call the correct configuration file, `SSM_config_whidbey`, i.e.: 
+1. Run [process_netcdf.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) to generate minimum dissolved oxygen in water column and bottom level.  Select:
+```
+case = "whidbey"
+param="DOXG"
+stat_type="min"
+```
+The result is minimum, daily DO across all levels.  If separate netcdf are wanted for surface and bottom minimum DO then add "1" to function call and these files will be produced as well, i.e.: `python ${py_path}/process_netcdf.py ${file_path} ${param} ${case} ${stat_type} 1 1`
+The output for the minimum value across the entire water column (wc) will be output to the following subdirectory of `ssm['paths']['processed_output']` (in SSM_config_whidbey.ipynb):
+```
+whidbey/DOXG/[RUN_TAG]/wc/daily_min_DOXG_wc.nc
+```
+Replace `wc` above with `surface` and `bottom` for the paths to those files.
 
-```
-with open('../etc/SSM_config_whidbey.yaml', 'r') as file:
-        ssm = yaml.safe_load(file)
-```
-Be sure to update the number of `slurm-arrays` used in bash scripts to match the number of scenarios.  For whidbey, this is:
-```
-#SBATCH --array=0-9
+Note: Be sure to update the number of `slurm-arrays` used in bash scripts to match the number of scenarios.  There is no error-check in this bash script so not all output will be processed if there isn't a sufficient allocation of `slurm-arrays`. 
 
-```
 ## Create tables for calculating DO below 2, 5, and/or DO standard <a name="threshold"></a>
 1. Change case to `whidbey` in `bash_scripts/calc_DO_below_threshold.sh`
 2. I updated code to eliminate need to specify reading `SSM_config_whidbey.yaml` by hard-coding in the use of `case` 
