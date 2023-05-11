@@ -60,7 +60,7 @@ dependencies:
  - xarray
  - geopandas
 ```
-2. An Apptainer "Container" in which to run FFMPEG.  See, FFMPEG section of [HyakOnboarding.md](https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/docs/HyakOnboarding.md](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/HyakOnboarding.md#ffmpeg). 
+2. An Apptainer "Container" in which to run FFMPEG.  See, FFMPEG section of [HyakOnboarding.md](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/HyakOnboarding.md#ffmpeg). 
 
 ## Create run configuration file <a name="configuration"></a>
 1. Define run and model output file locations. 
@@ -85,8 +85,7 @@ Replace `wc` above with `surface` and `bottom` for the paths to those files.
 Note: Be sure to update the number of `slurm-arrays` used in bash scripts to match the number of scenarios.  There is no error-check in this bash script so not all output will be processed if there isn't a sufficient allocation of `slurm-arrays`. 
 
 ## Create tables for calculating DO below 2, 5, and/or DO standard <a name="threshold"></a>
-1. Change case to `whidbey` in `bash_scripts/calc_DO_below_threshold.sh`
-2. I updated code to eliminate need to specify reading `SSM_config_whidbey.yaml` by hard-coding in the use of `case` 
+1. Change case to `whidbey` in `bash_scripts/calc_DO_below_threshold.sh`.  This is the only update needed between different cases, because I updated the code to eliminate need to specify reading `SSM_config_whidbey.yaml` by hard-coding in the use of `case` 
 ```
 with open('../etc/SSM_config_{case}.yaml', 'r') as file:
    ssm = yaml.safe_load(file)
@@ -98,8 +97,8 @@ with open('../etc/SSM_config_{case}.yaml', 'r') as file:
 The runtime for creating these spreadsheets (using a slurm array over three nodes, one for each spreadsheet) is: ~16 minutes
 
 File Reference:
-- [calc_DO_below_threshold.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_DO_below_threshold.sh)
-- [calc_DO_below_threshold.py](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/py_scripts/calc_DO_below_threshold.py)
+- [calc_DO_below_threshold.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_DO_below_threshold.sh)
+- [calc_DO_below_threshold.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/calc_DO_below_threshold.py)
 
 # Graphics <a name="graphics"></a>
 ## Create time series graphics for volume noncompliant <a name="noncompliantTS"></a>
