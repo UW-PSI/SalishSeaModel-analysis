@@ -1,7 +1,7 @@
 ************************
 Salish Sea Model analysis at Puget Sound Institute 
 ************************
-This repository contains a collection of post-processing files designed to create tables, graphics, and movies from Salish Sea Model output.  My goal was to be strategic in code development so as to produce well-organized and efficient system; but I was hired onto this project when there was already an urgent need to produce results.  I met this urgent need while also a system that stategically uses `.yaml` configuration files to organizing file paths and run information as well as a `shapefile` as the source of information for each model node (e.g. depth, region name, etc).  I also introduced `SLURM arrays` in bash scripts to help facilitate batch processing of multiple runs.  I have tried to address the places where urgent need won over my senses of good coding practices but may have missed some spots.  Please contact me if you have any questions.  
+This repository contains a collection of post-processing files designed to create tables, graphics, and movies from Salish Sea Model output.  Here is a link to `some examples of my graphics`_.  My goal was to be strategic in code development in ordder to produce a well-organized and efficient system; but I was hired onto this project when there was already an urgent need to produce results.  I did my best to meet this urgent need while also creating a sustaining system that stategically uses `.yaml` configuration files to organizing file paths and run information as well as a `shapefile` as the source of information for each model node (e.g. depth, region name, etc).  I also introduced `SLURM arrays` in bash scripts to help facilitate batch processing of multiple runs.  I have tried to address the places where urgent need won over my senses of good coding practices but may have missed some spots.  Please contact me if you have any questions.  
 
 If using or adapting this code for publications, presentations, or reports, then please cite this repository.
 
@@ -22,3 +22,4 @@ http://www.apache.org/licenses/LICENSE-2.0.  Please see the LICENSE file for det
 .. _University of Washington: https://www.pugetsoundinstitute.org
 .. _Cookbook: https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/creating_graphics_movies.md
 .. _ssmhist2netcdf: https://github.com/bedaro/ssm-analysis/tree/main/ssmhist2cdf
+.. _some examples of my graphics: https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/graphic_examples.md
