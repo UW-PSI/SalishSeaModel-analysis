@@ -1,6 +1,7 @@
 # Salish Sea Model output graphics 
-These are some simple graphics that I created to help develop a sense of baseline values and differences.  Most of the graphics were created on a time crunch and for the purpose of internal use and learning.  Even so, I share them here as a way of documenting code and because the insights/knowledge may be more broadly of interest.  
-Please reference this repository if you find this information helpful and develop it further.       
+These are some simple graphics that I created to help develop a sense of baseline values and differences.  Most of these graphics were created for the purpose of internal use and learning.  
+
+Please reference this repository if used.  
 
 ---
 Overview of 2014 Conditions
