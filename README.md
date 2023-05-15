@@ -5,9 +5,9 @@ This repository contains a collection of post-processing files designed to creat
 
 ![ECY compliance regions](/graphics/NodeMap_All_ECYcolors.png "ECY compliance regions")
 
-My job was to develop the coding platform and analyses to address questions of how these different regions respond to changes in nutrient inputs from rivers and wastewater treatment plants.  I was also asked to develop information on marine conditions.  Here is a link to [some examples of graphics](/docs/graphic_examples.md) showing marine conditions and regional characterics.  
+My job was to develop the coding platform and analyses to address questions of how these different regions respond to changes in nutrient inputs from rivers and wastewater treatment plants.  I was also asked to develop information on marine conditions.  Here is a link to [some examples of graphics](/docs/graphic_examples.md) showing marine conditions and regional characterics.   
 
-My goal in this work was to be strategic in code development in ordder to produce a well-organized and efficient system; but I was hired onto this project when there was already an urgent need to produce results and no system or code in place to do so.  I did my best to meet the urgent need while also being strategic in my code development.  
+My goal in this work was to be strategic in code development in ordder to produce a well-organized and efficient system; but I was hired onto this project when there was already an urgent need to produce results and no system or code in place to do so.  One of my contributions was to meet the urgent need while also creating coherence through my code development.  
 
 The system that I developed stategically uses a `.yaml` configuration files to organizing file paths and run information as well as using a `shapefile` as the source of information for each model node (e.g. depth, region name, etc).  I also introduced `SLURM arrays` in bash scripts to help facilitate batch processing of multiple runs.  Results from this work have been incorporated into three reports (one each for the SOG/Bellingham, Whidbey, and Main regions) as well as workshop presentations.  
 
@@ -22,5 +22,5 @@ Licenses
 :License: Apache License, Version 2.0
 
 All contents in this repository copyright 2022 by Rachael Mueller and [University of Washington](https://www.pugetsoundinstitute.org).  They are licensed under the Apache License, Version 2.0.
-http://www.apache.org/licenses/LICENSE-2.0.  Please see the [LICENSE](/LICENSE) file for details of the license and reference this repository if using or adapting this code for publications, presentations, or reports.
+http://www.apache.org/licenses/LICENSE-2.0.  Please see the [LICENSE](/LICENSE) file for details of the license and reference this repository if using or adapting this work.
 
