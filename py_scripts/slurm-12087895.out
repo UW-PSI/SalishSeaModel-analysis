@@ -1,0 +1,19 @@
+starting the run
+Wed Apr 26 14:14:17 PDT 2023
+findfont: Font family ['arial'] not found. Falling back to DejaVu Sans.
+findfont: Font family ['arial'] not found. Falling back to DejaVu Sans.
+findfont: Font family ['arial'] not found. Falling back to DejaVu Sans.
+findfont: Font family ['arial'] not found. Falling back to DejaVu Sans.
+findfont: Font family ['arial'] not found. Falling back to DejaVu Sans.
+2.744810930887858  minutes to open files
+*** Calling save_statistic_analysis_pd ***
+0.06998963356018066  minutes to save statistics excel
+*** Calling save_lyr_ME_analysis_pd ***
+0.0029140154520670572  minutes to save layer information to excel
+*** looping through stations ***
+0
+1
+2
+2.946271475156148  minutes to save layer information to excel
+Wed Apr 26 14:17:42 PDT 2023
+run ended

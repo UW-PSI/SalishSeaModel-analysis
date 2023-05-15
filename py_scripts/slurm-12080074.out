@@ -1,0 +1,10 @@
+starting the run
+Wed Apr 26 11:40:22 PDT 2023
+2.724715566635132  minutes to open files
+*** Calling save_statistic_analysis_pd ***
+Traceback (most recent call last):
+  File "QAQC_stations.py", line 243, in <module>
+    save_statistic_analysis_pd(base_values, compare_values, scenario_name)
+NameError: name 'scenario_name' is not defined
+Wed Apr 26 11:43:33 PDT 2023
+run ended
