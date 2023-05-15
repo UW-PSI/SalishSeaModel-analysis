@@ -1,10 +1,13 @@
 ***
 # Salish Sea Model analysis at Puget Sound Institute 
 ***
-This repository contains a collection of post-processing files designed to create tables, graphics, and movies from Salish Sea Model output.  Here is a link to [some examples of my graphics](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/graphic_examples.md). The project focused on understanding nutrient loading impacts in regions deliniated by Washington State Department of Ecology and shown below. 
+This repository contains a collection of post-processing files designed to create tables, graphics, and movies from Salish Sea Model output.  The project focused on understanding nutrient loading impacts in regions deliniated by the Washington State Department of Ecology and shown below. 
 
+Here is a link to [some examples of graphics](/docs/graphic_examples.md).
 
-My job was to develop the coding platform and analyses to develop this knowledge.  My goal was to be strategic in code development in ordder to produce a well-organized and efficient system; but I was hired onto this project when there was already an urgent need to produce results.  I did my best to meet this urgent need while also creating a sustaining system that stategically uses `.yaml` configuration files to organizing file paths and run information as well as a `shapefile` as the source of information for each model node (e.g. depth, region name, etc).  I also introduced `SLURM arrays` in bash scripts to help facilitate batch processing of multiple runs.  
+![ECY compliance regions](/graphics/NodeMap_All_ECYcolors.png "ECY compliance regions")
+
+My job was to develop the coding platform and analyses to develop this knowledge.  My goal was to be strategic in code development in ordder to produce a well-organized and efficient system; but I was hired onto this project when there was already an urgent need to produce results.  I did my best to meet this urgent need while also creating a sustaining system by stategically developing `.yaml` configuration files to organizing file paths and run information as well as using a `shapefile` as the source of information for each model node (e.g. depth, region name, etc).  I also introduced `SLURM arrays` in bash scripts to help facilitate batch processing of multiple runs.  
 
 I have tried to address the places where urgent need won over my senses of better/preferred coding practices, but I probably missed some spots.  Please contact me if you have any questions.  
 
