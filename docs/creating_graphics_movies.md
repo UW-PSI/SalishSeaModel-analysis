@@ -151,10 +151,11 @@ run_tag=(
 It takes ~0.1 minutes of computing time to create the graphics.
 
 File Reference:
-- [calc_DO_noncompliant_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_DO_noncompliant_timeseries.sh)
-- [calc_DO_noncompliant_timeseries.py](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/py_scripts/calc_DO_noncompliant_timeseries.py)
-- [plot_noncompliant_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/py_scripts/calc_DO_noncompliant_timeseries.py)
-- [plot_noncompliant_timeseries.py](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/py_scripts/plot_noncompliant_timeseries.py)
+- [calc_noncompliance_timeseries.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh)
+- [calc_noncompliance_timeseries.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/calc_noncompliance_timeseries.py)
+- [plot_noncompliance_timeseries.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_noncompliance_timeseries.ipynb)
+Previously used:
+- [plot_noncompliance_timeseries.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/plot_noncompliance_timeseries.py)
 
 ### 5-panel time series <a name="noncompliantTS_5panel"></a>
 
@@ -162,7 +163,7 @@ File Reference:
 - [calc_DO_noncompliant_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_DO_noncompliant_timeseries.sh)
 - [calc_DO_noncompliant_timeseries.py](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/py_scripts/calc_DO_noncompliant_timeseries.py)
 - [plot_5panel_noncompliant_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/plot_5panel_noncompliant_timeseries.sh)
-- [plot_5panel_noncompliant_timeseries.py](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/py_scripts/plot_5panel_noncompliant_timeseries.py)
+- [plot_5panel_noncompliant_timeseries.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/plot_5panel_noncompliant_timeseries.py)
 
 ## Nutrient Loading graphics <a name="nutrientLoading"></a>
 
