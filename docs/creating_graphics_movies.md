@@ -177,8 +177,8 @@ apptainer exec --bind ${graphics_dir} --bind ${output_dir} ~/ffmpeg.sif ffmpeg -
 ```
 Here, I use `-framerate 6` to get a minute-long movie by incorporating 6 images per second from a pool of ~366 images.  Including `-vcodec mpeg4` was neeccessary for me to get the product to play on my macOS Monterey.  We ran into trouble playing the output on a PC and worked around this problem by saving to `.avi` before finding the problem was on the PC side.  In the process of troubleshooting, I also read that adding `-c:v libx264 -pix_fmt yuv420p` can make the `.mp4` more broadly accessible, but I haven't yet received confirmation that this is an important/neccessary specification.  
 
-## Salinity, N03 and DO for the Whidbey run cases <a name="moviesConc"></a>
-1. Create a sub-set of the model output that only includes information for the desired variable (e.g. `DOXG`).  A file will be created for all 3D values and can be created for surface-only and bottom-only values using the `surface_flag` and/or `bottom_flag` when calling [process_netcdf.py]().  Use [process_netcdf.sh]() for a shell script to call `process_netcdf.py` with the desired setup. The way I have the file structure setup, the files are saved to, e.g.: ```/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/SOG_NB/DOXG/2a_sog_river_0.5times/surface/daily_mean_DOXG_surface.nc```
+## Salinity, N03, and DO <a name="moviesConc"></a>
+1. Create a sub-set of the model output that only includes information for the desired variable (e.g. `DOXG`).  A file will be created for all 3D values and can be created for surface-only and bottom-only values using the `surface_flag` and/or `bottom_flag` when calling [process_netcdf.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/process_netcdf.py).  Use [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) for a shell script to call `process_netcdf.py` with the desired setup. The way I have the file structure setup, the files are saved to, e.g.: ```/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/SOG_NB/DOXG/2a_sog_river_0.5times/surface/daily_mean_DOXG_surface.nc```
 <br /> A different choice that I'm considering is:<br /> ```/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/SOG_NB/DOXG/surface/2a_sog_river_0.5times/daily_mean_DOXG_surface.nc``` 
 
 2. Create a set of graphics for creating movies, with daily graphics saved to, e.g.:
@@ -205,13 +205,18 @@ The code for non-compliance uses a threshold value that can be passed in.  The d
 3. [create_DO_noncompliant_movie.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/create_DO_noncompliant_movie.sh)
 
 ## Concentration (DO, salinity, NO3) <a name="moviesConcentration"></a>
-1. [process_netcdf_DOXG_whidbey.sh]()
-    - Saves netcdf files to `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/whidbey/DOXG/{SCENARIO_NAME}/{LOC}` where `{LOC}` is either wc (water column), bottom, or surface. 
-
+1. [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh): Saves desired concentration information to netcdf files stored in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/{case}/{param}/{SCENARIO_NAME}/{LOC}` where:
+    -  `{case}` is SOG_NB, whidbey or main,
+    -  `{param}` is the SSM output parameter name (e.g. DOXG),
+    -  `{SCENARIO_NAME}` is the run-tag used on HYAK (e.g. `3m`), and
+    -  {LOC}` is either wc (water column), bottom, or surface. 
+2. [plot_conc_graphics_for_movies.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_conc_graphics_for_movies.sh): Uses output from [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) to create daily plots of concentration maps for either `FullDomain` or `Regional` view.  The `Regional` view uses region names in the shapefile and only plots the concentrations for the unmasked nodes within the given region.  The `FullDomain` graphics show values for masked and unmasked nodes. This script requires patience. 
+3. [create_conc_movies.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_conc_movies.sh). Uses a FFMPEG apptainer to compile individual graphic outputs from `plot_conc_graphics_for_movies.sh` into a .mp4 movie.  This script goes quickly. 
 
 # References <a name="references"></a>
-1. [Municiap model runs and scripting task list.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/Shared%20Documents/Nutrient%20Science/9.%20Modeling/Municipal%20%20model%20runs%20and%20scripting%20task%20list.xlsx?d=w417abadac06143409d092a23a26727e6&csf=1&web=1&e=tgJY69)
+1. [Municipal model runs and scripting task list.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/Shared%20Documents/Nutrient%20Science/9.%20Modeling/Municipal%20%20model%20runs%20and%20scripting%20task%20list.xlsx?d=w417abadac06143409d092a23a26727e6&csf=1&web=1&e=tgJY69) (Internal PSI document)
 2. [Whidbey configuration file](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/etc/SSM_config_whidbey.ipynb)
-3. [Whidbey_Figures&Tables.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B9011F04E-F423-4B45-A0EA-75338168A1B3%7D&file=Whidbey_Figures%26Tables.xlsx&action=default&mobileredirect=true)
-4. [SOG_NB_Figures&Tables.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B3788B09C-126F-40BF-86AF-22DEC185E831%7D&file=SOG_NB_Figures%26Tables.xlsx&action=default&mobileredirect=true)
+3. [Whidbey_Figures&Tables.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B9011F04E-F423-4B45-A0EA-75338168A1B3%7D&file=Whidbey_Figures%26Tables.xlsx&action=default&mobileredirect=true) (Internal PSI document)
+4. [SOG_NB_Figures&Tables.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B3788B09C-126F-40BF-86AF-22DEC185E831%7D&file=SOG_NB_Figures%26Tables.xlsx&action=default&mobileredirect=true) (Internal PSI document)
+5. [Main_Figures&Tables](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/Shared%20Documents/Nutrient%20Science/9.%20Modeling/7.3%20Main/Main_Figures%26Tables.xlsx?d=wa78a9065fcb640b488399c16db32def4&csf=1&web=1&e=V4z8Bd) (Internal PSI document)
 
