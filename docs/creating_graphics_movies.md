@@ -8,8 +8,6 @@
     2. [Dissolved Oxygen below 2, 5, and DO standard by region](#threshold)
 3. [Graphics](#graphics)
     1. [Time series of volume noncompliant](#noncompliantTS)
-        - [Individual time series](#noncompliantTS_individual)
-        - [5-panel time series compiliations](#noncompliantTS_5panel)
     2. [Nutrient Loadings (WWTP and rivers)](#nutrientLoading)
 4. [Animations](#movies)
     1. [Salinity, N03, and/or DOXG (map-style)](#moviesConc)
@@ -103,7 +101,7 @@ File Reference:
 # Graphics <a name="graphics"></a>
 ## Create time series graphics for volume noncompliant <a name="noncompliantTS"></a>
 ### Individual time series <a name="noncompliantTS_individual"></a>
-Updated [calc_DO_noncompliant_timeseries.sh]():
+Updated [calc_noncompliant_timeseries.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh):
 ```
 #SBATCH --array=0-9
 
@@ -149,6 +147,11 @@ run_tag=(
 )
 ```
 It takes ~0.1 minutes of computing time to create the graphics.
+### Multi-panel time series of noncompliance <a name="noncompliantTS_allruns"></a>
+In the interest of time, I gave up one creating an adaptable script and instead modified the Jupyter Notebook [plot_noncompliance_timeseries.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_noncompliance_timeseries.ipynb) for each regional application. 
+
+An example of the resulting graphic is below: 
+![Whidbey region timeseries graphic](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_Whidbey_noncompliant_m0p25_wc_TS.png)
 
 File Reference:
 - [calc_noncompliance_timeseries.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh)
@@ -156,19 +159,16 @@ File Reference:
 - [plot_noncompliance_timeseries.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_noncompliance_timeseries.ipynb)
 Previously used:
 - [plot_noncompliance_timeseries.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/plot_noncompliance_timeseries.py)
-
-### 5-panel time series <a name="noncompliantTS_5panel"></a>
-
-File Reference:
-- [calc_DO_noncompliant_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_DO_noncompliant_timeseries.sh)
-- [calc_DO_noncompliant_timeseries.py](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/py_scripts/calc_DO_noncompliant_timeseries.py)
 - [plot_5panel_noncompliant_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/plot_5panel_noncompliant_timeseries.sh)
 - [plot_5panel_noncompliant_timeseries.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/plot_5panel_noncompliant_timeseries.py)
 
 ## Nutrient Loading graphics <a name="nutrientLoading"></a>
 
-These are still done in a Jupyter Notebook that requires quite a bit of manual editing. 
-See [plot_nutrient_loading_whidbey.ipynb](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/notebooks/plot_nutrient_loading_whidbey.ipynb)
+These plots are still done in a Jupyter Notebook that requires quite a bit of manual editing. 
+See [plot_nutrient_loading_whidbey.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_nutrient_loading_whidbey.ipynb).  Examples of the resulting graphics are shown below. Grey shading between the `2014` and `reference` conditions is used to highlight changes over time.
+
+![river nutrient loading timeseries example](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_river_loadings.png)
+![wwtp nutrient loading timeseries example](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_WWTP_loadings.png)
 
 # Animations <a name="movies"></a>
 All animations are created using the software `ffmpeg` through an Apptainer Container, on Hyak.  It wasn't obvious to me how to control the runtime, and I needed to do a bit of online searching and experimenting to figure out a solution.  What I found was that the `-r` flag didn't do anything.  The solution that worked for my setup was the `-framerate` flag, e.g.:
