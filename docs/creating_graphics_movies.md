@@ -14,10 +14,13 @@
     2. [Hypoxic cells (DO < 2 mg/l, map-style)](#moviesHypoxia)
     3. [Percent volume of cell that is hypoxic (DO < 2 mg/l, map-style)](#moviesPercentHypoxic)
     4. [Dissolved oxygen noncompliant (scenario - reference < -0.2 or -0.25)](#moviesNonComplaint)
-5. [Reference links](#references)
+5. [Making sure there aren't problems with the inputs and outputs](#QAQC)
+    1.[Nutrient loading inputs](#qaqc_loading)  
+    2.[Model output](#qaqc_modeloutput)
+6. [Reference links](#references)
 
 # Introduction <a name="intro"></a>
-The goal of this file is to provide an overview of the setup and resources required to develop the tables, graphics, and animations provided to King County for the evaluation of nutrient loading impacts. It is currently in development.  Please email [Rachael Mueller](mailto:RachaelDMueller@gmail.com) with comments, suggestions, and/or corrections.  
+The goal of this file is to provide an overview of the setup and resources required to develop the tables, graphics, and animations provided to King County for the evaluation of nutrient loading impacts. In all of these cases, I was provided with a list of runs to evaluate and was requested to create a particular kind of graphic.  Included here is documentation on the code used to create the products.  The data to create these graphics and tables are not included and would need to be provided by Stefano Mazzilli at Puget Sound Institute.  Please email [Rachael Mueller](mailto:RachaelDMueller@gmail.com) with comments, suggestions, and/or corrections to the code or documentation.  
 
 # Setup <a name="setup"></a>
 ## Requirements <a name="requirements"></a>
@@ -212,6 +215,15 @@ The code for non-compliance uses a threshold value that can be passed in.  The d
     -  {LOC}` is either wc (water column), bottom, or surface. 
 2. [plot_conc_graphics_for_movies.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_conc_graphics_for_movies.sh): Uses output from [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) to create daily plots of concentration maps for either `FullDomain` or `Regional` view.  The `Regional` view uses region names in the shapefile and only plots the concentrations for the unmasked nodes within the given region.  The `FullDomain` graphics show values for masked and unmasked nodes. This script requires patience. 
 3. [create_conc_movies.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_conc_movies.sh). Uses a FFMPEG apptainer to compile individual graphic outputs from `plot_conc_graphics_for_movies.sh` into a .mp4 movie.  This script goes quickly. 
+
+# Making sure there aren't problems with the inputs and outputs <a name="QAQC"></a>
+## Nutrient loading inputs <a name="qaqc_loading"></a>  
+## Model output <a name="qaqc_modeloutput"></a>
+Other models that I've worked with have crashed when solutions become infinite but that's not the case with this version of ICM.  The way that I learned this was to notice outliers in plots that compare normalized noncompliance to normalized nitrogen.  See cases `Wtp1` (typo for `Mtp1`) and `Mtp2` in below figure. 
+[!qaqc volume days](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline_orig.png)
+A closer look revealed oxygen outputs that I recall being O(1e38), i.e. too high.  There were reported issues with MPI on the HPC at the time.  Su Kyong and I are suspicious that these high numbers are the result of a glitch in the parallel processing. Re-running the erroneous runs fixed the problem.  
+[!qaqc volume days](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline.png)
+The concept for the graphic of normalized non-compliance to normalized nitrogen loading was introduced by Joel Baker and developed further here to separate out the cases where nitrogen loading is varied in WWTPs from those in which nitrogen is varied in river inputs.  
 
 # References <a name="references"></a>
 1. [Municipal model runs and scripting task list.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/Shared%20Documents/Nutrient%20Science/9.%20Modeling/Municipal%20%20model%20runs%20and%20scripting%20task%20list.xlsx?d=w417abadac06143409d092a23a26727e6&csf=1&web=1&e=tgJY69) (Internal PSI document)
