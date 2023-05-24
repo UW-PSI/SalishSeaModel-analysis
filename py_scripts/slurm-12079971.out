@@ -1,8 +1,0 @@
-starting the run
-Wed Apr 26 11:39:25 PDT 2023
-  File "QAQC_stations.py", line 262
-    end_final = time.time()
-    ^
-SyntaxError: invalid syntax
-Wed Apr 26 11:39:26 PDT 2023
-run ended
