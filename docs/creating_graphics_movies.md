@@ -85,6 +85,8 @@ Replace `wc` above with `surface` and `bottom` for the paths to those files.
 
 Note: Be sure to update the number of `slurm-arrays` used in bash scripts to match the number of scenarios.  There is no error-check in this bash script so not all output will be processed if there isn't a sufficient allocation of `slurm-arrays`. 
 
+2. Run the [bash script for creating non-compliance table](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance.sh).  This bash script calls the python script [calc_noncompliance.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/calc_noncompliance.py)
+
 ## Create tables for calculating DO below 2, 5, and/or DO standard <a name="threshold"></a>
 1. Change case to `whidbey` in `bash_scripts/calc_DO_below_threshold.sh`.  This is the only update needed between different cases, because I updated the code to eliminate need to specify reading `SSM_config_whidbey.yaml` by hard-coding in the use of `case` 
 ```
