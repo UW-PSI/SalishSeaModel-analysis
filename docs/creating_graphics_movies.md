@@ -15,8 +15,8 @@
     3. [Percent volume of cell that is hypoxic (DO < 2 mg/l, map-style)](#moviesPercentHypoxic)
     4. [Dissolved oxygen noncompliant (scenario - reference < -0.2 or -0.25)](#moviesNonComplaint)
 5. [Making sure there aren't problems with the inputs and outputs](#QAQC)
-    1.[Nutrient loading inputs](#qaqc_loading)  
-    2.[Model output](#qaqc_modeloutput)
+    1. [Nutrient loading inputs](#qaqc_loading)  
+    2. [Model output](#qaqc_modeloutput)
 6. [Reference links](#references)
 
 # Introduction <a name="intro"></a>
