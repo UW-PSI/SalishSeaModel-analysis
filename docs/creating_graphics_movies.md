@@ -156,7 +156,6 @@ It takes ~0.1 minutes of computing time to create the graphics.
 In the interest of time, I gave up one creating an adaptable script and instead modified the Jupyter Notebook [plot_noncompliance_timeseries.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_noncompliance_timeseries.ipynb) for each regional application. 
 
 An example of the resulting graphic is below: 
-![Whidbey region timeseries graphic](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_Whidbey_noncompliant_m0p25_wc_TS.png)
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_Whidbey_noncompliant_m0p25_wc_TS.png" width="400" />
 File Reference:
 - [calc_noncompliance_timeseries.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh)
@@ -174,8 +173,6 @@ See [plot_nutrient_loading_whidbey.ipynb](https://github.com/RachaelDMueller/Sal
 
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_river_loadings.png" width="400" />
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_WWTP_loadings.png" width="400" />
-![river nutrient loading timeseries example](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_river_loadings.png)
-![wwtp nutrient loading timeseries example](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_WWTP_loadings.png)
 
 # Animations <a name="movies"></a>
 All animations are created using the software `ffmpeg` through an Apptainer Container, on Hyak.  It wasn't obvious to me how to control the runtime, and I needed to do a bit of online searching and experimenting to figure out a solution.  What I found was that the `-r` flag didn't do anything.  The solution that worked for my setup was the `-framerate` flag, e.g.:
@@ -222,16 +219,13 @@ The code for non-compliance uses a threshold value that can be passed in.  The d
 
 # Making sure there aren't problems with the inputs and outputs <a name="QAQC"></a>
 ## Nutrient loading inputs <a name="qaqc_loading"></a>  
+Salish Sea Model nitrogen inputs are in units of concentration but some of our runs required altering loading.  In these runs, I needed to scale concentrations appropriately in order to accurately change the loading.  These graphics reflect my internal QAQC to ensure that I scaled the nitrogen levels correctly and as requested.  
+
 ## Model output <a name="qaqc_modeloutput"></a>
 Other models that I've worked with have crashed when solutions become infinite but that's not the case with this version of ICM.  The way that I learned this was to notice outliers in plots that compare normalized noncompliance to normalized nitrogen.  See cases `Wtp1` (typo for `Mtp1`) and `Mtp2` in below figure. 
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline_orig.png" width="400" />
-
-[!qaqc volume days](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline_orig.png)
 A closer look revealed oxygen outputs that I recall being O(1e38), i.e. too high.  There were reported issues with MPI on the HPC at the time.  Su Kyong and I are suspicious that these high numbers are the result of a glitch in the parallel processing. Re-running the erroneous runs fixed the problem.  
-
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline.png" width="400" />
-
-[!qaqc volume days](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline.png)
 The concept for the graphic of normalized non-compliance to normalized nitrogen loading was introduced by Joel Baker and developed further here to separate out the cases where nitrogen loading is varied in WWTPs from those in which nitrogen is varied in river inputs.  
 
 # References <a name="references"></a>
