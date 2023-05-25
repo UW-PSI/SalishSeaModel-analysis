@@ -4,11 +4,15 @@
     1. [System requirements](#requirements)
     2. [Creating a configuration file](#configuration)
 2. [Tables](#tables)
-    1. [Non-compliance by region (days, volume, and percent volume)](#noncompliantTable)
-    2. [Dissolved Oxygen below 2, 5, and DO standard by region](#threshold)
+    1. [Nutrient loading by scenario based on model input files](#nutrientLoadingFromInputFile)
+    2. [Regional information](#regionalInformation)
+    3. [Non-compliance by region (days, volume, and percent volume)](#noncompliantTable)
+    4. [Dissolved Oxygen below 2, 5, and DO standard by region](#threshold)
 3. [Graphics](#graphics)
     1. [Time series of volume noncompliant](#noncompliantTS)
-    2. [Nutrient Loadings (WWTP and rivers)](#nutrientLoading)
+    2. [Noncompliance by region](#noncompliantDaysByRegion)
+    3. [Normalized noncompliance vs. volume days](#noncompliance_vs_volumedays)
+    4. [Nutrient Loadings (WWTP and rivers)](#nutrientLoading)
 4. [Animations](#movies)
     1. [Salinity, N03, and/or DOXG (map-style)](#moviesConc)
     2. [Hypoxic cells (DO < 2 mg/l, map-style)](#moviesHypoxia)
@@ -68,6 +72,13 @@ dependencies:
 2. Create [SSM_config_whidbey](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/etc/SSM_config_whidbey.ipynb) file with file paths and tag names for this set of model runs.
 
 # Tables <a name="tables"></a>
+## Nutrient loading by scenario based on model input files <a name="nutrientLoadingFromInputFile"></a>
+I developed code to create a table of the total nitrogen loading for each scenario based on getting the values directly from input files. Thanks again to Ben Roberts for his help in understanding the file formats and providing better code than what I had cooked up in my first attempt at creating a solution!
+I haven't yet developed the method into a script and relied on my [Table1_NutrientLoadings.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/Table1_NutrientLoadings.ipynb) notebook for creating the tables.
+
+## Regional information <a name="regionalInformation"></a>
+Questions were raised about the area, volume, depth, nitrogen sources, etc. for the different regions explored in this project, and I helped answer these questions with [Table2_RegionInformation.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/Table2_RegionInformation.ipynb) and the table it produces.  
+
 ## Create table of noncompliant (days, volume, and percent volume) <a name="noncompliantTable"></a>
 The code for non-compliance uses a threshold value that can be passed in.  The default values for the `scenario - reference` difference is -0.25 mg/L, which is equivalent to the Department of Ecology (DOE) `rounding method` based on a -0.2 mg/L threshold.  See pp. 49 and 50 of Appendix F of [Optimization Report Appendix](https://www.ezview.wa.gov/Portals/_1962/Documents/PSNSRP/Appendices%20A-G%20for%20Tech%20Memo.pdf) for more details.  
 1. Run [process_netcdf.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) to generate minimum dissolved oxygen in water column and bottom level.  Select:
@@ -105,6 +116,7 @@ File Reference:
 
 # Graphics <a name="graphics"></a>
 ## Create time series graphics for volume noncompliant <a name="noncompliantTS"></a>
+
 ### Individual time series <a name="noncompliantTS_individual"></a>
 Updated [calc_noncompliant_timeseries.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh):
 ```
@@ -168,13 +180,27 @@ Previously used:
 - [plot_5panel_noncompliant_timeseries.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_5panel_noncompliant_timeseries.sh)
 - [plot_5panel_noncompliant_timeseries.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/plot_5panel_noncompliant_timeseries.py)
 
-## Nutrient Loading graphics <a name="nutrientLoading"></a>
+## Number of noncompliant days for each region <a name="noncompliantDaysByRegion"></a>
+<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_NoncompliantDaysByRegion_notext_reordered.png" width="600" />
+This graphic was developed in [plot_noncompliant_days_by_Region.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_noncompliant_days_by_Region.ipynb) by specifying case (SOG_NB, whidbey, main) and using tag names in configuration .yaml files. 
 
+## Normalized volume non-compliance vs. nitrogen loading <a name="noncompliance_vs_volumedays"></a>
+The method for creating this graphic evolved as I developed the ability to read loading quantities directly from the input files. The three regions and corresponding notebooks are: 
+1. SOG ([plot_sog_loading_vs_noncompliance.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_sog_loading_vs_noncompliance.ipynb))
+<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/sog_nitrogen_volumedays_ALL_REGIONS.png" width="400" />
+2. Whidbey 
+        1.[create_loading_spreadsheets_whidbey.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/create_loading_spreadsheets_whidbey.ipynb)
+        2.[plot_whidbey_loading_vs_noncompliance.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_whidbey_loading_vs_noncompliance.ipynb)
+<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_nitrogen_volumedays_fit_Whidbey_2panel.png" width="600" />
+3. Main ([create_loading_spreadsheets_main.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/create_loading_spreadsheets_main.ipynb))
+<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline.png" width="300" />
+
+## Nutrient Loading graphics <a name="nutrientLoading"></a>
 These plots are still done in a Jupyter Notebook that requires quite a bit of manual editing. 
 See [plot_nutrient_loading_whidbey.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_nutrient_loading_whidbey.ipynb).  Examples of the resulting graphics are shown below. Grey shading between the `2014` and `reference` conditions is used to highlight changes over time.
 
-<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_river_loadings.png" width="400" />
-<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_WWTP_loadings.png" width="400" />
+<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_river_loadings.png" width="600" />
+<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_WWTP_loadings.png" width="600" />
 
 # Animations <a name="movies"></a>
 All animations are created using the software `ffmpeg` through an Apptainer Container, on Hyak.  It wasn't obvious to me how to control the runtime, and I needed to do a bit of online searching and experimenting to figure out a solution.  What I found was that the `-r` flag didn't do anything.  The solution that worked for my setup was the `-framerate` flag, e.g.:
