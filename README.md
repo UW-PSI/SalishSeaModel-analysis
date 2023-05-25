@@ -8,7 +8,7 @@ This repository contains a collection of post-processing files designed to creat
 My job was to develop the coding platform and analyses to address questions of how these different regions respond to changes in nutrient inputs from rivers and wastewater treatment plants.  I wasn't included in the decision-making for the types of runs or products; I was simply asked to make the magic happen in a way that aligned with the project goals of enhanced transparency.  My accomplishments include: 
 1. Reducing the turn-around time on post-processing model output from weeks to days.
 2. Strategically developing code in order to produce a well-organized and efficient system while meeting an urgent need that was established prior to my being hired.
-3. Identifying the mathematical equivalent of a series of logic statements that were used in a "rounding method" to quantify deviations in dissolved oxygen (used in a regulatory standard) and simplifying the calculation of this "noncompliance" with a mathematically equivalent but more simple approach.  
+3. Identifying the mathematical equivalent of a series of logic statements that were used in a "rounding method" to quantify deviations in dissolved oxygen (used in a regulatory standard) and simplifying the calculation of [noncompliance](py_scripts/calc_noncompliance.py) with a mathematically equivalent, albeit more simple, approach.  
 4. Developing information on marine conditions.  [Click here for some examples of graphics and links to code](/docs/graphic_examples.md). 
 5. Creating a method to batch process runs and synthesize requested information via:
     1.  [spreadsheets](/docs/creating_graphics_movies.md#tables-), 
