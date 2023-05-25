@@ -277,8 +277,8 @@ if __name__=='__main__':
         shp, case, scope, float(human_allowance), float(non_compliant_threshold))
         
     # make README 
-    this_file = '=HYPERLINK("https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/py_scripts/calc_noncompliant.py")'
-    run_description = '=HYPERLINK("https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/docs/supporting/KingCounty_Model_Runs.xlsx","KingCounty_Model_Runs.xlsx")'
+    this_file = '=HYPERLINK("https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/calc_noncompliant.py")'
+    run_description = '=HYPERLINK("https://github.com/RachaelDMueller/SalishSeaModel-analysis/tree/main/etc", "See corresponding config file")'
     non_compliant_threshold=f'{non_compliant_threshold} mg/l'
     noncompliant = f'Non Compliant in this table is defined as < {non_compliant_threshold} mg/l. A non_compliant_threshold threshold of -0.25 is described in pages 49 and 50 of the Optimization report appendix.'
     noncompliant_link = '=HYPERLINK("https://www.ezview.wa.gov/Portals/_1962/Documents/PSNSRP/Appendices%20A-G%20for%20Tech%20Memo.pdf", "Optimization Report Appendix")'

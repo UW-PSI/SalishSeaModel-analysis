@@ -224,10 +224,10 @@ if __name__=='__main__':
     start = time.time()
 
     # load yaml file containing path definitions.  This file is created by
-    # https://github.com/UWModeling/SalishSeaModel-analysis/tree/main/bash_scripts/SSM_config_whidbey.ipynb
+    # https://github.com/RachaelDMueller/SalishSeaModel-analysis/tree/main/bash_scripts/SSM_config_whidbey.ipynb
     # but can also be modified here (with the caveat the modifications will be 
     # over-written when the SSM_config.ipynb is run
-    # https://github.com/UWModeling/SalishSeaModel-analysis/tree/main/bash_scripts/etc/SSM_config_whidbey.yaml
+    # https://github.com/RachaelDMueller/SalishSeaModel-analysis/tree/main/bash_scripts/etc/SSM_config_whidbey.yaml
     with open(f'../etc/SSM_config_{case}.yaml', 'r') as file:
         ssm = yaml.safe_load(file)
         # get shapefile path    
@@ -244,7 +244,7 @@ if __name__=='__main__':
     )
     
     # make README 
-    this_file = '=HYPERLINK("https://github.com/UWModeling/SalishSeaModel-analysis/tree/main/bash_scripts/calc_DO_below_threshold.sh","calc_DO_below_threshold.sh")'
+    this_file = '=HYPERLINK("https://github.com/RachaelDMueller/SalishSeaModel-analysis/tree/main/bash_scripts/calc_DO_below_threshold.sh","calc_DO_below_threshold.sh")'
     run_description  = '=HYPERLINK("https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/docs/supporting/KingCounty_Model_Runs.xlsx","KingCounty_Model_Runs.xlsx")'
     ndays = 'Number of days where DO < threshold anywhere in Region (or in benthic layer of region if benthic case)'
     vd = 'Total volume of cells in region that experienced DO < threshold over the course of the year'
