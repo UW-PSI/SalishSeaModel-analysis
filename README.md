@@ -5,7 +5,7 @@ This repository contains a collection of post-processing files designed to creat
 
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/NodeMap_All_ECYcolors.png" width="400" />
 
-My job was to develop the coding platform and analyses to address questions of how these different regions respond to changes in nutrient inputs from rivers and wastewater treatment plants.  I wasn't included in the decision-making for the types of runs or products; I was simply asked to make the magic happen in a way that aligned with the project goals of enhanced transparency.  My accomplishments include: 
+My job was to develop the coding platform and analyses to address questions of how these different regions respond to changes in nutrient inputs from rivers and wastewater treatment plants.  I was asked to make the magic happen to produce requested information in a way that aligned with the project goals of enhancing transparency.  My accomplishments include: 
 1. Reducing the turn-around time on post-processing model output from weeks to days.
 2. Strategically developing code in order to produce a well-organized and efficient system while meeting an urgent need that was established prior to my being hired.
 3. Identifying the mathematical equivalent of a series of logic statements that were used in a "rounding method" to quantify deviations in dissolved oxygen (used in a regulatory standard) and simplifying the calculation of [noncompliance](py_scripts/calc_noncompliance.py) with a mathematically equivalent, albeit more simple, approach.  
