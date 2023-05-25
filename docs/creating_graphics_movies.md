@@ -164,7 +164,7 @@ File Reference:
 - [plot_noncompliance_timeseries.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_noncompliance_timeseries.ipynb)
 Previously used:
 - [plot_noncompliance_timeseries.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/plot_noncompliance_timeseries.py)
-- [plot_5panel_noncompliant_timeseries.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/plot_5panel_noncompliant_timeseries.sh)
+- [plot_5panel_noncompliant_timeseries.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_5panel_noncompliant_timeseries.sh)
 - [plot_5panel_noncompliant_timeseries.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/plot_5panel_noncompliant_timeseries.py)
 
 ## Nutrient Loading graphics <a name="nutrientLoading"></a>
@@ -194,20 +194,20 @@ _wwtp_off/surface_for_movie/
 The script takes ~15 minutes of computing time to run, with each case running in tandem on a separate node (via a slurm array), i.e., the script will take ~15 minutes to process regardless of the number of cases. 
 
 ## Hypoxia (DO < 2 mg/l) <a name="moviesHypoxia"></a>
-1. [calc_DO_below_threshold.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_DO_below_threshold.sh)
-2. [plot_threshold_movie.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/plot_threshold_movie.sh)
-3. [create_DO_threshold_movie.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/create_DO_threshold_movie.sh)
+1. [calc_DO_below_threshold.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_DO_below_threshold.sh)
+2. [plot_threshold_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_threshold_movie.sh)
+3. [create_DO_threshold_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_DO_threshold_movie.sh)
 
 ## Percent Hypoxic <a name="moviesPercentHypoxic"></a>
-1. [process_netcdf_DOXG_whidbey.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf_DOXG_whidbey.sh)
-2. [plot_percentVolumeHypoxic_movie.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/plot_percentVolumeHypoxic_movie.sh)
-3. [create_percentHypoxic_movie.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/create_percentHypoxic_movie.sh)
+1. [process_netcdf_DOXG_whidbey.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf_DOXG_whidbey.sh)
+2. [plot_percentVolumeHypoxic_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_percentVolumeHypoxic_movie.sh)
+3. [create_percentHypoxic_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_percentHypoxic_movie.sh)
 
 ## NonComplaint <a name="moviesNonComplaint"></a>
 The code for non-compliance uses a threshold value that can be passed in.  The default values for the `scenario - reference` difference is -0.25 mg/L, which is equivalent to the Department of Ecology (DOE) `rounding method` based on a -0.2 mg/L threshold.  See pp. 49 and 50 of Appendix F of  [Optimization Report Appendix](https://www.ezview.wa.gov/Portals/_1962/Documents/PSNSRP/Appendices%20A-G%20for%20Tech%20Memo.pdf) for more details.
-1. [calc_DO_noncompliant.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/calc_DO_noncompliant.sh)
-2. [plot_noncompliant_movie.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/plot_noncompliant_movie.sh)
-3. [create_DO_noncompliant_movie.sh](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/bash_scripts/create_DO_noncompliant_movie.sh)
+1. [calc_DO_noncompliant.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_DO_noncompliant.sh)
+2. [plot_noncompliant_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_noncompliant_movie.sh)
+3. [create_DO_noncompliant_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_DO_noncompliant_movie.sh)
 
 ## Concentration (DO, salinity, NO3) <a name="moviesConcentration"></a>
 1. [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh): Saves desired concentration information to netcdf files stored in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/{case}/{param}/{SCENARIO_NAME}/{LOC}` where:
@@ -229,7 +229,7 @@ The concept for the graphic of normalized non-compliance to normalized nitrogen 
 
 # References <a name="references"></a>
 1. [Municipal model runs and scripting task list.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/Shared%20Documents/Nutrient%20Science/9.%20Modeling/Municipal%20%20model%20runs%20and%20scripting%20task%20list.xlsx?d=w417abadac06143409d092a23a26727e6&csf=1&web=1&e=tgJY69) (Internal PSI document)
-2. [Whidbey configuration file](https://github.com/UWModeling/SalishSeaModel-analysis/blob/main/etc/SSM_config_whidbey.ipynb)
+2. [Whidbey configuration file](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/etc/SSM_config_whidbey.ipynb)
 3. [Whidbey_Figures&Tables.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B9011F04E-F423-4B45-A0EA-75338168A1B3%7D&file=Whidbey_Figures%26Tables.xlsx&action=default&mobileredirect=true) (Internal PSI document)
 4. [SOG_NB_Figures&Tables.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B3788B09C-126F-40BF-86AF-22DEC185E831%7D&file=SOG_NB_Figures%26Tables.xlsx&action=default&mobileredirect=true) (Internal PSI document)
 5. [Main_Figures&Tables](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/Shared%20Documents/Nutrient%20Science/9.%20Modeling/7.3%20Main/Main_Figures%26Tables.xlsx?d=wa78a9065fcb640b488399c16db32def4&csf=1&web=1&e=V4z8Bd) (Internal PSI document)
