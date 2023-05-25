@@ -156,7 +156,9 @@ It takes ~0.1 minutes of computing time to create the graphics.
 In the interest of time, I gave up one creating an adaptable script and instead modified the Jupyter Notebook [plot_noncompliance_timeseries.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_noncompliance_timeseries.ipynb) for each regional application. 
 
 An example of the resulting graphic is below: 
-<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_Whidbey_noncompliant_m0p25_wc_TS.png" width="400" />
+<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_Whidbey_noncompliant_m0p25_wc_TS.png" width="600" />
+
+
 File Reference:
 - [calc_noncompliance_timeseries.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh)
 - [calc_noncompliance_timeseries.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/calc_noncompliance_timeseries.py)
