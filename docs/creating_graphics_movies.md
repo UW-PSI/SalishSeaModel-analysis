@@ -157,7 +157,7 @@ In the interest of time, I gave up one creating an adaptable script and instead 
 
 An example of the resulting graphic is below: 
 ![Whidbey region timeseries graphic](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_Whidbey_noncompliant_m0p25_wc_TS.png)
-
+<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_Whidbey_noncompliant_m0p25_wc_TS.png" width="400" />
 File Reference:
 - [calc_noncompliance_timeseries.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_noncompliance_timeseries.sh)
 - [calc_noncompliance_timeseries.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/calc_noncompliance_timeseries.py)
@@ -172,6 +172,8 @@ Previously used:
 These plots are still done in a Jupyter Notebook that requires quite a bit of manual editing. 
 See [plot_nutrient_loading_whidbey.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_nutrient_loading_whidbey.ipynb).  Examples of the resulting graphics are shown below. Grey shading between the `2014` and `reference` conditions is used to highlight changes over time.
 
+<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_river_loadings.png" width="400" />
+<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_WWTP_loadings.png" width="400" />
 ![river nutrient loading timeseries example](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_river_loadings.png)
 ![wwtp nutrient loading timeseries example](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_WWTP_loadings.png)
 
@@ -222,8 +224,13 @@ The code for non-compliance uses a threshold value that can be passed in.  The d
 ## Nutrient loading inputs <a name="qaqc_loading"></a>  
 ## Model output <a name="qaqc_modeloutput"></a>
 Other models that I've worked with have crashed when solutions become infinite but that's not the case with this version of ICM.  The way that I learned this was to notice outliers in plots that compare normalized noncompliance to normalized nitrogen.  See cases `Wtp1` (typo for `Mtp1`) and `Mtp2` in below figure. 
+<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline_orig.png" width="400" />
+
 [!qaqc volume days](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline_orig.png)
 A closer look revealed oxygen outputs that I recall being O(1e38), i.e. too high.  There were reported issues with MPI on the HPC at the time.  Su Kyong and I are suspicious that these high numbers are the result of a glitch in the parallel processing. Re-running the erroneous runs fixed the problem.  
+
+<img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline.png" width="400" />
+
 [!qaqc volume days](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline.png)
 The concept for the graphic of normalized non-compliance to normalized nitrogen loading was introduced by Joel Baker and developed further here to separate out the cases where nitrogen loading is varied in WWTPs from those in which nitrogen is varied in river inputs.  
 
