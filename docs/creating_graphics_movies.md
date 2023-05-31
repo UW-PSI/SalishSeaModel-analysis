@@ -14,10 +14,10 @@
     3. [Normalized noncompliance vs. volume days](#noncompliance_vs_volumedays)
     4. [Nutrient Loadings (WWTP and rivers)](#nutrientLoading)
 4. [Animations](#movies)
-    1. [Salinity, N03, and/or DOXG (map-style)](#moviesConc)
+    1. [Salinity, N03, and/or DOXG (map-style)](#moviesConcentration)
     2. [Hypoxic cells (DO < 2 mg/l, map-style)](#moviesHypoxia)
     3. [Percent volume of cell that is hypoxic (DO < 2 mg/l, map-style)](#moviesPercentHypoxic)
-    4. [Dissolved oxygen noncompliant (scenario - reference < -0.2 or -0.25)](#moviesNonComplaint)
+    4. [Dissolved oxygen noncompliance (scenario - reference < -0.2 or -0.25)](#moviesNonComplaint)
 5. [Making sure there aren't problems with the inputs and outputs](#QAQC)
     1. [Nutrient loading inputs](#qaqc_loading)  
     2. [Model output](#qaqc_modeloutput)
@@ -87,7 +87,7 @@ case = "whidbey"
 param="DOXG"
 stat_type="min"
 ```
-The result is minimum, daily DO across all levels.  If separate netcdf are wanted for surface and bottom minimum DO then add "1" to function call and these files will be produced as well, i.e.: `python ${py_path}/process_netcdf.py ${file_path} ${param} ${case} ${stat_type} 1 1`
+The result is minimum, daily DO across all levels.  If separate NetCDF are wanted for surface and bottom minimum DO then add "1" to function call and these files will be produced as well, i.e.: `python ${py_path}/process_netcdf.py ${file_path} ${param} ${case} ${stat_type} 1 1`
 The output for the minimum value across the entire water column (wc) will be output to the following subdirectory of `ssm['paths']['processed_output']` (in SSM_config_whidbey.ipynb):
 ```
 whidbey/DOXG/[RUN_TAG]/wc/daily_min_DOXG_wc.nc
@@ -208,23 +208,26 @@ All animations are created using the software `ffmpeg` through an Apptainer Cont
 apptainer exec --bind ${graphics_dir} --bind ${output_dir} ~/ffmpeg.sif ffmpeg -start_number 6 -framerate 6 -i ${graphics_dir}${case}_${run_tags[${SLURM_ARRAY_TASK_ID}]}_${param}_${stat_type}_conc_${loc}_%d_whidbeyZoom.png -vcodec mpeg4 ${output_dir}${case}_${run_tags[${SLURM_ARRAY_TASK_ID}]}_${param}_${stat_type}_${loc}_whidbeyZoom.mp4
 ```
 Here, I use `-framerate 6` to get a minute-long movie by incorporating 6 images per second from a pool of ~366 images.  Including `-vcodec mpeg4` was neeccessary for me to get the product to play on my macOS Monterey.  We ran into trouble playing the output on a PC and worked around this problem by saving to `.avi` before finding the problem was on the PC side.  In the process of troubleshooting, I also read that adding `-c:v libx264 -pix_fmt yuv420p` can make the `.mp4` more broadly accessible, but I haven't yet received confirmation that this is an important/neccessary specification.  
-## Create netcdf file for variable of interest
-All animations require a netcdf of whatever variable (DOXG, salinity, NO3, etc.) and statistic (min, max, mean, etc.) that is being represented.  Theses are created using: [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh).  They only have to be created once, but I include this as a first step for all movies listed below so that the instructions are "stand alone."  If this step is done for one movie it does not need to be repeated for another. 
+## Create NetCDF file for variable of interest
+All animations require a NetCDF of whatever variable (DOXG, salinity, NO3, etc.) and statistic (min, max, mean, etc.) that is being represented.  Theses are created using: [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh).  These NetCDF only have to be created once, but I include this as a first step for all movies listed below so that the instructions are "stand alone."  If this step is done for one movie it does not need to be repeated for another. [Process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) saves desired concentration information to NetCDF files stored in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/{case}/{param}/{SCENARIO_NAME}/{LOC}` where:
+    -  `{case}` is SOG_NB, whidbey or main,
+    -  `{param}` is the SSM output parameter name (e.g. DOXG),
+    -  `{SCENARIO_NAME}` is the run-tag used on HYAK (e.g. `3m`), and
+    -  {LOC}` is either wc (water column), bottom, or surface. 
 
-## Salinity, N03, and DO <a name="moviesConc"></a>
-1. Create a sub-set of the model output that only includes information for the desired variable (e.g. `DOXG`).  A file will be created for all 3D values and can be created for surface-only and bottom-only values using the `surface_flag` and/or `bottom_flag` when calling [process_netcdf.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/process_netcdf.py).  Use [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) for a shell script to call `process_netcdf.py` with the desired setup. The way I have the file structure setup, the files are saved to, e.g.: 
-```
-/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/whidbey/DOXG/3b/wc/daily_min_DOXG_wc.nc
-```
+## Concentration (DO, salinity, NO3) <a name="moviesConcentration"></a>
 
-2. Create a set of graphics for creating movies using [plot_conc_graphics_for_movies.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_conc_graphics_for_movies.sh).  Daily graphics are saved to, e.g.:
+1. [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh): Creates a NetCDF of the model output that only includes information for the desired variable (e.g. `DOXG`).  A file is automatically created for all 3D values and can be created for surface-only and bottom-only values using the `surface_flag` and/or `bottom_flag` when calling [process_netcdf.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/process_netcdf.py).  Use [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) for a shell script to call `process_netcdf.py` with the desired setup. The way I have the file structure setup, the files are saved to, e.g.: 
+`/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/{case}/{param}/{SCENARIO_NAME}/{LOC}` where:
+    -  `{case}` is SOG_NB, whidbey or main,
+    -  `{param}` is the SSM output parameter name (e.g. DOXG),
+    -  `{SCENARIO_NAME}` is the run-tag used on HYAK (e.g. `3m`), and
+    -  {LOC}` is either wc (water column), bottom, or surface. 
+2. [plot_conc_graphics_for_movies.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_conc_graphics_for_movies.sh): Uses output from [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) to create daily plots of concentration maps for either `FullDomain` or `Regional` view.  The `Regional` view uses region names in the shapefile and only plots the concentrations for the unmasked nodes within the given region.  The `FullDomain` graphics show values for masked and unmasked nodes. This script requires patience (~15 minutes). Daily graphics are saved to, e.g.:
 ```
 /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/whidbey/DOXG/concentration/movies/FullDomain/wc/3b/whidbey_3b_DOXG_min_conc_wc_1.png
 ```
-The script takes ~15 minutes of computing time to run, with each case running in tandem on a separate node (via a slurm array), i.e., the script will take ~15 minutes to process regardless of the number of cases. 
-
-3.  Create concentration movies using [create_conc_movies.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_conc_movies.sh)
-There is an option `FullDomain` or `Region`.  The script will no over-write existing movies. 
+3. [create_conc_movies.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_conc_movies.sh). Uses a FFMPEG apptainer to compile individual graphic outputs from `plot_conc_graphics_for_movies.sh` into a .mp4 movie.  This script goes quickly. There is an option `FullDomain` or `Region`.  The script will no over-write existing movies.
 
 ## Hypoxia (DO < 2 mg/l) <a name="moviesHypoxia"></a>
 1. [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh).  
@@ -239,17 +242,8 @@ There is an option `FullDomain` or `Region`.  The script will no over-write exis
 ## NonComplaint <a name="moviesNonComplaint"></a>
 The code for non-compliance uses a threshold value that can be passed in.  The default values for the `scenario - reference` difference is -0.25 mg/L, which is equivalent to the Department of Ecology (DOE) `rounding method` based on a -0.2 mg/L threshold.  See pp. 49 and 50 of Appendix F of  [Optimization Report Appendix](https://www.ezview.wa.gov/Portals/_1962/Documents/PSNSRP/Appendices%20A-G%20for%20Tech%20Memo.pdf) for more details.
 1. [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh)
-2. [plot_noncompliant_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_noncompliant_movie.sh)
-3. [create_DO_noncompliant_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_DO_noncompliant_movie.sh)
-
-## Concentration (DO, salinity, NO3) <a name="moviesConcentration"></a>
-1. [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh): Saves desired concentration information to netcdf files stored in `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/{case}/{param}/{SCENARIO_NAME}/{LOC}` where:
-    -  `{case}` is SOG_NB, whidbey or main,
-    -  `{param}` is the SSM output parameter name (e.g. DOXG),
-    -  `{SCENARIO_NAME}` is the run-tag used on HYAK (e.g. `3m`), and
-    -  {LOC}` is either wc (water column), bottom, or surface. 
-2. [plot_conc_graphics_for_movies.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_conc_graphics_for_movies.sh): Uses output from [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) to create daily plots of concentration maps for either `FullDomain` or `Regional` view.  The `Regional` view uses region names in the shapefile and only plots the concentrations for the unmasked nodes within the given region.  The `FullDomain` graphics show values for masked and unmasked nodes. This script requires patience. 
-3. [create_conc_movies.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_conc_movies.sh). Uses a FFMPEG apptainer to compile individual graphic outputs from `plot_conc_graphics_for_movies.sh` into a .mp4 movie.  This script goes quickly. 
+2. [plot_NonCompliance_graphics4movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_NonCompliance_graphics4movie.sh)
+3. [create_noncompliance_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_noncompliance_movie.sh)
 
 # Making sure there aren't problems with the inputs and outputs <a name="QAQC"></a>
 ## Nutrient loading inputs <a name="qaqc_loading"></a>  
@@ -263,6 +257,7 @@ A closer look revealed oxygen outputs that I recall being O(1e38), i.e. too high
 The concept for the graphic of normalized non-compliance to normalized nitrogen loading was introduced by Joel Baker and developed further here to separate out the cases where nitrogen loading is varied in WWTPs from those in which nitrogen is varied in river inputs.  
 
 # References <a name="references"></a>
+The following files are not public and require access permission through the Puget Sound Institute. 
 1. [Municipal model runs and scripting task list.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/Shared%20Documents/Nutrient%20Science/9.%20Modeling/Municipal%20%20model%20runs%20and%20scripting%20task%20list.xlsx?d=w417abadac06143409d092a23a26727e6&csf=1&web=1&e=tgJY69) (Internal PSI document)
 2. [Whidbey configuration file](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/etc/SSM_config_whidbey.ipynb)
 3. [Whidbey_Figures&Tables.xlsx](https://uwnetid.sharepoint.com/:x:/r/sites/og_uwt_psi/_layouts/15/Doc.aspx?sourcedoc=%7B9011F04E-F423-4B45-A0EA-75338168A1B3%7D&file=Whidbey_Figures%26Tables.xlsx&action=default&mobileredirect=true) (Internal PSI document)
