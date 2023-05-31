@@ -6,7 +6,7 @@
 #SBATCH --partition=compute
 #SBATCH --nodes=1       
 #SBATCH --ntasks-per-node=1
-#SBATCH --array=0-11
+#SBATCH --array=0-12
 #SBATCH --time=0:30:00 
 #SBATCH --mem=175G 
 #SBATCH --mail-user=rdmseas@uw.edu
@@ -19,7 +19,7 @@ module load apptainer
 ## "array" specification above needs to be 0-6 for "SOG_NB" and 0-9 for "whidbey"
 case="whidbey"
 ## frame is either "FullDomain" for full domain, or "Region" for regional zoom
-frame="Region"
+frame="FullDomain"
 
 ## The following folder names and tags need to match 
 ## those in ../etc/config....yaml file. 
@@ -65,6 +65,7 @@ elif [ $case == "whidbey" ]; then
    "3h"
    "3i"
    "3j"
+   "3k"
    "3l"
    "3m"
    )
@@ -80,6 +81,7 @@ elif [ $case == "whidbey" ]; then
    "3h"
    "3i"
    "3j"
+   "3k"
    "3l"
    "3m"
    )
@@ -91,37 +93,11 @@ else
 fi
 
 
-run_folders=(	
-"wqm_baseline"
-"wqm_reference"
-"3b"
-"3c"
-"3e"
-"3f"
-"3g"
-"3h"
-"3i"
-"3m"
-)
-
-run_tags=(
-"baseline"
-"reference"
-"3b"
-"3c"
-"3e"
-"3f"
-"3g"
-"3h"
-"3i"
-"3m"
-)
-
 ## input graphics directory
 graphics_dir="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/${case}/DOXG/threshold/movies/${frame}/${run_folders[${SLURM_ARRAY_TASK_ID}]}/"
 
 ## output movie directory
-output_dir="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/movies/${case}/DOXG/${frame}/"
+output_dir="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/movies/${case}/DOXG/hypoxic/${frame}/"
 
 echo ${graphics_dir}
 apptainer exec --bind ${graphics_dir} --bind ${output_dir} ~/ffmpeg.sif ffmpeg -start_number 6 -framerate 6 -i ${graphics_dir}${case}_${frame}_${run_tags[${SLURM_ARRAY_TASK_ID}]}_threshold_2_wc_%d.png -c:v libx264 -pix_fmt yuv420p -vcodec mpeg4 ${output_dir}${case}_${frame}_${run_folders[${SLURM_ARRAY_TASK_ID}]}_threshold_2_wc.mp4

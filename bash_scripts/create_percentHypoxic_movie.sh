@@ -17,10 +17,10 @@ module load apptainer
 
 ## case options: SOG_NB or whidbey
 ## "array" specification above needs to be 0-6 for "SOG_NB" and 0-9 for "whidbey"
-case="main"
+case="whidbey"
 
 ## frame: "FullDomain" or "Region"
-frame="Region"
+frame="FullDomain"
 
 ## DOthresh: Threshold used to define hypoxic
 DOthresh=2
@@ -74,6 +74,7 @@ elif [ $case == "whidbey" ]; then
    "3h"
    "3i"
    "3j"
+   "3k"
    "3l"
    "3m"
    )
@@ -89,6 +90,7 @@ elif [ $case == "whidbey" ]; then
    "3h"
    "3i"
    "3j"
+   "3k"
    "3l"
    "3m"
    )

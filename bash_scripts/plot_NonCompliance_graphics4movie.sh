@@ -16,9 +16,9 @@ module purge
 module load foster/python/miniconda/3.8
 source /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/miniconda3/etc/profile.d/conda.sh
 conda activate klone_jupyter
-## case: 'SOG' (7 scenarios), 'whidbey' (10 scenarios), 'main', 'south', 'hood', or 'SJF'
+## case: 'SOG' (7 scenarios), 'whidbey' (12 scenarios), 'main', 'south', 'hood', or 'SJF'
 ## "array" specification above needs to be 0-6 for "SOG_NB" and 0-9 for "whidbey"
-case="main"
+case="whidbey"
 
 ## frame: "FullDomain" or "Region"
 frame="Region"

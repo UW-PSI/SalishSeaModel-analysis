@@ -6,7 +6,7 @@
 #SBATCH --partition=compute
 #SBATCH --nodes=1       
 #SBATCH --ntasks-per-node=1
-#SBATCH --array=0
+#SBATCH --array=0-11
 #SBATCH --time=0:30:00 
 #SBATCH --mem=175G 
 #SBATCH --mail-user=rdmseas@uw.edu
@@ -17,7 +17,7 @@ module load apptainer
 
 ## case options: SOG_NB(7 scenarios) or whidbey(10 scenarios)
 ## "array" specification above needs to be  0-6 for "SOG_NB" or 0-9 for "whidbey"
-case="main"
+case="whidbey"
 ## frame: "FullDomain" or "Region"
 frame="Region"
 
