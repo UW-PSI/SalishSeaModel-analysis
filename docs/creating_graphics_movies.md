@@ -208,31 +208,37 @@ All animations are created using the software `ffmpeg` through an Apptainer Cont
 apptainer exec --bind ${graphics_dir} --bind ${output_dir} ~/ffmpeg.sif ffmpeg -start_number 6 -framerate 6 -i ${graphics_dir}${case}_${run_tags[${SLURM_ARRAY_TASK_ID}]}_${param}_${stat_type}_conc_${loc}_%d_whidbeyZoom.png -vcodec mpeg4 ${output_dir}${case}_${run_tags[${SLURM_ARRAY_TASK_ID}]}_${param}_${stat_type}_${loc}_whidbeyZoom.mp4
 ```
 Here, I use `-framerate 6` to get a minute-long movie by incorporating 6 images per second from a pool of ~366 images.  Including `-vcodec mpeg4` was neeccessary for me to get the product to play on my macOS Monterey.  We ran into trouble playing the output on a PC and worked around this problem by saving to `.avi` before finding the problem was on the PC side.  In the process of troubleshooting, I also read that adding `-c:v libx264 -pix_fmt yuv420p` can make the `.mp4` more broadly accessible, but I haven't yet received confirmation that this is an important/neccessary specification.  
+## Create netcdf file for variable of interest
+All animations require a netcdf of whatever variable (DOXG, salinity, NO3, etc.) and statistic (min, max, mean, etc.) that is being represented.  Theses are created using: [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh).  They only have to be created once, but I include this as a first step for all movies listed below so that the instructions are "stand alone."  If this step is done for one movie it does not need to be repeated for another. 
 
 ## Salinity, N03, and DO <a name="moviesConc"></a>
-1. Create a sub-set of the model output that only includes information for the desired variable (e.g. `DOXG`).  A file will be created for all 3D values and can be created for surface-only and bottom-only values using the `surface_flag` and/or `bottom_flag` when calling [process_netcdf.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/process_netcdf.py).  Use [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) for a shell script to call `process_netcdf.py` with the desired setup. The way I have the file structure setup, the files are saved to, e.g.: ```/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/SOG_NB/DOXG/2a_sog_river_0.5times/surface/daily_mean_DOXG_surface.nc```
-<br /> A different choice that I'm considering is:<br /> ```/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/SOG_NB/DOXG/surface/2a_sog_river_0.5times/daily_mean_DOXG_surface.nc``` 
-
-2. Create a set of graphics for creating movies, with daily graphics saved to, e.g.:
+1. Create a sub-set of the model output that only includes information for the desired variable (e.g. `DOXG`).  A file will be created for all 3D values and can be created for surface-only and bottom-only values using the `surface_flag` and/or `bottom_flag` when calling [process_netcdf.py](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/py_scripts/process_netcdf.py).  Use [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh) for a shell script to call `process_netcdf.py` with the desired setup. The way I have the file structure setup, the files are saved to, e.g.: 
 ```
-/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics/SOG_NB/salinity/1e_med_sog
-_wwtp_off/surface_for_movie/
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/whidbey/DOXG/3b/wc/daily_min_DOXG_wc.nc
+```
+
+2. Create a set of graphics for creating movies using [plot_conc_graphics_for_movies.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_conc_graphics_for_movies.sh).  Daily graphics are saved to, e.g.:
+```
+/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/data/whidbey/DOXG/concentration/movies/FullDomain/wc/3b/whidbey_3b_DOXG_min_conc_wc_1.png
 ```
 The script takes ~15 minutes of computing time to run, with each case running in tandem on a separate node (via a slurm array), i.e., the script will take ~15 minutes to process regardless of the number of cases. 
 
+3.  Create concentration movies using [create_conc_movies.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_conc_movies.sh)
+There is an option `FullDomain` or `Region`.  The script will no over-write existing movies. 
+
 ## Hypoxia (DO < 2 mg/l) <a name="moviesHypoxia"></a>
-1. [calc_DO_below_threshold.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_DO_below_threshold.sh)
+1. [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh).  
 2. [plot_threshold_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_threshold_movie.sh)
 3. [create_DO_threshold_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_DO_threshold_movie.sh)
 
 ## Percent Hypoxic <a name="moviesPercentHypoxic"></a>
-1. [process_netcdf_DOXG_whidbey.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf_DOXG_whidbey.sh)
+1. [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh)
 2. [plot_percentVolumeHypoxic_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_percentVolumeHypoxic_movie.sh)
 3. [create_percentHypoxic_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_percentHypoxic_movie.sh)
 
 ## NonComplaint <a name="moviesNonComplaint"></a>
 The code for non-compliance uses a threshold value that can be passed in.  The default values for the `scenario - reference` difference is -0.25 mg/L, which is equivalent to the Department of Ecology (DOE) `rounding method` based on a -0.2 mg/L threshold.  See pp. 49 and 50 of Appendix F of  [Optimization Report Appendix](https://www.ezview.wa.gov/Portals/_1962/Documents/PSNSRP/Appendices%20A-G%20for%20Tech%20Memo.pdf) for more details.
-1. [calc_DO_noncompliant.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/calc_DO_noncompliant.sh)
+1. [process_netcdf.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/process_netcdf.sh)
 2. [plot_noncompliant_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_noncompliant_movie.sh)
 3. [create_DO_noncompliant_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_DO_noncompliant_movie.sh)
 
