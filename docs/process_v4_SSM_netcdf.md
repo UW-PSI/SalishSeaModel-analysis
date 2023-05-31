@@ -58,13 +58,8 @@ These model output files contain the following variables:
 - pH
 - pCO2
 ### Method and scripts
-The script development notebook is called [dev_process_netcdf.ipynb](https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/notebooks/dev_process_netcdf.ipynb)
-It runs out of memory if run with:
-```
---ntasks=1 --cpus-per-task=1 --mem-per-cpu=5120M
-```
-Instead of adding memory, I opted to create a python script and run with a batch script.  The python script is called [process_netcdf.py](https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/scripts/process_netcdf.py)
-and the shell script has the same name: [process_netcdf.sh](https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/scripts/process_netcdf.sh)
+The python script for creating netcdf for each variable is called [process_netcdf.py](https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/scripts/process_netcdf.py)
+and the shell script has the same name, [process_netcdf.sh](https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/scripts/process_netcdf.sh)
 ```
 #!/bin/bash
  
@@ -92,9 +87,6 @@ python process_netcdf.py
 date
 echo run ended
 ```
-
-It took XX minutes to process the output
-
 The code is setup to save model output to a directory that combines a specified root path and the model variable name. 
 There is a subdirectory that contains netcdf for the min 24 hour value at the bottom level, e.g.:
 ```
