@@ -1,4 +1,4 @@
-# Created by Rachael D. Mueller at the Puget Sound Institute
+# Created by Rachael D. Mueller at the Puget Sound Institute with funding from King County
 import numpy
 import geopandas as gpd
 from shapely.geometry import Point
