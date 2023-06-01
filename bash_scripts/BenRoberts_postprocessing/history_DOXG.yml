@@ -1,0 +1,9 @@
+state_vars: 46
+state_vars_bottom: 98
+output_indices:
+
+ 4:
+    variable: 'DOXG'
+    long_name: 'dissolved oxygen'
+    units: 'MG/L'
+

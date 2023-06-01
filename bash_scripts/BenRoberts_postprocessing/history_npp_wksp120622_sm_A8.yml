@@ -1,0 +1,60 @@
+state_vars: 46
+state_vars_bottom: 98
+output_indices:
+
+  0:
+    variable: 'h'
+    long_name: 'bathymetry'
+    units: 'meters'
+    positive: 'down'
+    per_layer: false
+    per_time: false
+  1:
+    variable: 'zeta'
+    long_name: 'Water Surface Elevation'
+    units: 'meters'
+    positive: 'up'
+    per_layer: false
+  3:
+    variable: 'depth'
+    long_name: 'depth'
+    units: 'meters'      
+  4:
+    variable: 'DOXG'
+    long_name: 'dissolved oxygen'
+    units: 'MG/L'
+  6:
+    variable: 'B1'
+    long_name: 'algal group 1'
+    units: 'gC meters-3'
+  7:
+    variable: 'B2'
+    long_name: 'algal group 2'
+    units: 'gC meters-3'
+  8:
+    variable: 'NH4'
+    long_name: 'ammonia'
+    units: 'gN meters-3'
+  9:
+    variable: 'NO3'
+    long_name: 'nitrate+nitrite'
+    units: 'gN meters-3'
+  11:
+    variable: 'netPP'
+    long_name: 'total net primary production'
+    units: 'gC meters-2 day-1'
+    per_layer: false
+  12:
+    variable: 'temp'
+    long_name: 'temperature'
+    units: 'degrees_C'
+  13:
+    variable: 'salinity'
+    long_name: 'salinity'
+    units: '1e-3'
+  14:
+    variable: 'IAVG'
+    long_name: 'photosynthetically active radiation (PAR)'
+    units: 'Einstein meters-2 day-1'
+    per_layer: false
+

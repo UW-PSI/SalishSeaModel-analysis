@@ -1,0 +1,102 @@
+# A basic config file to extracting information from SSM history files. The
+# more variables you uncomment, the longer the extraction will take.
+#
+# Index integers are the zero-indexed order of the blocks in the history
+# file at each time.
+#
+# Within each index, the only required key is "variable" which names the
+# NetCDF output variable. The optional keys "per_layer" and "per_time"
+# can each be set to false to specify that these variables do not change
+# along the given dimension; they will be skipped after the first
+# opportunity to read them, and the NetCDF variable will be appropriately
+# dimensioned. All other keys are added as attributes to the NetCDF
+# variable.
+state_vars: 46
+state_vars_bottom: 98
+output_indices:
+  0:
+    variable: 'h'
+    long_name: 'bathymetry'
+    units: 'meters'
+    positive: 'down'
+    per_layer: false
+    per_time: false
+  1:
+    variable: 'zeta'
+    long_name: 'Water Surface Elevation'
+    units: 'meters'
+    positive: 'up'
+    per_layer: false
+  3:
+    variable: 'depth'
+    long_name: 'depth'
+    units: 'meters'
+  4:
+    variable: 'DOXG'
+    long_name: 'dissolved oxygen'
+    units: 'MG/L'
+#  5:
+#    variable: 'LDOC'
+#    long_name: 'labile dissolved organic carbon'
+#    units: 'gC meters-3'
+  6:
+    variable: 'B1'
+    long_name: 'algal group 1'
+    units: 'gC meters-3'
+  7:
+    variable: 'B2'
+    long_name: 'algal group 2'
+    units: 'gC meters-3'
+  8:
+    variable: 'NH4'
+    long_name: 'ammonia'
+    units: 'gN meters-3'
+  9:
+    variable: 'NO3'
+    long_name: 'nitrate+nitrite'
+    units: 'gN meters-3'
+  10:
+    variable: 'PO4'
+    long_name: 'phosphate'
+    units: 'gP meters-3'
+  11:
+    variable: 'netPP'
+    long_name: 'total net primary production'
+    units: 'gC meters-2'
+    per_layer: false
+#  12:
+#    variable: 'temp'
+#    long_name: 'temperature'
+#    units: 'degrees_C'
+#  13:
+#    variable: 'salinity'
+#    long_name: 'salinity'
+#    units: '1e-3'
+#  15:
+#    variable: 'RDOC'
+#    long_name: 'refractory dissolved organic carbon'
+#    units: 'gC meters-3'
+#  16:
+#    variable: 'LPOC'
+#    long_name: 'labile particulate organic carbon'
+#    units: 'gC meters-3'
+#  17:
+#    variable: 'RPOC'
+#    long_name: 'refractory particulate organic carbon'
+#    units: 'gC meters-3'
+  20:
+    variable: 'TDIC'
+    long_name: 'total dissolved inorganic carbon'
+    units: 'mmolC meters-3'
+  21:
+    variable: 'TALK'
+    long_name: 'total alkalinity'
+    units: 'mmol meters-3'
+  22:
+    variable: 'pH'
+    long_name: 'pH'
+    units: 'SeaWater Scale'
+  23:
+    variable: 'pCO2'
+    long_name: 'carbon dioxide partial pressure'
+    units: 'ppmv'

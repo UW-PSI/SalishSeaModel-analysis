@@ -1,0 +1,94 @@
+state_vars: 46
+state_vars_bottom: 98
+output_indices:
+  0:
+    variable: 'h'
+    long_name: 'bathymetry'
+    units: 'meters'
+    positive: 'down'
+    per_layer: false
+    per_time: false
+  1:
+    variable: 'zeta'
+    long_name: 'Water Surface Elevation'
+    units: 'meters'
+    positive: 'up'
+    per_layer: false
+  8:
+    variable: 'NH4'
+    long_name: 'ammonia'
+    units: 'gN meters-3'
+  9:
+    variable: 'NO3'
+    long_name: 'nitrate+nitrite'
+    units: 'gN meters-3'
+  11:
+    variable: 'netPP'
+    long_name: 'total net primary production'
+    units: 'gC meters-2'
+    per_layer: false
+  49:
+    variable: 'JPON1'
+    long_name: 'sed particulate organic nitrogen flux 1'
+    units: 'gN meters-2 day-1'
+    per_layer: false
+  50:
+    variable: 'JPON2'
+    long_name: 'sed particulate organic nitrogen flux 2'
+    units: 'gN meters-2 day-1'
+    per_layer: false
+  51:
+    variable: 'JPON3'
+    long_name: 'sed particulate organic nitrogen flux 3'
+    units: 'gN meters-2 day-1'
+    per_layer: false
+  65:
+    variable: 'SODTM1S'
+    long_name: 'sediment oxygen demand'
+    units: 'gO2 meters-2 day-1'
+  66:
+    variable: 'JNH4'
+    long_name: 'sed dissolved ammonia flux'
+    units: 'gN meters-2 day-1'
+    per_layer: false
+  67:
+    variable: 'JNO3'
+    long_name: 'sed dissolved nitrate flux'
+    units: 'gN meters-2 day-1'
+    per_layer: false
+  74:
+    variable: 'sed_NH41'
+    long_name: 'sed layer 1 dissolved ammonia'
+    units: 'gN meters-3'
+    per_layer: false
+  75:
+    variable: 'sed_NH42'
+    long_name: 'sed layer 2 dissolved ammonia'
+    units: 'gN meters-3'
+    per_layer: false
+  76:
+    variable: 'sed_NO31'
+    long_name: 'sed layer 1 dissolved nitrate'
+    units: 'gN meters-3'
+    per_layer: false
+  77:
+    variable: 'sed_NO32'
+    long_name: 'sed layer 2 dissolved nitrate'
+    units: 'gN meters-3'
+    per_layer: false
+  89:
+    variable: 'sed_CPON1'
+    long_name: 'sed particulate organic nitrogen 1'
+    units: 'gN meters-3'
+    per_layer: false
+  90:
+    variable: 'sed_CPON2'
+    long_name: 'sed particulate organic nitrogen 2'
+    units: 'gN meters-3'
+    per_layer: false
+  91:
+    variable: 'sed_CPON3'
+    long_name: 'sed particulate organic nitrogen 3'
+    units: 'gN meters-3'
+    per_layer: false
+
