@@ -1,7 +1,7 @@
 ***
 # Salish Sea Model analysis at Puget Sound Institute 
 ***
-This repository contains a collection of post-processing files designed to create tables, graphics, and movies from Salish Sea Model output.  The focus of this project was to better understand the how nitrogen in rivers and waste water treatment plants affects oxygen levels in the Salish Sea, as delineated by regions established by the Washington State Department of Ecology and shown below. 
+This repository contains a collection of post-processing files designed to create tables, graphics, and movies from Salish Sea Model output, with funding from King County.  The focus of this project was to better understand the how nitrogen in rivers and waste water treatment plants affects oxygen levels in the Salish Sea, as delineated by regions established by the Washington State Department of Ecology and shown below. 
 
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/NodeMap_All_ECYcolors.png" width="400" />
 
