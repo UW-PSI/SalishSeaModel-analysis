@@ -24,7 +24,7 @@
 6. [Reference links](#references)
 
 # Introduction <a name="intro"></a>
-The goal of this file is to provide an overview of the setup and resources required to develop the tables, graphics, and animations provided to King County for the evaluation of nutrient loading impacts. In all of these cases, I was provided with a list of runs to evaluate and was requested to create a particular kind of graphic.  Included here is documentation on the code used to create the products.  The data to create these graphics and tables are not included and would need to be provided by Stefano Mazzilli at Puget Sound Institute.  Please email [Rachael Mueller](mailto:RachaelDMueller@gmail.com) with comments, suggestions, and/or corrections to the code or documentation.  
+The goal of this file is to provide an overview of the setup and resources required to develop the tables, graphics, and animations provided to King County for the evaluation of nutrient loading impacts. In all of these cases, I was provided with a list of runs to evaluate and was requested to create a particular kind of graphic.  Included here is documentation on the code used to create the products.  Some work more s    moothly than others.  They were on a development continuum when funds for the project ran out.  The data to create these graphics and tables are not included and would need to be provided by Stefano Mazzilli at Puget Sound Institute.  Please email [Rachael Mueller](mailto:RachaelDMueller@gmail.com) with comments, suggestions, and/or corrections to the code or documentation.  
 
 # Setup <a name="setup"></a>
 ## Requirements <a name="requirements"></a>
