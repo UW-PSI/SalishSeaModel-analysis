@@ -19,6 +19,7 @@ My job was to develop the coding platform and analyses to address questions of h
 The system that I developed stategically uses a `.yaml` configuration files to organizing file paths and run information as well as using a `shapefile` as the source of information for each model node (e.g. depth, region name, etc).  I also introduced `SLURM arrays` in bash scripts to help facilitate batch processing of multiple runs.  This system relies on files that are version-controlled on two different repositories, both of which are only visible/accessible by project collaborators (at the time of this posting): 
 1. https://github.com/UW-PSI/SalishSeaModel-grid
 2. https://github.com/UW-PSI/SalishSeaModel-spreadsheets
+
 These repositories ought to be cloned at the same directory level as this repository, using the repository names above (especially for the grid repository).  They were all tagged with `version-1` to benchmark completion of this project.  Results from this work have been incorporated into three reports (one each for the SOG/Bellingham, Whidbey, and Main regions) as well as workshop presentations that have knowledge-shared with around 400 participants.  
 
 Please note: I have tried to address the places where urgent need won over my senses of better/preferred coding practices, but I probably missed some spots.  I also had plans to further streamline this process but had to leave this project "as is."  Please contact me if you see something wonky.  
