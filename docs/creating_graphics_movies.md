@@ -248,7 +248,7 @@ The code for non-compliance uses a threshold value that can be passed in.  The d
 # QAQC: Making sure there aren't problems with the inputs and outputs <a name="QAQC"></a>
 ## Nutrient loading inputs <a name="qaqc_loading"></a>  
 Salish Sea Model nitrogen inputs are in units of concentration but some of our runs required altering loading.  In these runs, I needed to scale concentrations appropriately in order to accurately change the loading.  These graphics reflect my internal QAQC to ensure that I scaled the nitrogen levels correctly and as requested.  
-1. Validating the nutrient input loadings for Main region: [validate_SSM_input_loading_main.ipynb]((https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/QAQC/validate_SSM_input_loading_main.ipynb)
+1. Validating the nutrient input loadings for Main region: [validate_SSM_input_loading_main.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/QAQC/validate_SSM_input_loading_main.ipynb)
 2. Validating the nutrient input loadings for Whidbey region: [validate_SSM_input_loading.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/QAQC/validate_SSM_input_loading.ipynb)
 
 ## Model output <a name="qaqc_modeloutput"></a>
