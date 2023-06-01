@@ -245,16 +245,20 @@ The code for non-compliance uses a threshold value that can be passed in.  The d
 2. [plot_NonCompliance_graphics4movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/plot_NonCompliance_graphics4movie.sh)
 3. [create_noncompliance_movie.sh](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/bash_scripts/create_noncompliance_movie.sh)
 
-# Making sure there aren't problems with the inputs and outputs <a name="QAQC"></a>
+# QAQC: Making sure there aren't problems with the inputs and outputs <a name="QAQC"></a>
 ## Nutrient loading inputs <a name="qaqc_loading"></a>  
 Salish Sea Model nitrogen inputs are in units of concentration but some of our runs required altering loading.  In these runs, I needed to scale concentrations appropriately in order to accurately change the loading.  These graphics reflect my internal QAQC to ensure that I scaled the nitrogen levels correctly and as requested.  
+1. Validating the nutrient input loadings for Main region: [validate_SSM_input_loading_main.ipynb]((https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/QAQC/validate_SSM_input_loading_main.ipynb)
+2. Validating the nutrient input loadings for Whidbey region: [validate_SSM_input_loading.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/QAQC/validate_SSM_input_loading.ipynb)
 
 ## Model output <a name="qaqc_modeloutput"></a>
-Other models that I've worked with have crashed when solutions become infinite but that's not the case with this version of ICM.  The way that I learned this was to notice outliers in plots that compare normalized noncompliance to normalized nitrogen.  See cases `Wtp1` (typo for `Mtp1`) and `Mtp2` in below figure. 
+1. Histograms of DO difference between 2014 and scenario [QAQC_DeltaDO_DeltaNO3_MainRegion.ipynb](http://localhost:8800/lab/workspaces/auto-1/tree/PSI-analysis/notebooks/QAQC/QAQC_DeltaDO_DeltaNO3_MainRegion.ipynb).
+2. Comparing normalized nitrogen loading to normalized noncompliance.  Other models that I've worked with have crashed when solutions become infinite but that's not the case with this version of ICM.  The way that I learned this was to notice outliers in plots that compare normalized noncompliance to normalized nitrogen.  See cases `Wtp1` (typo for `Mtp1`) and `Mtp2` in below figure. 
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline_orig.png" width="400" />
 A closer look revealed oxygen outputs that I recall being O(1e38), i.e. too high.  There were reported issues with MPI on the HPC at the time.  Su Kyong and I are suspicious that these high numbers are the result of a glitch in the parallel processing. Re-running the erroneous runs fixed the problem.  
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline.png" width="400" />
 The concept for the graphic of normalized non-compliance to normalized nitrogen loading was introduced by Joel Baker and developed further here to separate out the cases where nitrogen loading is varied in WWTPs from those in which nitrogen is varied in river inputs.  
+
 
 # References <a name="references"></a>
 The following files are not public and require access permission through the Puget Sound Institute. 
