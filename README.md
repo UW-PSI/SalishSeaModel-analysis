@@ -28,10 +28,16 @@ Please note: I have tried to address the places where urgent need won over my se
 
 A special thanks to Ben Roberts for sharing information and his [ssmhist2netcdf](https://github.com/bedaro/ssm-analysis/tree/main/ssmhist2cdf) code for post-processing SalishSeaModel output.  Thanks as well to Su Kyong Yun (PNNL) for her help and guidance in developing this code. [Project Contributors](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/CONTRIBUTORS.rst) lists those who have contributed to this project.  
 
-Licenses
+License and Copyright
 ========
-:License: Apache License, Version 2.0
+:License: Please see the `LICENSE`_ file for details.
 
-All contents in this repository copyright 2022 by Rachael Mueller and [University of Washington](https://www.pugetsoundinstitute.org).  They are licensed under the Apache License, Version 2.0.
-http://www.apache.org/licenses/LICENSE-2.0.  Please see the [LICENSE](/LICENSE) file for details of the license and reference this repository if using or adapting this work.
+All contents in this repository copyright 2022 by King County and created by Rachael D. Mueller (unless otherwise specified) in collaboration with the `Project Contributors`_ at the `University of Washington's Puget Sound Institute`_.
+
+An overview of most of the products created by these scripts can be found in `Table of Contents`_. 
+
+.. _Project Contributors: https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/CONTRIBUTORS.rst
+.. _University of Washington's Puget Sound Institute: https://www.pugetsoundinstitute.org
+.. _Table of Contents: https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/creating_graphics_movies.md 
+.. _LICENSE: https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/LICENSE
 
