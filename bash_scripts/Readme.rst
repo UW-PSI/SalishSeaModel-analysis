@@ -1,4 +1,4 @@
-Licenses
+License and Copyright
 ========
 :License: Please see the `LICENSE`_ file for details.
 
