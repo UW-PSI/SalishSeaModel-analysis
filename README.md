@@ -30,7 +30,7 @@ A special thanks to Ben Roberts for sharing information and his [ssmhist2netcdf]
 
 License and Copyright
 ========
-:License: Please see the [LICENSE](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/LICENSE) file for details.
+Please see the [LICENSE](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/LICENSE) file for details.
 
 All contents in this repository copyright (c) 2022 by King County and created by Rachael D. Mueller (unless otherwise specified) in collaboration with the [Project Contributors](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/CONTRIBUTORS.rst) at the [University of Washington's Puget Sound Institute](https://www.pugetsoundinstitute.org).
 
