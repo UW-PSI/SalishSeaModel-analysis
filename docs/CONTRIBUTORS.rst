@@ -4,7 +4,7 @@
 Contributors to this repository
 **********************************************
 
-This project was funded by King County and led by `Stefano Mazzilli`_, `Joel Baker`_, and `Tarang Khangaonkar`_ 
+This project was funded by King County.  The coding platform was designed and developed by Rachael D. Mueller under the supervision of `Stefano Mazzilli`_ and `Joel Baker`_ and in collaboration with `Tarang Khangaonkar`_ 
 at the University of Washington's `Puget Sound Institute`_ and `PNNL`_. 
 
 The following people have contributed to code development:
@@ -13,6 +13,7 @@ The following people have contributed to code development:
 * Sukyong Yun <sukyong.yun@pnnl.gov> (Provided Salish Sea Model run output, an understanding of output file structure, and insight to post-processing methods.)
 * Ben Roberts <bedaro@uw.edu> (Shared knowledge on Salish Sea Model output forma and inspired the method of using a shapefile to organize model information and to plot output.  Provided code for converting Salish Sea Model output files to netcdf (see `ssmhist2netcdf`_.)
 * Kevin Bogue <kbogue13@uw.edu> (Created the shapefiles. The shapefile used in this work is version controled in `SalishSeaModel-grid`_).
+* Marielle Larson <marlars@uw.edu> (Helped guide graphic design and narration). 
 
 A special thanks to Doug Latornell in Susan Allen's lab at the University of British Columbia for generously sharing his knowledge on how to `create a good working environment`_ to support academic code developement. 
 
