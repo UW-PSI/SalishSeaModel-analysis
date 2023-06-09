@@ -4,7 +4,7 @@
 Contributors to this repository
 **********************************************
 
-This project was led by `Stefano Mazzilli`_, `Joel Baker`_, and `Tarang Khangaonkar`_ 
+This project was funded by King County and led by `Stefano Mazzilli`_, `Joel Baker`_, and `Tarang Khangaonkar`_ 
 at the University of Washington's `Puget Sound Institute`_ and `PNNL`_. 
 
 The following people have contributed to code development:
