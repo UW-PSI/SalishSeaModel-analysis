@@ -26,7 +26,7 @@ These repositories ought to be cloned at the same directory level as this reposi
 
 Please note: I have tried to address the places where urgent need won over my senses of better/preferred coding practices, but I probably missed some spots.  I also had plans to further streamline this process but had to leave this project "as is."  Please contact me if you see something wonky.  
 
-A special thanks to Ben Roberts for sharing information and his [ssmhist2netcdf](https://github.com/bedaro/ssm-analysis/tree/main/ssmhist2cdf) code for post-processing SalishSeaModel output.  Thanks as well to Su Kyong Yun (PNNL) for her help and guidance in developing this code. [Project Contributors](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/CONTRIBUTORS.rst) lists those who have contributed to this project.  
+A special thanks to Ben Roberts for sharing information and his [ssmhist2netcdf](https://github.com/bedaro/ssm-analysis/tree/main/ssmhist2cdf) code for post-processing SalishSeaModel output.  Thanks as well to Su Kyong Yun (PNNL) for her help and guidance in developing this code. Lastly, thanks to Marielle Larson for her support and guidance.   
 
 License and Copyright
 ========
