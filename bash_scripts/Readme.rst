@@ -1,6 +1,6 @@
 Licenses
 ========
-:License: BSD 3-Clause. Please see the `LICENSE`_ file for details.
+:License: Please see the `LICENSE`_ file for details.
 
 All contents in this repository copyright 2022 by King County and created by Rachael D. Mueller (unless otherwise specified) in collaboration with the `Project Contributors`_ at the `University of Washington's Puget Sound Institute`_.
 
