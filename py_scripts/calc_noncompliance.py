@@ -292,10 +292,9 @@ if __name__=='__main__':
     created_at = 'Puget Sound Institute'
     created_from = 'Model results produced by Su Kyong Yun (PNNL) and Rachael Mueller (PSI)'
     created_on = date.today().strftime("%B %d, %Y")
-    contact = 'Rachael D Mueller (rdmseas@uw.edu)'
     header = {
         ' ':[created_by, created_at, created_on, this_file, 
-            contact, created_from, 
+            created_from, 
             run_description, non_compliant_threshold, noncompliant, 
             noncompliant_link, ndays, HA, vd, pvd]
     }
