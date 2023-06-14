@@ -7,7 +7,7 @@ The focus of this project was to better understand how nitrogen in rivers and wa
 
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/NodeMap_All_ECYcolors.png" width="400" />
 
-My job was to develop the coding platform and analyses to address questions of how these different regions respond to changes in nutrient inputs from rivers and wastewater treatment plants.  It was the first time that I've taken more of a back seat in modeling work.  The model setup and scenarios were determined before I was hired on, and my computation skills were wanted more than my oceanographic and data analysis knowledge.  My main role was to make the magic happen in a way that aligned with the project goals of enhancing transparency.  
+My job was to develop the coding platform and analyses to address questions of how these different regions respond to changes in nutrient inputs from rivers and wastewater treatment plants.  It was the first time that I've taken more of a back seat in modeling work.  The model setup and scenarios were determined before I was hired on, and my computation skills were wanted more than my oceanographic and data analysis knowledge.  My main contribution was to make the magic happen in an organized and coherent structure that supports the project goals of enhancing transparency as well as access to knowledge.  
 
 My accomplishments include: 
 1. Reducing the turn-around time on post-processing model output from weeks to days.
