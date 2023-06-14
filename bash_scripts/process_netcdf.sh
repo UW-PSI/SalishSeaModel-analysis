@@ -1,5 +1,5 @@
-# Created by Rachael D. Mueller at the Puget Sound Institute
 #!/bin/bash
+# Created by Rachael D. Mueller at the Puget Sound Institute with funding by King County
  
 ## job name 
 #SBATCH --job-name=process_netcdf

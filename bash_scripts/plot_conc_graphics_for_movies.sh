@@ -1,5 +1,6 @@
-# Created by Rachael D. Mueller at the Puget Sound Institute
 #!/bin/bash
+# Created by Rachael D. Mueller at the Puget Sound Institute, with funding from King County.
+
 #SBATCH --job-name=conc_movie_graphics
 #SBATCH --account=ssmc
 #SBATCH --partition=compute
