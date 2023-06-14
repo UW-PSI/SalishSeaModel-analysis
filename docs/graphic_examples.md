@@ -1,5 +1,5 @@
 # Salish Sea Model output graphics 
-This is where I got to spread my oceanographic wings a bit and explore the model output in some fun ways.  I created these simple graphics as exploratory ways to start understanding baseline values and to move toward more sophisticated analyses.  Most of these graphics were created for the purpose of internal use and learning.  
+This is where I got to spread my oceanographic wings a bit.  I created these simple graphics as exploratory ways to start understanding baseline values and to move toward more sophisticated analyses.  Most of these graphics were created for the purpose of internal use and learning.  
 
 ---
 Overview of 2014 Conditions
