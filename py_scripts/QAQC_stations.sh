@@ -1,5 +1,7 @@
 #!/bin/bash
 
+## This script was provided by Su Kyong Yun and PNNL
+
 ## job name 
 #SBATCH --job-name=stations
 
