@@ -1,3 +1,4 @@
+# Created by Rachael D. Mueller at the Puget Sound Institute with funding provided by King County
 import sys
 import os
 import xarray
