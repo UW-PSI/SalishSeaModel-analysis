@@ -187,12 +187,15 @@ This graphic was developed in [plot_noncompliant_days_by_Region.ipynb](https://g
 ## Normalized volume non-compliance vs. nitrogen loading <a name="noncompliance_vs_volumedays"></a>
 The method for creating this graphic evolved as I developed the ability to read loading quantities directly from the input files. The three regions and corresponding notebooks are: 
 1. SOG ([plot_sog_loading_vs_noncompliance.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_sog_loading_vs_noncompliance.ipynb))
+
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/sog_nitrogen_volumedays_ALL_REGIONS.png" width="400" />
-2. Whidbey 
-        1.[create_loading_spreadsheets_whidbey.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/create_loading_spreadsheets_whidbey.ipynb)
-        2.[plot_whidbey_loading_vs_noncompliance.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_whidbey_loading_vs_noncompliance.ipynb)
+
+2. Whidbey ([create_loading_spreadsheets_whidbey.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/create_loading_spreadsheets_whidbey.ipynb), [plot_whidbey_loading_vs_noncompliance.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/plot_whidbey_loading_vs_noncompliance.ipynb))
+
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/whidbey_nitrogen_volumedays_fit_Whidbey_2panel.png" width="600" />
+
 3. Main ([create_loading_spreadsheets_main.ipynb](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/notebooks/reports/create_loading_spreadsheets_main.ipynb))
+
 <img src="https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/main_nitrogen_volumedays_fit_Main_noline.png" width="300" />
 
 ## Nutrient Loading graphics <a name="nutrientLoading"></a>
