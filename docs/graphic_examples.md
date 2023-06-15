@@ -19,7 +19,7 @@ These graphics were created in [plot_NPP_workshop_120622 notebook](https://githu
 ---
 Time series of median physical characteristics across embayments
 ---
-These time series show temperature ($^o$C, temp), salinity (ppt), and sea surface height (m, zeta). Light shades show hourly output while darker shades show 24-hour running averages.  
+ Note: There is a typo in the y-label of these graphics that needs correcting.  These time series show temperature ($^o$C, temp), salinity (ppt), and sea surface height (m, zeta). Light shades show hourly output while darker shades show 24-hour running averages. 
 Graphics for Bellingham Bay, Sinclair Inlet, and Case Inlet were created in the [plot_TS_inlets_NPP_workshop_12062022 notebook](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/NPP_workshop_120622/plot_TS_inlets_NPP_workshop_12062022.ipynb). 
 ![Image](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/Median_Bellingham_TS_Physical4panel.png)
 ![Image](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/Median_Sinclair_TS_Physical4panel.png)
@@ -28,7 +28,7 @@ Graphics for Bellingham Bay, Sinclair Inlet, and Case Inlet were created in the 
 ---
 Time series of median biophyical characteristics across embayments
 ---
-These time series show Nitrate and Nitrite (mg/l, NO3), salinity (ppt), Photosynthetically Available Radiation (Einstein/meters^2/day, PAR), Net Primary Productivity (gC/m^2/day, NPP), and Disolved Oxygen (mg/l, DOXG). Light shades show hourly output while darker shades show 24-hour running averages.  
+Note: There is a typo in the y-label of these graphics that needs correcting. These time series show Nitrate and Nitrite (mg/l, NO3), salinity (ppt), Photosynthetically Available Radiation (Einstein/meters^2/day, PAR), Net Primary Productivity (gC/m^2/day, NPP), and Disolved Oxygen (mg/l, DOXG). Light shades show hourly output while darker shades show 24-hour running averages.    
 Graphics for Bellingham Bay, Sinclair Inlet, and Case Inlet were created in the [plot_TS_inlets_NPP_workshop_12062022 notebook](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/NPP_workshop_120622/plot_TS_inlets_NPP_workshop_12062022.ipynb). 
 ![Image](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/Median_Bellingham_NO3_salinity_PAR_NPP_DOXG_5panel.png)
 ![Image](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/graphics/Median_Sinclair_NO3_salinity_PAR_NPP_DOXG_5panel.png)
