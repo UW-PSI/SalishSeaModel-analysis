@@ -1,5 +1,8 @@
 #!/bin/bash
 # Created by Rachael D. Mueller at the Puget Sound Institute, with funding from King County.
+# The Main Region case had to be run differently for the baseline and reference runs
+# For these runs, the graphics are named with run_tag vs. run_folder (as was/is used for the other scenarios)
+# the graphic name after "-i" needs to include run_tag rather than run_folder for the baseline and reference runs only
 
 ## job name 
 #SBATCH --job-name=%Hypoxic
@@ -21,7 +24,7 @@ module load apptainer
 case="whidbey"
 
 ## frame: "FullDomain" or "Region"
-frame="FullDomain"
+frame="Region"
 
 ## DOthresh: Threshold used to define hypoxic
 DOthresh=2
@@ -141,4 +144,4 @@ graphics_dir="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/graphics
 
 echo "Saving output to: " ${output_dir}
 
-apptainer exec --bind ${graphics_dir} --bind ${output_dir} ~/ffmpeg.sif ffmpeg -start_number 6 -framerate 6 -i ${graphics_dir}${case}_${run_folders[${SLURM_ARRAY_TASK_ID}]}_percentDO_lt_${DOthresh}_wc_%d.png -c:v libx264 -pix_fmt yuv420p -vcodec mpeg4 ${output_dir}${case}_${run_tags[${SLURM_ARRAY_TASK_ID}]}_percentDO_lt_${DOthresh}_${frame}.mp4
+apptainer exec --bind ${graphics_dir} --bind ${output_dir} ~/ffmpeg.sif ffmpeg -start_number 6 -framerate 6 -i ${graphics_dir}${case}_${run_tags[${SLURM_ARRAY_TASK_ID}]}_percentDO_lt_${DOthresh}_wc_%d.png -c:v libx264 -pix_fmt yuv420p -vcodec mpeg4 ${output_dir}${case}_${run_tags[${SLURM_ARRAY_TASK_ID}]}_percentDO_lt_${DOthresh}_${frame}.mp4

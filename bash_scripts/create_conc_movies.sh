@@ -23,7 +23,7 @@ case="main"
 ## if "wc" then the stat (e.g. min) is taken both as a daily minimum
 ## and a minimum across depth levels; otherwise, it's just a 
 ## daily minimum
-loc="surface"
+loc="wc"
 
 ## frame: "FullDomain" or "Region"
 frame="Region"
@@ -34,12 +34,12 @@ frame="Region"
 ##stat_type="mean"
 
 ## ~~~ OPTION 2 ~~~
-param="NO3"
-stat_type="mean"
+#param="NO3"
+#stat_type="mean"
 
 ## ~~~ OPTION 3 ~~~
-##param="DOXG"
-##stat_type="min"
+param="DOXG"
+stat_type="min"
 
 if [ $case == "SOG_NB" ]; then
 
@@ -120,6 +120,22 @@ elif [ $case == "whidbey" ]; then
    "4k"
    "4l"
    )
+   run_tags=(
+   "baseline"
+   "reference"
+   "4b"
+   "4c"
+   "4d"
+   "4e"
+   "4f"
+   "4g"
+   "4h"
+   "4i"
+   "4j"
+   "4k"
+   "4l"
+   )
+
 
 else
 
@@ -133,4 +149,4 @@ output_dir="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael/projects/KingCounty/movies/${c
 
 echo ${graphics_dir}
 
-apptainer exec --bind ${graphics_dir} --bind ${output_dir} ~/ffmpeg.sif ffmpeg -start_number 6 -framerate 6 -i ${graphics_dir}${case}_${run_folders[${SLURM_ARRAY_TASK_ID}]}_${param}_${stat_type}_conc_${loc}_%d.png  -vcodec mpeg4 ${output_dir}${case}_${run_folders[${SLURM_ARRAY_TASK_ID}]}_${param}_${stat_type}_${loc}_${frame}.mp4
+apptainer exec --bind ${graphics_dir} --bind ${output_dir} ~/ffmpeg.sif ffmpeg -start_number 6 -framerate 6 -i ${graphics_dir}${case}_${run_tags[${SLURM_ARRAY_TASK_ID}]}_${param}_${stat_type}_conc_${loc}_%d.png  -vcodec mpeg4 ${output_dir}${case}_${run_folders[${SLURM_ARRAY_TASK_ID}]}_${param}_${stat_type}_${loc}_${frame}.mp4
