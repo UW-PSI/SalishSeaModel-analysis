@@ -1,7 +1,7 @@
 ***
 # Salish Sea Model analysis at Puget Sound Institute 
 ***
-This repository contains a collection of post-processing files designed to create tables, graphics, and movies from Salish Sea Model output.  The work was funded by King County and the coding platform was designed and developed by Rachael D. Mueller (unless otherwise specified) under the supervision of Stefano Mazzilli and Joel Baker.  Code development also included collaborations with Ben Roberts, Su Kyong Yun, and Marielle Larson.  See [contributors](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/CONTRIBUTORS.rst) for a full overview of this collaboritive effort.  
+This repository contains a collection of post-processing files designed to create tables, graphics, and movies from Salish Sea Model output.  The work was funded by King County and the coding platform was designed and developed by Rachael D. Mueller (unless otherwise specified) under the supervision of Stefano Mazzilli and Joel Baker.  Code development also included collaborations with Ben Roberts, Su Kyong Yun, and Marielle Larson.  See [contributors](https://github.com/RachaelDMueller/SalishSeaModel-analysis/blob/main/docs/CONTRIBUTORS.rst) for a full overview of this collaboritive effort. This work was forked and cloned from Rachael Mueller’s personal git [repository]([https://github.com/RachaelDMueller/SalishSeaModel-analysis/]) on 6/29/2023.
 
 The focus of this project was to better understand how nitrogen in rivers and waste water treatment plants affects oxygen levels in the Salish Sea, as delineated by regions established by the Washington State Department of Ecology and shown below. 
 
