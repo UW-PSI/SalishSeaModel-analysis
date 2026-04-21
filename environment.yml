@@ -1,0 +1,10 @@
+name: base
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.13
+  - conda
+  - mamba[version='>=2.5.0']
+  - pip
+prefix: /mmfs1/gscratch/ssmc/USRS/PSI/Ben/miniforge3
