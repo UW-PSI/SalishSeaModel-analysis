@@ -1,18 +1,44 @@
+#!/usr/bin/env python3
 # Created by Rachael D. Mueller at the Puget Sound Institute with funding from King County
 
 import os
-import sys
 import xarray
 import yaml
 import numpy as np
 import geopandas as gpd
 import pathlib
 import time
+import argparse
 # load functions from my scripts file "ssm_utils"
 from ssm_utils import reshape_fvcom, calc_fvcom_stat
 
+ECOLOGY_VARIABLE_MAP = {
+        'temp': 'Var_18',
+        'salinity': 'Var_19',
+        'DOXG': 'Var_10',
+        'NH4': 'Var_14',
+        'NO3': 'Var_15',
+        'B1': 'Var_12',
+        'B2': 'Var_13'
+        # TODO finish me
+}
+
+def read_netcdf(f, model_var):
+    """Read a model output NetCDF file, handling different formats"""
+    ds = xarray.open_dataset(f,engine='netcdf4')
+    if model_var in ds.variables:
+        hourly_values = reshape_fvcom(
+            ds[model_var],'days'
+        )
+    else:
+        hourly_values = reshape_fvcom(ds[ECOLOGY_VARIABLE_MAP[model_var]], 'dayslevels')
+        hourly_values = np.swapaxes(hourly_values, 2, 3)
+    ds.close()
+    return hourly_values
+
 def process_netcdf(netcdf_file_path, model_var='DOXG', case='SOG_NB',
-                   np_operator='min', bottom_flag=1, surface_flag=0):
+                   np_operator='min', bottom_flag=True, surface_flag=False,
+                   run_type=None):
     """
     *** HEADER INFORMATION TO BE ADDED ***
     model_var options: DOXG, LDOC,B1, B2, NH4, NO3,PO4,temp, salinity, 
@@ -26,7 +52,7 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', case='SOG_NB',
     # but can also be modified here (with the caveat the modifications will be 
     # over-written when the SSM_config.ipynb is run
     # https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/etc/SSM_config.yaml
-    with open(f'../etc/SSM_config_{case}.yaml', 'r') as file:
+    with open(pathlib.Path(__file__).parent.parent / 'etc' / f'SSM_config_{case}.yaml', 'r') as file:
         ssm = yaml.safe_load(file)
     
     # load shapefile   
@@ -40,10 +66,10 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', case='SOG_NB',
     output_dir = output_base/model_var
     
     # use directory name of model output to define run-type
-    run_type = netcdf_file_path.split('/')[-2]
-    print(run_type)
+    if run_type is None:
+        run_type = netcdf_file_path.split('/')[-2]
 
-    # create output directory, if is doesn't already exist for all depths
+    # create output directory, if it doesn't already exist for all depths
     # see https://docs.python.org/3/library/os.html#os.makedirs
     if os.path.exists(output_base)==False:
         print(f'creating: {output_dir}/{run_type}/wc')
@@ -66,15 +92,11 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', case='SOG_NB',
         print(f'creating: {output_dir}/{run_type}/wc')
         os.makedirs(output_dir/run_type/'wc',mode=0o777,exist_ok=True)
     # input netcdf filename
-    path=netcdf_file_path 
+    path=netcdf_file_path
     print('***********************************************************')
     print('processing: ', path)
     # load variable into xarray and calculate daily stat (e.g. min)
-    ds = xarray.open_dataset(path,engine='netcdf4')
-    hourly_values = reshape_fvcom(
-        ds[model_var],'days'
-    )
-    ds.close()
+    hourly_values = read_netcdf(netcdf_file_path, model_var)
     # calculate daily minimum
     daily_values = calc_fvcom_stat(hourly_values, np_operator, axis=1)
     # remove spin-up days
@@ -90,9 +112,8 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', case='SOG_NB',
         output_dir/run_type/'wc'/f'daily_{np_operator}_{model_var}_wc.nc',
         format='netcdf4'
     )
-    print(bottom_flag)
     # store time series of daily min bottom DO & save to file
-    if int(bottom_flag)==1:
+    if bottom_flag:
         # create ouptut directory if it doesn't yet exist
         if os.path.exists(output_dir/run_type/'bottom')==False:
             print(f'creating: {output_dir}/{run_type}/bottom')
@@ -109,7 +130,7 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', case='SOG_NB',
             format='netcdf4'
         )
     # store time series of daily min surface DO & save to file
-    if int(surface_flag)==1:
+    if surface_flag:
         # create ouptut directory if it doesn't yet exist
         if os.path.exists(output_dir/run_type/'surface')==False:
             print(f'creating: {output_dir}/{run_type}/surface')
@@ -127,35 +148,18 @@ def process_netcdf(netcdf_file_path, model_var='DOXG', case='SOG_NB',
         )
 
 if __name__=='__main__':
-    """
-    VERY basic error handling.  Update needed. 
-    # args[0]: input netcdf file path
-    # args[1]: variable to extract, e.g. 'DOXG'
-    # args[2]: Experiment case (`SOG_NB` or `whidbey`)
-    # args[3]: daily stat (as numpy operation) to create, e.g. 'min'
-    # args[4]: Boolean flag to save bottom values to netcdf [1] or not [0]
-    # args[5]: Boolean flag to save surface values to netcdf [1] or not [0]
-    """
-    args = sys.argv[1:]
-    if len(args)>6:
-        raise Error("Too many arguments")
-    if len(args)<6:
-        raise Error("Too few arguments")
-    if os.path.exists(args[0]):
-        print("input args:\n", args[0], "\n", args[1], "\n",
-              args[2], "\n", args[3], "\n", args[4])
-        # assign inputs
-        netcdf_file_path = args[0]
-        model_var = args[1]
-        case = args[2]
-        np_operator = args[3]
-        bottom_flag = args[4]
-        surface_flag = args[5]
-        # process netcdf
-        process_netcdf(
-            netcdf_file_path, model_var, case, np_operator, 
-            bottom_flag, surface_flag)
-    else:
-        raise FileNotFoundError(
-            errno.ENOENT, os.strerror(errno.ENOENT), args[0]
-            )
+    parser = argparse.ArgumentParser(description='Create per-variable netcdf extractions of model results')
+    parser.add_argument('netcdf_file', type=argparse.FileType('r'), help='input netcdf file path')
+    parser.add_argument('model_var', help='variable to extract, e.g. DOXG')
+    parser.add_argument('case', help='Experiment case (SOG_NB, whidbey, ...)')
+    parser.add_argument('np_operator', help='Daily state (as numpy reduction) to create, e.g. min')
+    parser.add_argument('bottom_flag', type=bool, help='Save bottom values to netcdf')
+    parser.add_argument('surface_flag', type=bool, help='Save surface values to netcdf')
+    parser.add_argument('-t', '--run-type', help='Run type (default is directory name containing model netcdf)')
+    args = parser.parse_args()
+    # process netcdf
+    netcdf_file_path = args.netcdf_file.name
+    args.netcdf_file.close()
+    process_netcdf(
+        netcdf_file_path, args.model_var, args.case, args.np_operator,
+        args.bottom_flag, args.surface_flag, run_type=args.run_type)
