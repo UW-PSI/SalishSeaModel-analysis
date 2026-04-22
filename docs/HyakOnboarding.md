@@ -18,6 +18,21 @@ rdmseas@uwtlocadminsMBP ~ % git config --global alias.glog "log --graph"
 rdmseas@uwtlocadminsMBP ~ % git config --global alias.out "log --pretty=oneline --abbrev-commit --graph @{u}.."
 ```
 
+Also make sure you generate a SSH key if you need to push changes back to
+Github:
+
+```
+$ ssh-keygen -t ed25519
+[specifying a password is not a bad idea on a shared system like Hyak]
+```
+
+Then on Github:
+ * Click on your profile picture in the upper right
+ * Look for "SSH and GPG keys" in the left column
+ * Add a new SSH key
+ * Copy the contents of ~/.ssh/id_ed25519.pub and paste it into the github
+   key field
+
 # Connecting to Hyak
 Remote connection to Hyak via `ssh` might intermittently drop and yield the error:
 ```
@@ -46,7 +61,9 @@ Host klone
    HostName klone.hyak.uw.edu
    User rdmseas
 ```
-NOTE: I haven't gotten this setup to work on my UW macOS Monterey laptop, and I'm working with IT to figure out why.  
+Note that with the above "Host" alias all you have to do is type "ssh
+klone" and it will connect you to the right host and specify the correct
+username.
 
 # Hyak storage
 
@@ -54,32 +71,35 @@ NOTE: I haven't gotten this setup to work on my UW macOS Monterey laptop, and I'
 The "research lab" directory is located at `/mmfs1/gscratch/ssmc/`.  Sub-directories of this root-directory are the best places for installing miniconda3 environments and storing data. 
 SSMC has a disk quota of 92 TB and has used (as of this file creation) 60 TB.  This storage is communal.  
 
-Use command `hyakstorage` to get more information on `home` and `"research lab"` storage
-
-Installing conda environments to `$HOME` doesn't work due to disk limits (see, e.g. [Hyak Miniconda3 instructions](https://hyak.uw.edu/docs/tools/python/)), so the installation has to go to `/mmfs1/gscratch/ssmc/USRS/PSI/` subdirectories.  The way that I was able to get this work (and I tried a few ways!) was to add a line to `.bashrc` that defines `$HOME` as the subdirectory of `/mmfs1/gscratch/ssmc/USRS/PSI/` in which `.conda` directory will reside.  For example:
-```
-HOME="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael"
-```
-The install instructions below only worked when this line was added to my `/mmfs1/home/USERID/.bashrc` (i.e. `/mmfs1/home/rdmseas/.bashrc`).  What this means is that `~/` will point to `/mmfs1/gscratch/ssmc/USRS/PSI/Rachael`.  As such, I also added an alias to allow me to easily navigate to my login (and former $HOME) directory `/mmfs1/home/rdmseas/`.
-```
-alias cdh='cd /mmfs1/home/rdmseas'
-```
+Use command `hyakstorage` to get more information on `home` and `"research lab"` storage.
 
 # Install Miniconda3 in lab workspace
-We install miniconda in the lab workspace because there isn't enough disk space to accomodate miniconda environments in `$HOME`.  See [Hyak Miniconda3 instructions](https://hyak.uw.edu/docs/tools/python/) for more details.  
+Installing conda environments to `$HOME` doesn't work due to disk limits
+(see, e.g.
+[Hyak Miniconda3 instructions](https://hyak.uw.edu/docs/tools/python/)),
+so the installation has to go to `/mmfs1/gscratch/ssmc/USRS/PSI/`
+subdirectories.
+
+Both Miniconda3 and Miniforge3 (based on mamba) work well.
 
 Navigate to lab workspace
 ```
-$ cd /mmfs1/gscratch/ssmc/PSI/
+klone-login01$ cd /mmfs1/gscratch/ssmc/PSI/
 ```
 create a personal folder and change directory to this directory
 ```
 $ mkdir your-personal-folder-name
 $ cd your-personal-folder-name
 ```
+It's a good idea to create a bash alias to quickly switch to this
+directory, e.g.
+```
+alias cdssmc='cd /gscratch/ssmc/USRS/PSI/xxx'
+```
+
 Download miniconda3 in this directory
 ```
-$ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+klone-login01$ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 ```
 The output will look something like: 
 ```
@@ -94,9 +114,35 @@ Miniconda3-latest-L 100%[===================>]  73.06M   232MB/s    in 0.3s
 
 2022-05-19 10:14:25 (232 MB/s) - ‘Miniconda3-latest-Linux-x86_64.sh’ saved [76607678/76607678]
 ```
-Install miniconda3 to this directory
+### Create an alias to initiate an interactive node
+Before proceeding further you should do your work on a compute node rather
+than the login node. In your .bashrc, create an alias that specifies account
+and partition.  Use `hyakalloc` to see which account and partition apply to
+your personal account.  Mine are `ssmc` and `compute`.  When calling this
+alias you will also want to specify a time argument with
+`--time=<minutes>`.
 ```
-$ bash Miniconda3-latest-Linux-x86_64.sh -b -p ./miniconda3
+alias ssmcinteract='salloc -N 1 -p compute -A ssmc'
+```
+This will automatically request a single node to run on.
+
+After reloading your .bashrc with `source ~/.bashrc`, run the alias:
+```
+klone-login01$ ssmcinteract --time=180 --mem=2G
+```
+
+Now your prompt should reflect that you are running commands on a compute
+node. **Note that you should be very conservative with your time
+allocation**. The job scheduler will terminate your interactive session
+when the time limit is reached, and installing conda and its environments
+can take several hours. If the scheduler kills your session in the middle
+of an install, it can be left in a broken state and you'll have to remove
+your miniconda directory and start over. It happened to me, don't let it
+happen to you.
+
+Install miniconda3 to your directory.
+```
+nXXXX$ bash Miniconda3-latest-Linux-x86_64.sh -b -p ./miniconda3
 ```
 My output looked like:
 ```
@@ -228,225 +274,132 @@ conda config --set auto_activate_base false
 ```
 use `conda activate` before each use and unload it with `conda deactivate`
 
-# create a miniconda environment using a Yaml file
-Yaml files are great because they use a data-oriented language structure that allows for useful, easy-for-humans-to-read structure that is also machine readable. 
+The version of conda that comes with the miniconda package is usually out
+of date. To fix that, run `conda -c conda-forge update conda`.
 
-Create a `envs` folder to contain environment.yaml files
+# Install Jupyter in its own Conda environment
+
+It's best practice never to install anything in the base environment that
+was created when you installed Miniconda. It's also best practice not to
+just install Jupyter in the same environment from which you're running
+code, since you may need multiple different (possibly conflicting)
+environments for different sets of Python code, but you shouldn't need to
+install Jupyter more than once. In fact, Jupyter Lab has features that
+make it easy to switch between different Conda environments while working
+on notebooks! We're going to set that up here.
+
+Creating a Conda environment just for Jupyter is pretty simple:
 ```
-$ mkdir envs
+nXXXX$ conda create --name jupyter python=3.13 jupyterlab nb_conda_kernels
 ```
-Add Yaml file to `envs` directory.  Mine is called `klone-jupyter.yml` and includes packages that I anticipate needing to use for my project.  The nice thing about using a Yaml file for creating an environment is that there is a clear record of the packages used and the file can be modified down the road, as needed.  This is what I have inside `klone-jupyter.yml`.
-```
-$ more klone-jupyter.yml 
-# virtualenv environment description for a useful jupyter
-# environment on Klone
-#
-# Create a virtualenv containing these packages with:
-#
-#    module load foster/python/miniconda/3.8
-#    conda env create -f /gscratch/ssmc/USRS/PSI/Rachael/envs/klone-jupyter.yml 
-#
-# To activate this environment use:
-#    conda activate klone-jupyter
-# 
-# Deactivate with:
-#    conda deactivate
-#
-# Delete environment using:
-#    conda env remove -klone_jupyter
-#
+Here we're creating a new environment called ``jupyter'' with just three
+packages: a recent version of Python, Jupyter Lab, and a special helper
+library called
+[nb_conda_kernels](https://github.com/anaconda/nb_conda_kernels) which
+allows Jupyter to see all your installed Conda environments as different
+"Kernels" that can be selected in the interface. All that's needed in each
+Conda environment is the library ``ipykernel''.
 
-name: klone_jupyter
+## Launch Jupyter with an interactive session on Klone
 
-channels:
- - conda-forge
- - defaults
-
-dependencies:
- - pyaml
- - cmocean
- - jupyterlab
- - matplotlib
- - scipy
- - cartopy
- - netCDF4
- - xarray
- - geopandas
-```
-
-From within `envs` folder, we can install this environment as follows
-```
-$ module load foster/python/miniconda/3.8
-$ conda env create -f ./klone-jupyter.yml
-```
-It took a while (~10 minutes) to get through `Solving environment:` mode.  Afterwards, the environment packages and versions were listed out.  The list looked like:
-```
-$ conda env create -f ./klone-jupyter.yml
-Collecting package metadata (repodata.json): done
-Solving environment: done
-
-
-==> WARNING: A newer version of conda exists. <==
-  current version: 4.10.3
-  latest version: 4.12.0
-
-Please update conda by running
-
-    $ conda update -n base -c defaults conda
-
-
-
-Downloading and Extracting Packages
-freetype-2.10.4      | 890 KB    | ##################################### | 100% 
-tornado-6.1          | 657 KB    | ##################################### | 100% 
-
-...[and many more!]...
-
-readline-8.1         | 295 KB    | ################################################ | 100% 
-Preparing transaction: done
-Verifying transaction: done
-Executing transaction: done
-#
-# To activate this environment, use
-#
-#     $ conda activate klone_jupyter
-#
-# To deactivate an active environment, use
-#
-#     $ conda deactivate
-```
-
-# Initiate a remote Jupyterlab session
-Jupyterlab provides an ability to plot up model results and develop methods visualizing model output.  Opening a visual session requires that we set up our local system with an `SSH` connection to `HYAK`.  Setting up an `SSH` connection is a bit tedious, though.  Here are steps to make it more functional.  
-
-From the wiki: "Mox nodes have 28, 32 or 40 cores. Ask the experienced members of your Hyak group about the number of cores for  the nodes in your group."  Need information on Hyak. 
-
-
-### Create an alias to initiate an interactive node
-Create a shell script in your root directory (I chose `/mmfs1/home/rdmseas`) that specifies account and partition.  Use `hyakalloc` to see which account and partition apply to your personal account.  Mine are `ssmc` and `compute`.  The `$1` for `time` indicates that the first variable passed in will be the requested time allocation.  Here, I just select 1 node and 1 CPU with ~5GB memory (in multiples of 1280). 
-```
-#!/bin/bash
-
-# activate a compute node
-salloc --time=$1 --ntasks=1 --cpus-per-task=1 --mem-per-cpu=5120M --account=ssmc -p compute
-```
-I then use an alias to call this shell script.  The alias is in my `.bashrc` file.  I have three aliases with the three most common compute window sessions that I like to use. 
-```
-alias allocate130='bash /mmfs1/home/rdmseas/./startallocation.sh 1:30:00'
-alias allocate1='bash /mmfs1/home/rdmseas/./startallocation.sh 1:00:00'
-alias allocate2='bash /mmfs1/home/rdmseas/./startallocation.sh 2:00:00'
-```
-Once this is setup (and `source .bashrc` is run or terminal re-started) then an interactive node for 1-hour can be started with this alias
-```
-(base) [rdmseas@klone1 rdmseas]$ allocate1
-salloc: Granted job allocation 4618953
-salloc: Waiting for resource configuration
-salloc: Nodes n3012 are ready for job
-bash-4.4$ 
-```
-Now we are ready to start a JupyterLab session without overloading the login node and making others mad.  :-) 
+Jupyterlab provides an ability to plot up model results and develop
+methods visualizing model output. Opening a visual session requires that
+we set up our local system with an SSH connection to HYAK. Setting up an
+SSH connection is a bit tedious, though. Here are steps to make it more
+functional.
 
 ### Create an alias to initiate a JupyterLab session
-Create a shell script to initiate a JupyterLab session.  Mine is called `klone_jupyter.sh` and looks like:
+
+Create a shell script that will launch Jupyter Lab. If you create a
+directory in your `$HOME` called "bin", that's a good place for your
+scripts to live. Just be sure that it's added to your PATH environment
+variable in your .bashrc. My script is called `klone_jupyter.sh` and it
+looks like this:
 ```
 #!/bin/bash
 
-# load modules and jupyter environment
-module load cesg/python/3.8.10
-# UPDATE PATH BELOW WITH YOUR USER PATH
-source /mmfs1/gscratch/ssmc/USRS/PSI/USERID/miniconda3/etc/profile.d/conda.sh
-conda activate klone_jupyter
+# For miniconda you might need this line. I know you don't with miniforge
+#module load cesg/python/3.8.10
+
+# Make sure to change these paths to represent your setup
+source /gscratch/ssmc/USRS/PSI/Ben/miniforge3/etc/profile.d/conda.sh
+# This part is only needed for mamba/miniforge
+export MAMBA_ROOT_PREFIX=/gscratch/ssmc/USRS/PSI/Ben/miniforge3
+source /gscratch/ssmc/USRS/PSI/Ben/miniforge3/etc/profile.d/mamba.sh
+
+conda activate jupyter
 
 # activate remote login
 jupyter lab --no-browser --ip $(hostname -f)
 ```
-NOTE: the `klone_jupyter` environment name used here matched the name used in the environment YAML files
-```
-name: klone_jupyter
-```
-Change it to match whichever environment name you have.  
 
-Create an alias to call this shell script.  This is mine:
+Note that the `jupyter` environment name used here matches the one used to
+create the conda environment earlier. And don't forget to make your script
+executable with `chmod +x`.
+
+Now if your PATH is set up and your .bashrc is reloaded, you should be able
+to invoke the script (again, from the compute node):
 ```
-alias startjupyter='bash /mmfs1/home/rdmseas/./klone_jupyter.sh'
-```
-Use the alias shortcut to initiate the JupyterLab session, e.g.
-```
-$ startjupyter
-```
-The output will look something like: 
-```
-(klone_jupyter) bash-4.4$ jupyter lab --no-browser --ip $(hostname -f)
-[I 2022-05-20 15:21:45.624 ServerApp] jupyterlab | extension was successfully linked.
-[I 2022-05-20 15:21:45.635 ServerApp] nbclassic | extension was successfully linked.
-[I 2022-05-20 15:21:45.653 ServerApp] Writing Jupyter server cookie secret to /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.local/share/jupyter/runtime/jupyter_cookie_secret
-[I 2022-05-20 15:21:48.001 ServerApp] notebook_shim | extension was successfully linked.
-[I 2022-05-20 15:21:48.163 ServerApp] notebook_shim | extension was successfully loaded.
-[I 2022-05-20 15:21:48.165 LabApp] JupyterLab extension loaded from /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.conda/envs/klone_jupyter/lib/python3.10/site-packages/jupyterlab
-[I 2022-05-20 15:21:48.165 LabApp] JupyterLab application directory is /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.conda/envs/klone_jupyter/share/jupyter/lab
-[I 2022-05-20 15:21:48.171 ServerApp] jupyterlab | extension was successfully loaded.
-[I 2022-05-20 15:21:48.203 ServerApp] nbclassic | extension was successfully loaded.
-[I 2022-05-20 15:21:48.204 ServerApp] Serving notebooks from local directory: /mmfs1/home/rdmseas
-[I 2022-05-20 15:21:48.204 ServerApp] Jupyter Server 1.17.0 is running at:
-[I 2022-05-20 15:21:48.204 ServerApp] http://n3012.hyak.local:8888/lab?token=03324ebd47d67438d610da6044be0c1b10147525a40b4767
-[I 2022-05-20 15:21:48.204 ServerApp]  or http://127.0.0.1:8888/lab?token=03324ebd47d67438d610da6044be0c1b10147525a40b4767
-[I 2022-05-20 15:21:48.204 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
-[C 2022-05-20 15:21:48.215 ServerApp] 
+nXXXX$ klone_jupyter.sh
+[...]
+[C 2026-04-21 15:07:16.319 ServerApp] 
     
     To access the server, open this file in a browser:
-        file:///mmfs1/gscratch/ssmc/USRS/PSI/Rachael/.local/share/jupyter/runtime/jpserver-62970-open.html
+        file:///mmfs1/home/bedaro/.local/share/jupyter/runtime/jpserver-XXXXX-open.html
     Or copy and paste one of these URLs:
-        http://n3012.hyak.local:8888/lab?token=03324ebd47d67438d610da6044be0c1b10147525a40b4767
-     or http://127.0.0.1:8888/lab?token=03324ebd47d67438d610da6044be0c1b10147525a40b4767
+        http://nXXXX.hyak.local:8888/lab?token=<token>
+        http://127.0.0.1:8888/lab?token=<token>
 ```
-The most important bits from the above is the computer and port address `n3012.hyak.local:8888` and the key `03324ebd47d67438d610da6044be0c1b10147525a40b4767`.  We used these in a `ssh` call from a local computer as follows (using my USERID "rdmseas").
-```
-ssh -N -L localhost:8800:n3012.hyak.local:8888 rdmseas@klone.hyak.uw.edu
-```
-In this call, I'm connecting my local system port `8800` to HYAK's port `8888` using `localhost:8800:n3012.hyak.local:8888`, followed by my login.  The system will prompt for password and two-factor login authentication. Once the password and authentication is provided, open a new browser window and use `localhost:8800` as the web address.  Et voila!  Compute away.  
 
-# In summary: Creating a JupyterLab session on Klone
-Login to Klone and type the following three shortcuts at the command line to initialize an interactive node and to start a JupyterLab session.  For example, for a 2-hour coding session, type:
+The most important bits from the above is the computer and port address
+`nXXXX.hyak.local:8888` and the "token" parameter. Use whatever these are in your output in a `ssh` call from your local terminal/laptop:
 ```
-$ allocate2
-$ cda
-$ startjupyter
+ssh -N -L localhost:8800:nXXXX.hyak.local:8888 klone
 ```
-Where `cda` is my `alias-to-directory-where-notebooks-are-located`, i.e., in my `.bashrc` I've specified
-```
-alias cda='cd /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/Projects'
-```
-Something that I've noticed on `Klone` is that my `.bashrc` isn't automatically initialized when I start an interactive node.  In this case, the setup requires four command lines:
-```
-$ allocate2
-$ source .bashrc
-$ cda
-$ startjupyter
-```
-Happy computing! 
+[Remember we set up a host alias named ``klone'' in .ssh/config earlier]
 
-# `.bashrc` setup
+In this call, I'm connecting my local system port `8800` through the
+SSH connection (a "tunnel") to get the login node to connect to the
+compute node at port 8888, using `localhost:8800:n3012.hyak.local:8888`,
+followed by my login.  The system will prompt for password and
+two-factor login authentication. Once the password and authentication is
+provided, open a new browser window and use `localhost:8800` as the web
+address. You should see Jupyter open, with a prompt to create new
+notebooks using the ``jupyter'' Conda environment. Now shut down Jupyter
+lab; it's time to create the actual development environment.
+
+# create a conda environment using a Yaml file
+Yaml files are great because they use a data-oriented language
+structure that allows for useful, easy-for-humans-to-read structure
+that is also machine readable. 
+
+This repository includes an environment file one can use that will call
+the environment `psi_ssm`.
+
+From the root of the repository, we can install this environment as
+follows
+```
+nXXXX$ module load foster/python/miniconda/3.8
+nXXXX$ conda env create -f environment.yml
+```
+It took a while (~10 minutes) to get through `Solving environment:` mode.  Afterwards, the environment packages and versions were listed out and installed.
+
+Now you're ready to use Jupyter Lab on Klone and you have a populated
+development environment. You can create new ones for different projects
+and switch between them in Jupyter itself.
+
+# Bash setup
 Here is an overview of useful bits in my `.bashrc` file
 ```
-# ~~~ SYSTEM CONFIG ~~~
-# Point $HOME to lab directory for conda environment installations
-HOME="/mmfs1/gscratch/ssmc/USRS/PSI/Rachael"
 
 # ~~~ ALIASES ~~~
-alias cdw='cd /mmfs1/gscratch/ssmc/USRS/PSI/Rachael'
-alias cda='cd /mmfs1/gscratch/ssmc/USRS/PSI/Rachael/Projects'
-alias cdh='cd /mmfs1/home/rdmseas'
+alias cdssmc='cd /gscratch/ssmc/USRS/PSI/Ben'
 alias sukscripts='cd /mmfs1/gscratch/ssmc/USRS/PSI/Sukyong/script'
 alias ssmoutputs='cd /mmfs1/gscratch/ssmc/USRS/PSI/Adi/BS_WQM/2014_SSM4_WQ_exist_orig/hotstart/o
 utputs'
 
 # interactive node
-alias allocate130='bash /mmfs1/home/rdmseas/./startallocation.sh 1:30:00'
-alias allocate1='bash /mmfs1/home/rdmseas/./startallocation.sh 1:00:00'
-alias allocate2='bash /mmfs1/home/rdmseas/./startallocation.sh 2:00:00'
-
-# jupyter
-alias startjupyter='bash /mmfs1/home/rdmseas/./klone_jupyter.sh'
+alias ssmcinteract='salloc -N 1 -p compute -A ssmc'
 
 # utils
 alias du="du -h"
@@ -457,6 +410,51 @@ alias la="ls -a"
 alias rm="rm -i"
 alias ll="ls -al"
 
+# A much more useful prompt than the default
+PS1='\u@\h \w\$ '
+
+# Even better, add some color so it's more obvious which system you're on
+# (login or compute node)
+if [ "$color_prompt" = yes ]; then
+  if [ ${HOSTNAME:0:11} = klone-login ]; then
+    # We're on a login node
+    hostcolor=35
+  else
+    # We're on a compute node
+    hostcolor=32
+  fi
+  PS1="\[\033[01;${color}m\]\u@\h\[\033[00m\] \w\$"
+fi
+export PS1
+
+# Autocomplete your Hyak jobs when running scancel
+_myjobs_completions() {
+  local IFS=$'\n'
+  local suggestions=($(compgen -W "$(squeue --me -h -o '%i %P %10j %t %M %R')" -- "${COMP_WORDS[$COMP_CWORD]}"))
+
+  if [ "${#suggestions[@]}" == 1 ]; then
+    jobid=${suggestions[0]%%\ *}
+    COMPREPLY=($jobid)
+  else
+    COMPREPLY=("${suggestions[@]}")
+  fi
+
+}
+
+complete -r scancel
+complete -F _myjobs_completions scancel
+
+```
+
+## `.bash_profile`
+
+The file `.bash_profile` is sometimes read instead of `.bashrc`, so adding
+these lines to it will ensure your customizations are always present:
+```
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
 ```
 
 # FFMPEG
