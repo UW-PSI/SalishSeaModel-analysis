@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Created by Rachael D. Mueller at the Puget Sound Institute with funding from King County
 import sys
 import os
@@ -51,7 +53,7 @@ def calc_noncompliant(shp, case, scope, human_allowance=-0.2, non_compliant_thre
     if scope=='benthic':
         print("Benthic case")
         for run_dir in dir_list: 
-            try: 
+            try:
                 run_file=processed_netcdf_dir/run_dir/'bottom'/f'daily_min_{model_var}_bottom.nc'
                 with xarray.open_dataset(run_file) as ds:
                     MinDO_full[run_dir]=ds[f'{model_var}_daily_min_bottom']
@@ -60,6 +62,7 @@ def calc_noncompliant(shp, case, scope, human_allowance=-0.2, non_compliant_thre
             except FileNotFoundError:
                 print(f'File Not Found: {run_file}')
             if run_dir == dir_list[0]:
+                assert len(gdf) <= MinDO_full[run_dir].shape[1], "Shapefile dimensions don't match output file"
                 # Get number of days and nodes
                 [ndays,nnodes]=MinDO[run_dir].shape
                 # Convert DO_standard to 2D array (time, nodes)
@@ -77,6 +80,7 @@ def calc_noncompliant(shp, case, scope, human_allowance=-0.2, non_compliant_thre
                     MinDO[run_dir]=MinDO_full[run_dir][:,:,gdf['node_id']-1]
             except FileNotFoundError:
                 print(f'File Not Found: {run_file}')
+            assert len(gdf) <= MinDO_full[run_dir].shape[2], "Shapefile dimensions don't match output file"
             if run_dir == dir_list[0]:
                 # Get number of days and nodes
                 [ndays,nlevels,nnodes]=MinDO[run_dir].shape
@@ -139,7 +143,7 @@ def calc_noncompliant(shp, case, scope, human_allowance=-0.2, non_compliant_thre
             idx = ((gdf['Regions']==region) &
                    (gdf['included_i']==1))            
             # Note: The max of True/False will be True and initial sets False to zero.
-            # The "where" keywork specifies to only use values where idx=True,
+            # The "where" keyword specifies to only use values where idx=True,
             # which in this case I set to specify the region.
             if scope=='benthic':
                 # Assign the maximum (True) of DO < threshold occurrence anywhere in region
@@ -268,7 +272,7 @@ if __name__=='__main__':
     # but can also be modified here (with the caveat the modifications will be 
     # over-written when the SSM_config.ipynb is run
     # https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/etc/SSM_config.yaml
-    with open(f'../etc/SSM_config_{case}.yaml', 'r') as file:
+    with open(pathlib.Path(__file__).parent.parent / 'etc' / f'SSM_config_{case}.yaml', 'r') as file:
         ssm = yaml.safe_load(file)
         # get shapefile path    
         shp = ssm['paths']['shapefile']
