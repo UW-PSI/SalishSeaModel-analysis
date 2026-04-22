@@ -292,13 +292,13 @@ Creating a Conda environment just for Jupyter is pretty simple:
 ```
 nXXXX$ conda create --name jupyter python=3.13 jupyterlab nb_conda_kernels
 ```
-Here we're creating a new environment called ``jupyter'' with just three
+Here we're creating a new environment called "jupyter" with just three
 packages: a recent version of Python, Jupyter Lab, and a special helper
 library called
 [nb_conda_kernels](https://github.com/anaconda/nb_conda_kernels) which
 allows Jupyter to see all your installed Conda environments as different
 "Kernels" that can be selected in the interface. All that's needed in each
-Conda environment is the library ``ipykernel''.
+Conda environment is the library "ipykernel".
 
 ## Launch Jupyter with an interactive session on Klone
 
@@ -356,7 +356,7 @@ The most important bits from the above is the computer and port address
 ```
 ssh -N -L localhost:8800:nXXXX.hyak.local:8888 klone
 ```
-[Remember we set up a host alias named ``klone'' in .ssh/config earlier]
+[Remember we set up a host alias named "klone" in .ssh/config earlier]
 
 In this call, I'm connecting my local system port `8800` through the
 SSH connection (a "tunnel") to get the login node to connect to the
@@ -365,7 +365,7 @@ followed by my login.  The system will prompt for password and
 two-factor login authentication. Once the password and authentication is
 provided, open a new browser window and use `localhost:8800` as the web
 address. You should see Jupyter open, with a prompt to create new
-notebooks using the ``jupyter'' Conda environment. Now shut down Jupyter
+notebooks using the "jupyter" Conda environment. Now shut down Jupyter
 lab; it's time to create the actual development environment.
 
 # create a conda environment using a Yaml file
