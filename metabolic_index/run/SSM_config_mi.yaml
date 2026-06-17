@@ -1,0 +1,57 @@
+siglev_diff:
+- 3.2
+- 5.7
+- 7.5
+- 8.9
+- 10.1
+- 11.1
+- 12.1
+- 13.0
+- 13.8
+- 14.6
+paths:
+  model_output:
+    mi:
+    - /gscratch/ssmc/USRS/PSI/Stefano/projects/KingCounty/SalishSeaModel/wqm_baseline/ssm_hotstart_wqm_baseline.nc
+    - /gscratch/ssmc/USRS/PSI/Stefano/projects/KingCounty/SalishSeaModel/wqm_reference/ssm_hotstart_wqm.nc
+  processed_output: SSM_data/
+  graphics: SSM_output/
+  shapefile: ../grid/SSMGrid2_tce_ecy_node_v3_20241003.shp
+run_information:
+  spin_up_days: 5
+  baseline: exist
+  reference: wqm_reference
+  run_description_short:
+    mi:
+      exist: 2014 conditions
+      wqm_reference: Reference
+  run_tag:
+    mi:
+      exist: 2014 Conditions
+      wqm_reference: Reference
+mi:
+  species:
+    salmon:
+      organism_weight_grams: 6400 # Body weight (grams) - typical adult Chinook salmon (updated weight see papers cited in report)
+      betas: [1.58422927,-0.04328307,0.17567401,-0.32428962] # [intercept, size_effect, temp_effect, metabolic_mode]
+      var_covar: 
+        - [0.173846857, 1.326809e-2, -0.073963952, 6.287643e-3]  # Variances and covariances for intercept
+        - [0.013268092, 8.014129e-3, -0.004246992, 1.119302e-5]  # Variances and covariances for size effect
+        - [-0.073963952, -4.246992e-3, 0.035758738, -2.752385e-3]  # Variances and covariances for temperature effect
+        - [0.006287643, 1.119302e-5, -0.002752385, 2.331340e-2]   # Variances and covariances for metabolic mode
+    crab: #Dungeness
+      organism_weight_grams: 1200 # Typical adult Dungeness crab
+      betas: [1.39504370, -0.06864861, 0.29907692, -0.32428962]
+      var_covar:
+        - [0.160201361, 0.006825386, -0.043946093, 0.005911341]
+        - [0.006825386, 0.006126607, -0.003405334, -0.000179495]
+        - [-0.043946093, -0.003405334, 0.026743298, -0.001186574]
+        - [0.005911341, -0.000179495, -0.001186574, 0.023313400]
+    sole: # English Sole
+      organism_weight_grams: 1000 # Good-sized English sole
+      betas: [1.21586046, -0.07752212, 0.26795349, -0.32428962]
+      var_covar:
+        - [0.133984605, -0.000759200, -0.034233516, 0.002470956]
+        - [-0.000759200, 0.005736930, -0.001583776, -0.000338378]
+        - [-0.034233516, -0.001583776, 0.025289992, -0.000539733]
+        - [0.002470956, -0.000338378, -0.000539733, 0.023313400]

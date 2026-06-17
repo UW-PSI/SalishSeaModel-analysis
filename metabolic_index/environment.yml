@@ -1,0 +1,17 @@
+name: psi_mi
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - matplotlib
+  - scipy
+  - netcdf4
+  - ipykernel
+  - geopandas
+  - cartopy
+  - xarray
+  - openpyxl
+  - contextily
+  - pyaml
+  # GSW library for oceanographic calculations which uses the update to UNESCO (1981): Thermodynamic Equation of Seawater 2010 (TEOS-10)
+  - gsw
