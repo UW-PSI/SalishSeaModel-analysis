@@ -18,25 +18,6 @@ Cells 58-61 from original notebook
 # ==============================================================================
 
 # ==============================================================================
-# Area Sec. 1: Calculate Regional Total Areas from Shapefile
-# ==============================================================================
-# Calculate total area for each region from gdf.Area_m2 column
-# Follows noncompliant pattern: filter by region+included_i, sum Area_m2, convert m² to km²
-
-print("Calculating regional total areas from shapefile...")
-regional_areas = {}  #initialize dictionary to store total area (km²) for each region
-for region in regions:  #iterate through all regions including All_regions
-    if region == 'All_regions':
-        idx = (gdf['included_i'] == 1)  #All_regions uses all included nodes across entire domain
-        regional_areas[region] = (gdf.Area_m2[idx].sum()) * 1e-6  #sum all included node areas, convert m² to km²
-    else:
-        idx = (gdf['Regions'] == region) & (gdf['included_i'] == 1)  #individual region filters by region name and included status
-        regional_areas[region] = (gdf.Area_m2[idx].sum()) * 1e-6  #sum regional node areas, convert m² to km²
-
-print(f"Regional areas calculated: {list(regional_areas.keys())}")  #show which regions have area data
-print("Sample areas (km²):", {k: f"{v:.2f}" for k, v in list(regional_areas.items())[:3]})  #display first 3 regions as verification
-
-# ==============================================================================
 # Area Sec. 2: Daily Area Extraction Loop
 # ==============================================================================
 # Extract daily areas below threshold for each region/scenario
@@ -87,96 +68,6 @@ for threshold_key in all_threshold_results.keys():  #iterate through all thresho
 print("Daily area extraction complete.")
 
 # ==============================================================================
-# Area Sec. 3: Area Statistics Function
-# ==============================================================================
-# Create statistics DataFrames for area (copied from volume statistics function)
-# Calculates min/max/avg daily areas and their percentages of total regional area
-# Returns two DataFrames ready for Excel export (one for existing, one for reference scenario)
-
-def create_area_statistics_dataframes(threshold_key, regions_to_plot, regional_total_areas=None):
-    """
-    Create DataFrames for daily area statistics - ready for Excel export
-    Parallel to create_volume_statistics_dataframes but for area metrics
-    
-    Parameters:
-    threshold_key: which threshold to analyze (e.g., 'threshold_2')  
-    regions_to_plot: list of regions to include in output
-    regional_total_areas: dict with total area for each region in km²
-    
-    Returns:
-    df_existing, df_reference: DataFrames formatted for Excel export with area statistics
-    """
-    
-    # Using scenarios, scenario_labels initialized at beginning of script workflow
-
-    dataframes = {}  #store DataFrames for each scenario
-
-    for scenario in scenarios:  # Loops: 'wqm_baseline', then 'wqm_reference'
-        table_data = []  #initialize list to store row data
-        
-        for region in regions_to_plot:  #iterate through regions to include in table
-            data = daily_area_results[threshold_key][scenario][region]  #get 361-day array of daily areas for this combination
-            
-            min_idx = np.argmin(data)  #find day index with minimum area below threshold
-            max_idx = np.argmax(data)  #find day index with maximum area below threshold
-            min_date = time_coords[min_idx].strftime('%m/%d')  #convert index to date string MM/DD
-            max_date = time_coords[max_idx].strftime('%m/%d')  #convert index to date string MM/DD
-            
-            min_area = data.min()  #minimum daily area (km²) across 361 days
-            avg_area = data.mean()  #average daily area (km²) across 361 days
-            max_area = data.max()  #maximum daily area (km²) across 361 days - worst case single day
-
-            total_region_area = regional_total_areas.get(region, None) if regional_total_areas else None  #get total area for percentage calculations
-            avg_area_pct = (avg_area / total_region_area) * 100 if total_region_area else None  #average as percentage of total regional area
-            min_area_pct = (min_area / total_region_area) * 100 if total_region_area else None  #minimum as percentage of total
-            max_area_pct = (max_area / total_region_area) * 100 if total_region_area else None  #maximum as percentage of total
-
-            #Calculate habitat area (nodes with ANY valid depth layer in habitat mask)
-            # Check which nodes in region have at least one non-NaN depth layer in habitat mask
-            region_mask_habitat = (gdf['Regions'] == region) & (gdf['included_i'] == 1) if region != 'All_regions' else (gdf['included_i'] == 1)  #get mask for nodes in this region (for habitat calculation)
-            region_indices_habitat = np.where(region_mask_habitat)[0]  #array indices for this region's nodes (for habitat calculation)
-            habitat_mask_for_region = habitat_depth_mask[0, :, region_indices_habitat]  #extract habitat mask; shape is (N_region, 10) due to numpy advanced indexing
-            nodes_in_habitat = np.any(~np.isnan(habitat_mask_for_region), axis=1)  #check each node: is ANY depth layer valid? axis=1 collapses depths dimension, result is (N_region,) boolean
-            habitat_region_area = (gdf.Area_m2.iloc[region_indices_habitat][nodes_in_habitat].sum()) * 1e-6  #select areas of nodes in habitat, sum them, convert m² to km² (×1e-6)
-
-            #Calculate unique area for nodes violated at least once during year
-            violations_data = all_threshold_results[threshold_key]['ParmBelowThresh_daily_data'][scenario]  #(361×10×16013) boolean array showing violations per day×depth×node
-            region_mask = (gdf['Regions'] == region) & (gdf['included_i'] == 1) if region != 'All_regions' else (gdf['included_i'] == 1)  #get mask for nodes in this region
-            region_indices = np.where(region_mask)[0]  #array indices for this region's nodes
-            ever_violated_nodes = violations_data.any(axis=0).any(axis=0)[region_indices]  #collapse days & depths to get nodes ever violated
-            unique_area = (gdf.Area_m2.iloc[region_indices][ever_violated_nodes].sum()) * 1e-6  #sum areas of violated nodes, convert to km²
-            unique_area_pct = (unique_area / total_region_area) * 100 if total_region_area else None  #percentage of total region area
-            
-            row = [  #construct row with all statistics for this region
-                region,
-                f"{total_region_area:.3f}" if total_region_area else "N/A",  #total regional area in km²
-                f"{habitat_region_area:.3f}" if habitat_region_area else "N/A",  #habitat area column
-                f"{avg_area:.6f}",  #average daily area below threshold
-                f"{avg_area_pct:.3f}" if avg_area_pct else "N/A",  #average as % of total
-                f"{min_area:.6f}",  #minimum daily area
-                min_date,  #date of minimum
-                f"{min_area_pct:.3f}" if min_area_pct else "N/A",  #minimum as % of total
-                f"{max_area:.6f}",  #maximum daily area
-                max_date,  #date of maximum
-                f"{max_area_pct:.3f}" if max_area_pct else "N/A",  #maximum as % of total
-                f"{unique_area:.3f}",  #unique area
-                f"{unique_area_pct:.2f}" if unique_area_pct else "N/A"  #unique area percentage
-            ]
-            table_data.append(row)
-        
-        columns = [  #define column headers for DataFrame
-            'Region', 'Total_Area_km2', 'Total_Habitat_Area_km2', 'Avg_Area_km2', 'AvgArea_%ofTotal',  #includes habitat area column 
-            'Min_Area_km2', 'Min_Date_M/D', 'MinArea_%ofTotal',
-            'Max_Area_km2', 'Max_Date_M/D', 'MaxArea_%ofTotal',
-            'Total_Unique_Area_km2', 'UniqueArea_%ofTotal'  #unique area columns
-        ]
-        
-        df = pd.DataFrame(table_data, columns=columns)  #create DataFrame for this scenario
-        dataframes[scenario] = df  #store in dictionary
-    
-    return dataframes['wqm_baseline'], dataframes['wqm_reference']  #return both DataFrames
-
-# ==============================================================================
 # Area Sec. 4: Add Area Tabs to Excel Files
 # ==============================================================================
 # Add Area_Existing and Area_Reference tabs to existing threshold Excel files
@@ -192,7 +83,7 @@ def add_area_tabs_to_existing_excels():
     
     excel_dir = pathlib.Path(excel_output_path)  #get path to Excel directory
     
-    excel_files = list(excel_dir.glob(f'{case}_{scope}_*-lt-*.xlsx'))  #find all threshold Excel files matching pattern
+    excel_files = list(excel_dir.glob(f'{case}_{scope}_Mindex_{taxa}_*-lt-*.xlsx'))  #find all threshold Excel files matching pattern
     excel_files = [f for f in excel_files if 'noncompliant' not in f.name]  #exclude noncompliant files (different structure)
     
     print(f"\nAdding Area tabs to {len(excel_files)} Excel files...")
@@ -210,10 +101,21 @@ def add_area_tabs_to_existing_excels():
             continue  #skip this file if threshold data not available
         
         print(f"  Processing {excel_file.name}")
-        
-        df_area_existing, df_area_reference = create_area_statistics_dataframes(  #create area statistics DataFrames for this threshold
-            threshold_key, regions, regional_areas)  #pass threshold, region list, and area dictionary
-        
+
+        #Calculate habitat area (nodes with ANY valid depth layer in habitat mask)
+        habitat_areas = {}
+        for region in regions:
+            # Check which nodes in region have at least one non-NaN depth layer in habitat mask
+            region_mask_habitat = (gdf['Regions'] == region) & (gdf['included_i'] == 1) if region != 'All_regions' else (gdf['included_i'] == 1)  #get mask for nodes in this region (for habitat calculation)
+            region_indices_habitat = np.where(region_mask_habitat)[0]  #array indices for this region's nodes (for habitat calculation)
+            habitat_mask_for_region = habitat_depth_mask[0, :, region_indices_habitat]  #extract habitat mask; shape is (N_region, 10) due to numpy advanced indexing
+            nodes_in_habitat = np.any(~np.isnan(habitat_mask_for_region), axis=1)  #check each node: is ANY depth layer valid? axis=1 collapses depths dimension, result is (N_region,) boolean
+            habitat_areas[region] = (gdf.Area_m2.iloc[region_indices_habitat][nodes_in_habitat].sum()) * 1e-6  #select areas of nodes in habitat, sum them, convert m² to km² (×1e-6)
+
+        dfs = create_statistics_dataframes(case, ssm_config, 'area', daily_area_results[threshold_key], regions, time_coords, habitat_sizes=habitat_areas)
+        df_area_existing = dfs['wqm_baseline']
+        df_area_reference = dfs['wqm_reference']
+
         existing_data = {}  #dictionary to store all existing sheets from Excel file
         with pd.ExcelFile(excel_file) as xls:  #open Excel file for reading
             for sheet_name in xls.sheet_names:  #iterate through all existing sheets
@@ -248,25 +150,6 @@ print("\n=== AREA PROCESSING COMPLETE ===")
 # Counts number of model grid cells (nodes) below threshold each day
 # Output Excel tabs: Nodes_Existing, Nodes_Reference (same structure as Volume/Area tabs)
 # ==============================================================================
-
-# ==============================================================================
-# Node Sec. 1: Calculate Regional Total Node Counts from Shapefile
-# ==============================================================================
-# Calculate total node count for each region from gdf
-# Node = model grid cell; count of nodes = count of spatial locations in region
-
-print("Calculating regional total node counts from shapefile...")
-regional_node_counts = {}  #initialize dictionary to store total node count (integer) for each region
-for region in regions:  #iterate through all regions including All_regions
-    if region == 'All_regions':
-        idx = (gdf['included_i'] == 1)  #All_regions counts all included nodes across entire domain
-        regional_node_counts[region] = idx.sum()  #sum True values in boolean mask = count of nodes
-    else:
-        idx = (gdf['Regions'] == region) & (gdf['included_i'] == 1)  #individual region filters by region name and included status
-        regional_node_counts[region] = idx.sum()  #sum True values = count of nodes in this region
-
-print(f"Regional node counts calculated: {list(regional_node_counts.keys())}")  #show which regions have node count data
-print("Sample node counts:", {k: v for k, v in list(regional_node_counts.items())[:3]})  #display first 3 regions as verification
 
 # ==============================================================================
 # Node Sec. 2: Daily Node Extraction Loop
@@ -315,95 +198,6 @@ for threshold_key in all_threshold_results.keys():  #iterate through all thresho
 print("Daily node extraction complete.")
 
 # ==============================================================================
-# Node Sec. 3: Node Statistics Function
-# ==============================================================================
-# Create statistics DataFrames for node counts (copied from area statistics function)
-# Calculates min/max/avg daily node counts and their percentages of total regional nodes
-# Returns two DataFrames ready for Excel export (one for existing, one for reference scenario)
-
-def create_node_statistics_dataframes(threshold_key, regions_to_plot, regional_total_node_counts=None):
-    """
-    Create DataFrames for daily node count statistics - ready for Excel export
-    Parallel to create_area_statistics_dataframes but for node count metrics
-    
-    Parameters:
-    threshold_key: which threshold to analyze (e.g., 'threshold_2')  
-    regions_to_plot: list of regions to include in output
-    regional_total_node_counts: dict with total node count for each region (integers)
-    
-    Returns:
-    df_existing, df_reference: DataFrames formatted for Excel export with node statistics
-    """
-    
-    # Using scenarios, scenario_labels initialized at beginning of script workflow
-
-    dataframes = {}  #store DataFrames for each scenario
-
-    for scenario in scenarios:  # Loops: 'wqm_baseline', then 'wqm_reference'
-        table_data = []  #initialize list to store row data
-        
-        for region in regions_to_plot:  #iterate through regions to include in table
-            data = daily_node_results[threshold_key][scenario][region]  #get 361-day array of daily node counts for this combination
-            
-            min_idx = np.argmin(data)  #find day index with minimum node count
-            max_idx = np.argmax(data)  #find day index with maximum node count
-            min_date = time_coords[min_idx].strftime('%m/%d')  #convert index to date string MM/DD
-            max_date = time_coords[max_idx].strftime('%m/%d')  #convert index to date string MM/DD
-            
-            min_nodes = int(data.min())  #minimum daily node count (integer) across 361 days
-            avg_nodes = data.mean()  #average daily node count (decimal) across 361 days
-            max_nodes = int(data.max())  #maximum daily node count (integer) across 361 days - worst case single day
-            
-            total_region_nodes = regional_total_node_counts.get(region, None) if regional_total_node_counts else None  #get total nodes for percentage calculations
-            avg_nodes_pct = (avg_nodes / total_region_nodes) * 100 if total_region_nodes else None  #average as percentage of total regional nodes
-            min_nodes_pct = (min_nodes / total_region_nodes) * 100 if total_region_nodes else None  #minimum as percentage of total
-            max_nodes_pct = (max_nodes / total_region_nodes) * 100 if total_region_nodes else None  #maximum as percentage of total
-
-            #Calculate habitat node count (nodes with ANY valid depth layer in habitat mask)
-            region_mask_habitat = (gdf['Regions'] == region) & (gdf['included_i'] == 1) if region != 'All_regions' else (gdf['included_i'] == 1)  #get mask for nodes in this region (for habitat calculation)
-            region_indices_habitat = np.where(region_mask_habitat)[0]  #array indices for this region's nodes (for habitat calculation)
-            habitat_mask_for_region = habitat_depth_mask[0, :, region_indices_habitat]  #extract habitat mask; shape is (N_region, 10) due to numpy advanced indexing
-            nodes_in_habitat = np.any(~np.isnan(habitat_mask_for_region), axis=1)  #boolean array: True if node has ANY non-NaN depth; axis=1 collapses depth dimension
-            habitat_region_nodes = nodes_in_habitat.sum()  #count True values = number of nodes in habitat
-
-            #Calculate unique nodes violated at least once during year
-            violations_data = all_threshold_results[threshold_key]['ParmBelowThresh_daily_data'][scenario]  #(361×10×16013) boolean array showing violations per day×depth×node
-            region_mask = (gdf['Regions'] == region) & (gdf['included_i'] == 1) if region != 'All_regions' else (gdf['included_i'] == 1)  #get mask for nodes in this region
-            region_indices = np.where(region_mask)[0]  #array indices for this region's nodes
-            ever_violated_nodes = violations_data.any(axis=0).any(axis=0)[region_indices]  #collapse days & depths to get nodes ever violated
-            unique_nodes = ever_violated_nodes.sum()  #count of True values for unique nodes
-            unique_nodes_pct = (unique_nodes / total_region_nodes) * 100 if total_region_nodes else None  #percentage of total region nodes
-            
-            row = [  #construct row with all statistics for this region
-                region,
-                total_region_nodes,  #total nodes in region (integer)
-                habitat_region_nodes,  #habitat nodes count
-                f"{avg_nodes:.1f}",  #average daily nodes below threshold (decimal)
-                f"{avg_nodes_pct:.2f}" if avg_nodes_pct else "N/A",  #average as % of total
-                min_nodes,  #minimum daily nodes (integer)
-                min_date,  #date of minimum
-                f"{min_nodes_pct:.2f}" if min_nodes_pct else "N/A",  #minimum as % of total
-                max_nodes,  #maximum daily nodes (integer)
-                max_date,  #date of maximum
-                f"{max_nodes_pct:.2f}" if max_nodes_pct else "N/A",  #maximum as % of total
-                unique_nodes,  #unique nodes
-                f"{unique_nodes_pct:.2f}" if unique_nodes_pct else "N/A"  #unique nodes percentage
-            ]
-            table_data.append(row)
-        
-        columns = [  #define column headers for DataFrame
-            'Region', 'Total_Nodes', 'Total_Habitat_Nodes', 'Avg_Nodes', 'AvgNodes_%ofTotal',  #includes habitat nodes column 
-            'Min_Nodes', 'Min_Date_M/D', 'MinNodes_%ofTotal',
-            'Max_Nodes', 'Max_Date_M/D', 'MaxNodes_%ofTotal',
-            'Total_Unique_Nodes', 'UniqueNodes_%ofTotal'  #unique nodes columns
-        ]
-        
-        df = pd.DataFrame(table_data, columns=columns)  #create DataFrame for this scenario
-        dataframes[scenario] = df  #store in dictionary
-    
-    return dataframes['wqm_baseline'], dataframes['wqm_reference']  #return both DataFrames
-
-# ==============================================================================
 # Node Sec. 4: Add Node Tabs to Excel Files
 # ==============================================================================
 # Add Nodes_Existing and Nodes_Reference tabs to existing threshold Excel files
@@ -419,7 +213,7 @@ def add_node_tabs_to_existing_excels():
     
     excel_dir = pathlib.Path(excel_output_path)  #get path to Excel directory
     
-    excel_files = list(excel_dir.glob(f'{case}_{scope}_*-lt-*.xlsx'))  #find all threshold Excel files matching pattern
+    excel_files = list(excel_dir.glob(f'{case}_{scope}_Mindex_{taxa}_*-lt-*.xlsx'))  #find all threshold Excel files matching pattern
     excel_files = [f for f in excel_files if 'noncompliant' not in f.name]  #exclude noncompliant files (different structure)
     
     print(f"\nAdding Node tabs to {len(excel_files)} Excel files...")
@@ -437,10 +231,20 @@ def add_node_tabs_to_existing_excels():
             continue  #skip this file if threshold data not available
         
         print(f"  Processing {excel_file.name}")
-        
-        df_node_existing, df_node_reference = create_node_statistics_dataframes(  #create node statistics DataFrames for this threshold
-            threshold_key, regions, regional_node_counts)  #pass threshold, region list, and node count dictionary
-        
+
+        #Calculate habitat node count (nodes with ANY valid depth layer in habitat mask)
+        habitat_nodes = {}
+        for region in regions:
+            region_mask_habitat = (gdf['Regions'] == region) & (gdf['included_i'] == 1) if region != 'All_regions' else (gdf['included_i'] == 1)  #get mask for nodes in this region (for habitat calculation)
+            region_indices_habitat = np.where(region_mask_habitat)[0]  #array indices for this region's nodes (for habitat calculation)
+            habitat_mask_for_region = habitat_depth_mask[0, :, region_indices_habitat]  #extract habitat mask; shape is (N_region, 10) due to numpy advanced indexing
+            nodes_in_habitat = np.any(~np.isnan(habitat_mask_for_region), axis=1)  #boolean array: True if node has ANY non-NaN depth; axis=1 collapses depth dimension
+            habitat_nodes[region] = nodes_in_habitat.sum()  #count True values = number of nodes in habitat
+
+        dfs = create_statistics_dataframes(case, ssm_config, 'node', daily_node_results[threshold_key], regions, time_coords, habitat_sizes=habitat_nodes) #create node statistics DataFrames for this threshold
+        df_node_existing = dfs['wqm_baseline']
+        df_node_reference = dfs['wqm_reference']
+
         existing_data = {}  #dictionary to store all existing sheets from Excel file
         with pd.ExcelFile(excel_file) as xls:  #open Excel file for reading
             for sheet_name in xls.sheet_names:  #iterate through all existing sheets

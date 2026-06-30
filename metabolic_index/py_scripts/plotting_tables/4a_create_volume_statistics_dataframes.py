@@ -10,98 +10,6 @@ Includes min/avg/max statistics and Excel export
 # ## Min Avg statistics for threshold volumes -Adds tab volume_exist/reference to existing excel
 # ============================================================================
 
-# ==============================================================================
-# SEPARATE STATISTICS BLOCK - COMPREHENSIVE SUMMARY TABLE FORMAT
-# ==============================================================================
-
-def create_volume_statistics_dataframes(threshold_key, regions_to_plot, regional_total_volumes=None):
-    """
-    Create DataFrames for daily volume statistics - ready for Excel export
-    
-    Parameters:
-    threshold_key: which threshold to analyze (e.g., 'threshold_2')  
-    regions_to_plot: list of regions to include
-    regional_total_volumes: dict with total volume for each region (provide if available)
-    
-    Returns:
-    df_existing, df_reference: DataFrames formatted for Excel export
-    """
-    
-    # Using scenarios, scenario_labels initialized at beginning of script workflow
-
-    dataframes = {}
-
-    # Create separate DataFrame for each scenario
-    for scenario in scenarios:  # Loops: 'wqm_baseline', then 'wqm_reference'
-        table_data = []
-        
-        for region in regions_to_plot:
-            data = daily_volume_results[threshold_key][scenario][region]
-            
-            #find min/max indices and dates
-            min_idx = np.argmin(data)
-            max_idx = np.argmax(data)
-            min_date = time_coords[min_idx].strftime('%m/%d')
-            max_date = time_coords[max_idx].strftime('%m/%d')
-            
-            #calculate statistics
-            min_vol = data.min()
-            avg_vol = data.mean() 
-            max_vol = data.max()
-            
-            #add total regional volume and calculate percentages
-            total_region_vol = regional_total_volumes.get(region, None) if regional_total_volumes else None
-            avg_vol_pct = (avg_vol / total_region_vol) * 100 if total_region_vol else None
-            min_vol_pct = (min_vol / total_region_vol) * 100 if total_region_vol else None
-            max_vol_pct = (max_vol / total_region_vol) * 100 if total_region_vol else None
-
-            # Habitat selection - Use volume2D_masked which already has habitat mask applied and uses full grid indexing
-            region_mask_habitat = (gdf['Regions'] == region) & (gdf['included_i'] == 1) if region != 'All_regions' else (gdf['included_i'] == 1)  #get mask for nodes in this region (for habitat calculation)
-            region_indices_habitat = np.where(region_mask_habitat)[0]  #array indices for this region's nodes (for habitat calculation)
-            habitat_region_vol = np.nansum(volume2D_masked[region_indices_habitat, :])  #sum habitat-masked volume for region; volume2D_masked already has habitat mask applied
-
-            #Unique metric - Added calculation of total unique volume for nodes less than threshold at least once during year
-            violations_data = all_threshold_results[threshold_key]['ParmBelowThresh_daily_data'][scenario]  #(361×10×16013) boolean array showing less than threshold per day×depth×node
-            region_mask = (gdf['Regions'] == region) & (gdf['included_i'] == 1) if region != 'All_regions' else (gdf['included_i'] == 1)  #get mask for nodes in this region
-            region_indices = np.where(region_mask)[0]  #array indices for this region's nodes
-            
-            # Calculate unique volume: any day (axis=0) gives (10×16013), subset to region, multiply by volume, sum
-            ever_violated_by_depth = violations_data.any(axis=0)[:, region_indices]  #(10×N_region) True if depth×node ever violated during year
-            region_volume2D = all_threshold_results[threshold_key]['volume2D_data'][region_indices, :].T  #(10×N_region) transposed volumes for this region
-            unique_vol = (region_volume2D * ever_violated_by_depth).sum()  #element-wise multiply and sum for total unique volume
-            unique_vol_pct = (unique_vol / total_region_vol) * 100 if total_region_vol else None  #percentage of total region volume
-            
-            # Row data: finish all avg, then all min, then all max, then unique
-            row = [
-                region,
-                f"{total_region_vol:.3f}" if total_region_vol else "N/A",
-                f"{habitat_region_vol:.3f}" if habitat_region_vol else "N/A",  
-                f"{avg_vol:.6f}",
-                f"{avg_vol_pct:.3f}" if avg_vol_pct else "N/A",
-                f"{min_vol:.6f}",
-                min_date,
-                f"{min_vol_pct:.3f}" if min_vol_pct else "N/A",
-                f"{max_vol:.6f}",
-                max_date,
-                f"{max_vol_pct:.3f}" if max_vol_pct else "N/A",
-                f"{unique_vol:.6f}",  
-                f"{unique_vol_pct:.3f}" if unique_vol_pct else "N/A"  
-            ]
-            table_data.append(row)
-        
-        # Create DataFrame with correct column order
-        columns = [
-            'Region', 'Total_Vol_km3', 'Total_Habitat_Vol_km3', 'Avg_Vol_km3', 'AvgVol_%ofTotal',   
-            'Min_Vol_km3', 'Min_Date_M/D', 'MinVol_%ofTotal',
-            'Max_Vol_km3', 'Max_Date_M/D', 'MaxVol_%ofTotal',
-            'Total_Unique_Vol_km3', 'UniqueVol_%ofTotal'  
-        ]
-        
-        df = pd.DataFrame(table_data, columns=columns)
-        dataframes[scenario] = df
-    
-    return dataframes['wqm_baseline'], dataframes['wqm_reference']
-
 def print_volume_statistics(threshold_key, regions_to_plot, regional_total_volumes=None):
     """
     Print comprehensive statistics and create DataFrames for Excel export
@@ -112,7 +20,9 @@ def print_volume_statistics(threshold_key, regions_to_plot, regional_total_volum
     print(f"=== COMPREHENSIVE STATISTICS FOR {threshold_key.upper()} ===\n")
 
     # Get DataFrames
-    df_existing, df_reference = create_volume_statistics_dataframes(threshold_key, regions_to_plot, regional_total_volumes)
+    dfs = create_statistics_dataframes(case, ssm_config, 'volume', daily_volume_results[threshold_key], regions_to_plot, time_coords)
+    df_existing = dfs['wqm_baseline']
+    df_reference = dfs['wqm_reference']
 
     # Print both tables
     for scenario, df, label in [('wqm_baseline', df_existing, scenario_labels['wqm_baseline']), ('wqm_reference', df_reference, scenario_labels['wqm_reference'])]:
@@ -178,10 +88,19 @@ def add_volume_tabs_to_existing_excels():
         with pd.ExcelFile(excel_file) as xls:
             for sheet_name in xls.sheet_names:
                 existing_data[sheet_name] = pd.read_excel(xls, sheet_name=sheet_name)
-        
+
+        # Habitat selection - Use volume2D_masked which already has habitat mask applied and uses full grid indexing
+        habitat_volumes = {}
+        for region in regions:
+            region_mask_habitat = (gdf['Regions'] == region) & (gdf['included_i'] == 1) if region != 'All_regions' else (gdf['included_i'] == 1)  #get mask for nodes in this region (for habitat calculation)
+            region_indices_habitat = np.where(region_mask_habitat)[0]  #array indices for this region's nodes (for habitat calculation)
+            habitat_volumes[region] = np.nansum(volume2D_masked[region_indices_habitat, :])  #sum habitat-masked volume for region; volume2D_masked already has habitat mask applied
+
         # Get detailed volume statistics for this threshold
-        df_existing, df_reference = create_volume_statistics_dataframes(threshold_key, regions, regional_volumes)
-        
+        dfs = create_statistics_dataframes(case, ssm_config, 'volume', daily_volume_results[threshold_key], regions, time_coords, habitat_sizes=habitat_volumes)
+        df_existing = dfs['wqm_baseline']
+        df_reference = dfs['wqm_reference']
+
         # Write all sheets in desired order: Number_of_Days, Volume_Existing, Volume_Reference, then rest
         with pd.ExcelWriter(excel_file, mode='w', engine='openpyxl') as writer:
             # First: Number_of_Days

@@ -42,7 +42,9 @@ def create_threshold_summary_table(metric_name, scenario='wqm_baseline', regiona
     
     if regional_total_volumes:  #add first row with total volumes for each region to enable recalculation from percentages
         total_row = {'DO_threshold': 'Total_km3'}  #first row label
-        df_existing, df_reference = create_volume_statistics_dataframes(threshold_nums[0][1], regions, regional_volumes)  #get any DataFrame just to extract region names in correct order
+        dfs = create_statistics_dataframes(case, ssm_config, 'volume', daily_volume_results[threshold_nums[0][1]], regions, time_coords)
+        df_existing = dfs['wqm_baseline']#get any DataFrame just to extract region names in correct order
+        df_reference = dfs['wqm_reference']
         df_scenario = df_existing if scenario == 'wqm_baseline' else df_reference
         for _, row in df_scenario.iterrows():  #loop through regions in DataFrame order
             region = row['Region']
@@ -51,7 +53,10 @@ def create_threshold_summary_table(metric_name, scenario='wqm_baseline', regiona
         pivot_data.append(total_row)  #insert total volumes as first row
     
     for thresh_num, threshold_key in threshold_nums:  #loop through each threshold to create data rows
-        df_existing, df_reference = create_volume_statistics_dataframes(threshold_key, regions, regional_volumes)  #get statistics DataFrame for this threshold using helper function
+        dfs = create_statistics_dataframes(case, ssm_config, 'volume', daily_volume_results[threshold_key], regions, time_coords) #get statistics DataFrame for this threshold using helper function
+
+        df_existing = dfs['wqm_baseline']
+        df_reference = dfs['wqm_reference']
         df_scenario = df_existing if scenario == 'wqm_baseline' else df_reference  #select scenario-specific DataFrame
         
         row_data = {'DO_threshold': thresh_num}  #initialize row with threshold number

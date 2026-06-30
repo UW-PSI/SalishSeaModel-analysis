@@ -460,8 +460,5 @@ for threshold_key in all_threshold_results.keys():  #loop through 'threshold_2',
             max_day_idx = np.argmax(DailyVolume_1D)  #find day index with maximum volume below threshold
             print(f"[DEBUG] {threshold_key} - {run_type} - {region}: Min volume day {min_day_idx} ({time_coords[min_day_idx].date()}), Max volume day {max_day_idx} ({time_coords[max_day_idx].date()})")  #show min/max days found
 
-        # BR: added for QA
-        pd.DataFrame(daily_volume_results[threshold_key][run_type]).to_excel(excel_output_path + f'/{case}_{scope}_{excel_file_param_name}-dailyVols-{threshold_key}_{run_type}.xlsx')
-
 print(f"[DEBUG] Daily volume analysis complete. Results stored in daily_volume_results dictionary.")  #final status message
 
