@@ -306,7 +306,7 @@ def main():
     MaxParam_timeseries_DOX = load_nc(ssm, case, gdf, 'DOXG', 'max')
     MeanParam_timeseries_DOX = load_nc(ssm, case, gdf, 'DOXG')
 
-    [ndays,nlevels,nnodes]=MinParam_timeseries_DOX[next(iter(MinParam_timeseries_DOX))].dims # Get number of days and nodes
+    [ndays,nlevels,nnodes]=MinParam_timeseries_DOX[next(iter(MinParam_timeseries_DOX))].sizes.values() # Get number of days and nodes
 
     MinParam_timeseries_temp = load_nc(ssm, case, gdf, 'temp', 'min')
     MaxParam_timeseries_temp = load_nc(ssm, case, gdf, 'temp', 'max')
@@ -337,19 +337,19 @@ def main():
     coords = {
         "day": {  # Time-based coordinates
             "time": xr.DataArray(
-                pd.date_range('2014-01-05', periods=361),  
+                MinParam_timeseries_DOX[next(iter(MinParam_timeseries_DOX))].coords['day'].values,
                 dims=("day",)
             )
         },
         "siglay": {  # Depth-based coordinates
             "depth_fraction": xr.DataArray(
-                [3.2, 5.7, 7.5, 8.9, 10.1, 11.1, 12.1, 13.0, 13.8, 14.6],
+                ssm['siglev_diff'],
                 dims=("siglay",)
             )
         },
         "node": {  # Node-based coordinates, now supporting multiple values
-            "node_id": xr.DataArray(range(16012), dims=("node",)),  # 0-based
-            "node_id_OrigGis": xr.DataArray(range(1, 16013), dims=("node",)),  # 1-based indexing added
+            "node_id": xr.DataArray(range(nnodes), dims=("node",)),  # 0-based
+            "node_id_OrigGis": xr.DataArray(range(1, nnodes+1), dims=("node",)),  # 1-based indexing added
             #"latitude": xr.DataArray(center_lat, dims=("node",)),  # Debug - Added direct latitude (not currently used)
             #"longitude": xr.DataArray(center_long, dims=("node",)),  # Debug - Added direct longitude (not currently used)
             "latitude_reproj": xr.DataArray(center_reprojected_lat, dims=("node",)), #using calc from shapefile geometry  
