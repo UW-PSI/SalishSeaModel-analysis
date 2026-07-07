@@ -30,10 +30,13 @@ def create_statistics_dataframes(case: str, ssm_config: dict, dtype: str, daily_
     gdf = gpd.read_file(shp)
     if dtype == 'volume':
         regional_total_volumes = gdf.loc[gdf['included_i'] == 1].groupby('region_inf')['volume'].sum().to_dict()
+        regional_total_volumes['All_regions'] = gdf.loc[gdf['included_i'] == 1, 'volume'].sum()
     elif dtype == 'area':
         regional_total_volumes = (gdf.loc[gdf['included_i'] == 1].groupby('region_inf')['Area_m2'].sum() * 1e-6).to_dict()
+        regional_total_volumes['All_regions'] = gdf.loc[gdf['included_i'] == 1, 'Area_m2'].sum() * 1e-6
     else: # Node count
         regional_total_volumes = gdf.loc[gdf['included_i'] == 1].groupby('region_inf')['volume'].count().to_dict()
+        regional_total_volumes['All_regions'] = len(np.nonzero(gdf['included_i'] == 1)[0])
 
     dataframes = {}
 
