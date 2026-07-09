@@ -26,8 +26,8 @@ print(f"Output path: {ssm_config['paths']['processed_output']}")
 # ==============================================================================
 
 # Use pre-loaded data from existing dictionary
-existing_data = SSMcalcs_dic[f'CalMinParam_3D_{taxa}_Mindex_routine']['exist']
-reference_data = SSMcalcs_dic[f'CalMinParam_3D_{taxa}_Mindex_routine']['wqm_reference']
+existing_data = SSMcalcs_dic[f'CalMinParam_3D_{taxa}_Mindex_routine'][ssm_config['run_information']['baseline']]
+reference_data = SSMcalcs_dic[f'CalMinParam_3D_{taxa}_Mindex_routine'][ssm_config['run_information']['reference']]
 variable_name = f'Mindex_{taxa}_routine'
 excel_file_param_name = variable_name
 
@@ -42,7 +42,7 @@ else:  # scope == 'wc'
     wqm_reference_data = reference_data[variable_name].values
 
 ssm_input_datasets = {
-    'wqm_baseline': wqm_baseline_data,
-    'wqm_reference': wqm_reference_data
+    ssm_config['run_information']['baseline']: wqm_baseline_data,
+    ssm_config['run_information']['reference']: wqm_reference_data
 }
 print(f"Data ready - keys: {list(ssm_input_datasets.keys())}")  # [DEBUG]

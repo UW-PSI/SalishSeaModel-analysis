@@ -114,6 +114,7 @@ specific_parameters = {
 add_parameters_directly_to_netcdf_files_in_dictionary(SSMcalcs_dic, datasets, specific_parameters)
 del datasets, specific_parameters # cleanup after function
 
+time_coords = pd.DatetimeIndex(SSMcalcs_dic[f'CalMinParam_3D_{taxa}_Mindex_routine']['exist'].coords['day'])
 
 # ============================================================================
 # ## Add existing -reference for each dataarray (not done currently)

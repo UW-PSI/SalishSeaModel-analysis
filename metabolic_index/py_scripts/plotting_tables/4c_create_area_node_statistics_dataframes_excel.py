@@ -113,8 +113,6 @@ def add_area_tabs_to_existing_excels():
             habitat_areas[region] = (gdf.Area_m2.iloc[region_indices_habitat][nodes_in_habitat].sum()) * 1e-6  #select areas of nodes in habitat, sum them, convert m² to km² (×1e-6)
 
         dfs = create_statistics_dataframes(case, ssm_config, 'area', daily_area_results[threshold_key], regions, time_coords, habitat_sizes=habitat_areas)
-        df_area_existing = dfs['wqm_baseline']
-        df_area_reference = dfs['wqm_reference']
 
         existing_data = {}  #dictionary to store all existing sheets from Excel file
         with pd.ExcelFile(excel_file) as xls:  #open Excel file for reading
@@ -124,10 +122,10 @@ def add_area_tabs_to_existing_excels():
         with pd.ExcelWriter(excel_file, mode='w', engine='openpyxl') as writer:  #open Excel file for writing (overwrites existing)
             if 'Number_of_Days' in existing_data:  #write Number_of_Days tab first if it exists
                 existing_data['Number_of_Days'].to_excel(writer, sheet_name='Number_of_Days', index=False)
-            
-            df_area_existing.to_excel(writer, sheet_name='Area_Existing', index=False)  #write Area_Existing tab (new)
-            df_area_reference.to_excel(writer, sheet_name='Area_Reference', index=False)  #write Area_Reference tab (new)
-            
+
+            for tag, df in dfs.items():
+                df.to_excel(writer, sheet_name=f'Area_{ssm_config["run_information"]["run_tag"][case][tag]}', index=False)  #write each scenario tab (new)
+
             for sheet_name, data in existing_data.items():  #write all remaining existing tabs
                 if sheet_name != 'Number_of_Days':  #skip Number_of_Days since already written
                     data.to_excel(writer, sheet_name=sheet_name, index=False)
@@ -242,8 +240,6 @@ def add_node_tabs_to_existing_excels():
             habitat_nodes[region] = nodes_in_habitat.sum()  #count True values = number of nodes in habitat
 
         dfs = create_statistics_dataframes(case, ssm_config, 'node', daily_node_results[threshold_key], regions, time_coords, habitat_sizes=habitat_nodes) #create node statistics DataFrames for this threshold
-        df_node_existing = dfs['wqm_baseline']
-        df_node_reference = dfs['wqm_reference']
 
         existing_data = {}  #dictionary to store all existing sheets from Excel file
         with pd.ExcelFile(excel_file) as xls:  #open Excel file for reading
@@ -258,10 +254,10 @@ def add_node_tabs_to_existing_excels():
                 existing_data['Area_Existing'].to_excel(writer, sheet_name='Area_Existing', index=False)
             if 'Area_Reference' in existing_data:
                 existing_data['Area_Reference'].to_excel(writer, sheet_name='Area_Reference', index=False)
-            
-            df_node_existing.to_excel(writer, sheet_name='Nodes_Existing', index=False)  #write Nodes_Existing tab (new)
-            df_node_reference.to_excel(writer, sheet_name='Nodes_Reference', index=False)  #write Nodes_Reference tab (new)
-            
+
+            for tag, df in dfs.items():
+                df.to_excel(writer, sheet_name=f'Nodes_{ssm_config["run_information"]["run_tag"][case][tag]}', index=False)  #write scenario tab (new)
+
             for sheet_name, data in existing_data.items():  #write all remaining existing tabs
                 if sheet_name not in ['Number_of_Days', 'Area_Existing', 'Area_Reference']:  #skip already written tabs
                     data.to_excel(writer, sheet_name=sheet_name, index=False)

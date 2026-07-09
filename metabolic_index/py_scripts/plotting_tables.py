@@ -59,4 +59,14 @@ def main():
     # Create area/node DFs & add to the existing Excel files
     exec(open(modpath / '4c_create_area_node_statistics_dataframes_excel.py').read(), globals())
 
+    # For the report: output daily volumes/areas of each species where MI < 1. We really should be
+    # saving all of these, but we're not and we're up against a deadline.
+    for scn in daily_volume_results['threshold_1'].keys():
+        with pd.ExcelWriter(f'SSM_output/SSMspreadsheets/{args.species}_lt-1_dailies_{scn}.xlsx') as writer:
+            for region in regions:
+                df = pd.DataFrame({'Daily_Volumes': daily_volume_results['threshold_1'][scn][region],
+                                   'Daily_Areas': daily_area_results['threshold_1'][scn][region]
+                }, index=time_coords)
+                df.to_excel(writer, sheet_name=region)
+
 if __name__ == '__main__': main()

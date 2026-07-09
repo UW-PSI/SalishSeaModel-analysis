@@ -382,36 +382,20 @@ taxa = "salmon"  # Changed from sole to salmon - 2026-02-12
 # Define all scenarios in one place for consistency across scripts
 
 # Scenario list (used in: plot_daily_threshold_volumes() in 3b_plot, add_volume_tabs_to_existing_excels() in 4a_volume, 4c_area_node multiple functions)
-scenarios = ['wqm_baseline', 'wqm_reference']
-# scenarios = ['wqm_baseline', 'wqm_reference', 'future_2050']  # Example with additional scenario
+scenarios = list(ssm_config['run_information']['run_tag'][case].keys())
 
 # Display labels (used in: plot_daily_threshold_volumes() in 3b_plot, add_volume_tabs_to_existing_excels() in 4a_volume)
-scenario_labels = {
-    'wqm_baseline': '2014 Conditions',
-    'wqm_reference': 'Reference',
-    # 'future_2050': '2050 Projection',
-}
+scenario_labels = ssm_config['run_information']['run_tag'][case]
 
 # Plot colors (used in: plot_daily_threshold_volumes() in 3b_plot, plot_multi_threshold_stacked_volumes() in 3c_stacked)
 scenario_colors = {
-    'wqm_baseline': 'black',
-    'wqm_reference': 'gray',
+    ssm_config['run_information']['baseline']: 'black',
+    ssm_config['run_information']['reference']: 'gray',
     # 'future_2050': 'blue',
 }
 
 # Excel tab names (used in: create_summary_excel() in 4b_pivot_summary)
-scenario_excel_tabs = {
-    'wqm_baseline': '2014_Conditions',
-    'wqm_reference': 'Reference',
-    # 'future_2050': '2050_Projection',
-}
-
-# NetCDF subdirectory mapping (used in: 2d_prepare_threshold_input_data)
-nc_subdir_mapping = {
-    'exist': 'wqm_baseline',           # Maps 'exist' folder to 'wqm_baseline'
-    'wqm_reference': 'wqm_reference',  # Maps 'wqm_reference' to same name
-    # 'future_2050': 'future_2050',
-}
+scenario_excel_tabs = ssm_config['run_information']['run_tag'][case]
 
 # === OUTPUT DIRECTORIES ===
 SSM_output_path = 'SSM_output' #base directory for all SSM outputs

@@ -43,9 +43,7 @@ def create_threshold_summary_table(metric_name, scenario='wqm_baseline', regiona
     if regional_total_volumes:  #add first row with total volumes for each region to enable recalculation from percentages
         total_row = {'DO_threshold': 'Total_km3'}  #first row label
         dfs = create_statistics_dataframes(case, ssm_config, 'volume', daily_volume_results[threshold_nums[0][1]], regions, time_coords)
-        df_existing = dfs['wqm_baseline']#get any DataFrame just to extract region names in correct order
-        df_reference = dfs['wqm_reference']
-        df_scenario = df_existing if scenario == 'wqm_baseline' else df_reference
+        df_scenario = dfs[scenario]#get any DataFrame just to extract region names in correct order
         for _, row in df_scenario.iterrows():  #loop through regions in DataFrame order
             region = row['Region']
             total_vol = regional_total_volumes.get(region, None)  #lookup total volume for this region
@@ -55,10 +53,8 @@ def create_threshold_summary_table(metric_name, scenario='wqm_baseline', regiona
     for thresh_num, threshold_key in threshold_nums:  #loop through each threshold to create data rows
         dfs = create_statistics_dataframes(case, ssm_config, 'volume', daily_volume_results[threshold_key], regions, time_coords) #get statistics DataFrame for this threshold using helper function
 
-        df_existing = dfs['wqm_baseline']
-        df_reference = dfs['wqm_reference']
-        df_scenario = df_existing if scenario == 'wqm_baseline' else df_reference  #select scenario-specific DataFrame
-        
+        df_scenario = dfs[scenario]
+
         row_data = {'DO_threshold': thresh_num}  #initialize row with threshold number
         
         for _, row in df_scenario.iterrows():  #extract the metric values for each region
@@ -84,17 +80,17 @@ def create_threshold_summary_table(metric_name, scenario='wqm_baseline', regiona
 
 print("=== PIVOT TABLES FOR EXCEL PLOTTING ===")
 print("Maximum daily volume below DO threshold as % of total regional volume")
-pivot_max_existing = create_threshold_summary_table('MaxVol_%ofTotal', 'wqm_baseline', regional_volumes)
+pivot_max_existing = create_threshold_summary_table('MaxVol_%ofTotal', ssm_config['run_information']['baseline'], regional_volumes)
 print(pivot_max_existing.to_string(index=False))  #removed float_format to fix error
 print()
 
 print("Average daily volume below DO threshold as % of total regional volume")
-pivot_avg_existing = create_threshold_summary_table('AvgVol_%ofTotal', 'wqm_baseline', regional_volumes)
+pivot_avg_existing = create_threshold_summary_table('AvgVol_%ofTotal', ssm_config['run_information']['baseline'], regional_volumes)
 print(pivot_avg_existing.to_string(index=False))  #removed float_format to fix error
 print()
 
 print("Minimum daily volume below DO threshold as % of total regional volume")
-pivot_min_existing = create_threshold_summary_table('MinVol_%ofTotal', 'wqm_baseline', regional_volumes)
+pivot_min_existing = create_threshold_summary_table('MinVol_%ofTotal', ssm_config['run_information']['baseline'], regional_volumes)
 print(pivot_min_existing.to_string(index=False))  #removed float_format to fix error
 print()
 

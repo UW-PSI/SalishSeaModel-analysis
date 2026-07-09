@@ -21,20 +21,19 @@ def print_volume_statistics(threshold_key, regions_to_plot, regional_total_volum
 
     # Get DataFrames
     dfs = create_statistics_dataframes(case, ssm_config, 'volume', daily_volume_results[threshold_key], regions_to_plot, time_coords)
-    df_existing = dfs['wqm_baseline']
-    df_reference = dfs['wqm_reference']
 
     # Print both tables
-    for scenario, df, label in [('wqm_baseline', df_existing, scenario_labels['wqm_baseline']), ('wqm_reference', df_reference, scenario_labels['wqm_reference'])]:
+    for scenario in ssm_config['run_information']['run_tag'][case].keys():
+        df = dfs[scenario]
+        label=scenario_labels[scenario]
         print(f"--- {label} ---")
         print(df.to_string(index=False, max_colwidth=12, col_space=10))
         print() # extra line after each table
-    
-    # Store DataFrames globally for Excel export later
-    globals()[f'df_{threshold_key}_existing'] = df_existing
-    globals()[f'df_{threshold_key}_reference'] = df_reference
-    
-    return df_existing, df_reference
+
+        # Store DataFrames globally for Excel export later
+        globals()[f'df_{threshold_key}_{scenario}'] = df
+
+    return dfs
 
 # ==============================================================================
 # REGIONAL VOLUME DATA - PROVIDED BY USER
@@ -98,25 +97,26 @@ def add_volume_tabs_to_existing_excels():
 
         # Get detailed volume statistics for this threshold
         dfs = create_statistics_dataframes(case, ssm_config, 'volume', daily_volume_results[threshold_key], regions, time_coords, habitat_sizes=habitat_volumes)
-        df_existing = dfs['wqm_baseline']
-        df_reference = dfs['wqm_reference']
 
         # Write all sheets in desired order: Number_of_Days, Volume_Existing, Volume_Reference, then rest
         with pd.ExcelWriter(excel_file, mode='w', engine='openpyxl') as writer:
             # First: Number_of_Days
             if 'Number_of_Days' in existing_data:
                 existing_data['Number_of_Days'].to_excel(writer, sheet_name='Number_of_Days', index=False)
-            
-            # Second: Volume_Existing and Volume_Reference
-            df_existing.to_excel(writer, sheet_name='Volume_Existing', index=False)
-            df_reference.to_excel(writer, sheet_name='Volume_Reference', index=False)
-            
+
+            for scenario in ssm_config['run_information']['run_tag'][case].keys():
+                df = dfs[scenario]
+                label=scenario_labels[scenario]
+
+                # Second: Volume_Existing and Volume_Reference
+                df.to_excel(writer, sheet_name=f'Volume_{label}', index=False)
+
             # Third: All remaining sheets in original order
             for sheet_name, data in existing_data.items():
                 if sheet_name != 'Number_of_Days':  #skip since already written
                     data.to_excel(writer, sheet_name=sheet_name, index=False)
-        
-        print(f"Added Volume_Existing and Volume_Reference tabs after Number_of_Days in {excel_file.name}")
+
+        print(f"Added Volume tabs after Number_of_Days in {excel_file.name}")
 
 # Run the function to add volume tabs
 add_volume_tabs_to_existing_excels()

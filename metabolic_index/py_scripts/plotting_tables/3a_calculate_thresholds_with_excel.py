@@ -392,9 +392,6 @@ gdf = gdf.rename(columns={'region_inf': 'Regions'})  # Rename region column name
 regions = gdf[['node_id', 'Regions']].groupby('Regions').count().index.to_list()  #get list of unique region names from shapefile
 regions.remove('Other')  #exclude Other or any region from analysis 
 regions.append('All_regions')  #add All_regions as virtual region representing all included nodes for combined analysis
-#set time coordinates for 361 days starting 1/5/2014
-dataset_start_date = pd.to_datetime('2014-01-05')  #define model start date matching SSM runs
-time_coords = pd.date_range(dataset_start_date, periods=361, freq='D')  #create pandas date_range array of daily time index for full year
 
 daily_volume_results = {}  #initalize for nested dictionary: threshold -> scenario -> region -> daily_volumes_array
 # ==============================================================================
