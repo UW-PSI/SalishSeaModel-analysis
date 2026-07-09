@@ -84,7 +84,7 @@ def create_statistics_dataframes(case: str, ssm_config: dict, dtype: str, daily_
             # Compute average compressed volume
             nonzero = data.nonzero()[0]
             if len(nonzero):
-                avg_compr_vol = data[nonzero[0]:nonzero[-1]].mean()
+                avg_compr_vol = data[nonzero[0]:nonzero[-1]+1].mean()
                 compr_first_datestr = date_of_index(nonzero[0])
                 compr_last_datestr = date_of_index(nonzero[-1])
             else:
