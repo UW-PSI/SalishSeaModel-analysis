@@ -1,324 +1,256 @@
+#!/usr/bin/env python3
 # Created by Rachael D. Mueller at the Puget Sound Institute with funding from King County
-import sys
 import os
-import xarray
-import openpyxl
-import contextily as cx 
-import yaml
-import numpy as np
-import pandas
-import pathlib
+import sys
+import argparse
+from pathlib import Path
 import time
+import logging
+import subprocess
 from datetime import date
+
+import xarray as xr
+import contextily as cx 
+import numpy as np
+import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import cmocean.cm as cm
 
-def plot_conc_graphics(shp, case, model_var, stat_type, loc, run_file, frame="FullDomain"):
-    """ 
-    shp [path]: shapefile path
+sys.path.append(str(Path(__file__).parent.parent))
+from apis import API_KEYS
+from ssm_utils import read_case, DepthReducer, FileFinder
+from ssm_utils.depth import SCOPES
+
+def plot_conc_graphics(case, ssm, stat_type, vtype, depth, run_type, region=None,
+                       mitype=None, mispecies=None, toner=False, delta_ref=False):
+    """
     case [string]: "SOG_NB" or "whidbey"
     model_var [string]: "DOXG", "NO3", "salinity"
     stat_type[string]: "mean","min","max"
     loc[string]: "surface" or "bottom"
-    frame: "FullDomain" or "Region"
     """
-    print(os.path.basename(__file__))
-    plt.rc('axes', titlesize=16)     # fontsize of the axes title
+
+    logger = logging.getLogger(f'plot_conc_graphics_{run_type + ("-ref" if delta_ref else "")}_{vtype}')
+
+    plt.rc('font', family='sans-serif', weight='normal', style='normal', size=10)
+    plt.rc('legend', fontsize=10, title_fontsize=12)
+    plt.rc('axes', titlesize=14, labelsize=12)
+    plt.rc('figure', titlesize=14)
 
     # Define dimension sizes and load shapefile
-    gdf = gpd.read_file(shp)
-    gdf = gdf.rename(columns={'region_inf':'Regions'})
-    regions = gdf[['node_id','Regions']].groupby(
-        'Regions').count().index.to_list()
-    regions.remove('Other')
+    shp = ssm['paths']['shapefile']
+    gdf = gpd.read_file(shp).set_index('tce')
+    if len(gdf) == 16013:
+            logger.warning('Correcting shapefile length')
+            gdf = gdf.iloc[:-1].copy()
+    gdf = gdf.rename(columns={'region_inf':'Regions'}).to_crs('EPSG:4326')
+    # Filter the GeoDataFrame to include only rows where 'included_i' == 1 (exclude shallow/outside areas)
+    gdf = gdf.loc[gdf['included_i'] == 1].copy()
 
-    # Pull directory name from run_file path
-    run_type = run_file.split('/')[-3]
-    
-    # Isolate run tag for image file naming
-    run_tag = run_type.split("_")[0]
-    if run_tag=='wqm': # for baseline and reference cases
-        run_tag = run_type.split("_")[1]
-    print(f'run_file: {run_file}')
-    print(f'run_type: {run_type}')
-    print(f'run_tag: {run_tag}')
-    
-    # Load results from scenario for 2D case
-    if (loc=='surface') or (loc=='bottom'):
-        try: 
-            with xarray.open_dataset(run_file) as ds:
-                # there is only one variable in these files ([0]),
-                # though the name changes; hence, [*ds]
-                param_full=ds[[*ds][0]]
-                # Sub-sample nodes (from 16012 nodes to 7494)
-                param_wc=param_full[:,gdf['tce']-1]
-                # Get number of days and nodes
-                [ndays,nnodes]=param_wc.shape
-                print(f'Opened: {run_file}')
-        except FileNotFoundError:
-            print(f'File Not Found: {run_file}')
-    # Load results from scenario for 3D (water column) case
-    else:
-        try: 
-            with xarray.open_dataset(run_file) as ds:
-                param_full=ds[[*ds][0]]
-                # Sub-sample nodes (from 16012 nodes to 7494)
-                param=param_full[:,:,gdf['tce']-1]
-                # Apply "stat_type" across depth levels
-                param_wc = getattr(np,stat_type)(param,axis=1)
-                # Get number of days and nodes
-                [ndays,nlevels,nnodes]=param.shape
-                print(f'Opened: {run_file}')
-        except FileNotFoundError:
-            print(f'File Not Found: {run_file}')
-    graphics_output_dir = pathlib.Path(
-        ssm['paths']['graphics'])/case/model_var
-    output_directory = graphics_output_dir/'concentration'/'movies'/frame/f'{loc}'/run_type 
-    print(f'Writing graphics to {output_directory}')
+    ff = FileFinder(case=case, ssm_config=ssm, vtype=vtype,
+                    mitype=mitype, mispecies=mispecies, run_type=run_type)
+    dr = DepthReducer(ssm_config=ssm, gdf=gdf)
+
+    run_file = ff.get_file(ff.run_types[0], stat_type)
+    with xr.open_dataset(run_file) as ds:
+        param=ds[ff.get_var_name(run_file)]
+        param = dr.select_depth(param, depth)
+        if ds.attrs.get('version', 1) >= 2:
+            time_coords = param.coords['day']
+            long_name = param.attrs['long_name']
+            units = param.attrs['units']
+        else:
+            # TODO assign reasonable defaults
+            pass
+    if delta_ref:
+        ref_file = ff.get_file(ssm['run_information']['reference'], stat_type)
+        logger.info(f'Subtracting reference condition from {ref_file}')
+        with xr.open_dataset(ref_file) as ds:
+            param -= dr.select_depth(ds[ff.get_var_name(ref_file)], depth)
+
+    graphics_output_dir = Path(ssm['paths']['movies']) / ff.output_var_base
+    frame = 'FullDomain' if region is None else region
+    output_directory = graphics_output_dir / frame / depth / (
+            run_type + ('-ref' if delta_ref else ''))
+    logger.info(f'Writing graphics to {output_directory}')
     # create output directory, if it doesn't already exist 
-    # see https://docs.python.org/3/library/os.html#os.makedirs
-    if os.path.exists(output_directory)==False:
-        print(f'creating: {output_directory}.  Assumed that {graphics_output_dir} exists.')
-        os.umask(0) #clears permissions
-        if os.path.exists(graphics_output_dir/'concentration')==False:
-            os.makedirs(
-                graphics_output_dir/'concentration',
-                mode=0o777,exist_ok=True)
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies',
-                mode=0o777,exist_ok=True)
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies'/frame,
-                mode=0o777,exist_ok=True)
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies'/frame/f'{loc}',
-                mode=0o777,exist_ok=True)
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies'/frame/f'{loc}'/run_type,
-                mode=0o777,exist_ok=True)
-            
-        elif os.path.exists(graphics_output_dir/'concentration'/'movies')==False:
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies',
-                mode=0o777,exist_ok=True)
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies'/frame,
-                mode=0o777,exist_ok=True)
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies'/frame/f'{loc}',
-                mode=0o777,exist_ok=True)
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies'/frame/f'{loc}'/run_type,
-                mode=0o777,exist_ok=True)
-        elif os.path.exists(graphics_output_dir/'concentration'/'movies'/frame)==False:
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies'/frame,
-                mode=0o777,exist_ok=True)
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies'/frame/f'{loc}',
-                mode=0o777,exist_ok=True)
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies'/frame/f'{loc}'/run_type,
-                mode=0o777,exist_ok=True)
-        elif os.path.exists(graphics_output_dir/'concentration'/'movies'/frame/f'{loc}')==False:
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies'/frame/f'{loc}',
-                mode=0o777,exist_ok=True)
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies'/frame/f'{loc}'/run_type,
-                mode=0o777,exist_ok=True)
-        else: 
-            os.makedirs(
-                graphics_output_dir/'concentration'/'movies'/frame/f'{loc}'/run_type,
-                mode=0o777,exist_ok=True)
-           
-    # NOTE: Lables are hard-coded (not ideal) and need to match  
-    upper_bounds={
-        'DOXG': [2, 3, 4, 5, 6, 7, np.ceil(param_wc.max().item())],
-        'salinity': [5, 10, 15, 20, 25, 30, 35],
-        'NO3': [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6,  np.ceil(param_wc.max().item())]
-    }
-    
+    if not output_directory.is_dir():
+        logger.info(f'creating: {output_directory}.  Assumed that {graphics_output_dir} exists.')
+        output_directory.mkdir(mode=0o777, parents=True, exist_ok=True)
+
+    # NOTE: Labels are hard-coded (not ideal) and need to match colormap list
+    if not delta_ref:
+        upper_bounds={
+            'DOXG': [2, 3, 4, 5, 6, 7],
+            'salinity': [5, 10, 15, 20, 25, 30],
+            'NO3': [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6],
+            'mi': [1, 2]
+        }
+        color_list = {
+            'DOXG': ['red','orange','navajowhite','beige','skyblue','royalblue','midnightblue'],
+            'salinity': ['navy','mediumblue','cadetblue','seagreen','lightseagreen','khaki','lemonchiffon'],
+            'SST': ['midnightblue','darkslateblue','darkmagenta','darkorchid',
+                    'palevioletred','thistle','palegoldenrod','khaki','gold','goldenrod'],
+            'NO3': ['darkgoldenrod','goldenrod','darkkhaki','khaki','thistle','palevioletred','darkorchid',
+                    'darkmagenta','darkslateblue','midnightblue'],
+            'mi': ['red', 'orange', 'skyblue']
+        }
+    else:
+        upper_bounds = {
+            'DOXG': [-1,-.9,-.8,-.7,-.6,-.5,-.4,-.3],
+            'mi': [-1,-.9,-.8,-.7,-.6,-.5,-.4,-.3,-.2,-.1]
+        }
+        color_list = {
+            'DOXG': ['#010101','#4d8684','#fcfc00','#f3be00','#e4760d',
+                     '#8b0000','#ae0100','#ff6347','#ef797b'],
+            'mi': ['#010101','#4d8684','#fcfc00','#f3be00','#e4760d','#8b0000',
+                   '#ae0100','#ff6347','#ef797b','#f1cece','#fce4ec']
+        }
+
     # create legend labels
     bounds = []
-    for index, upper_bound in enumerate(upper_bounds[model_var]):
-        
+    max_val = np.ceil(param.max().item())
+    for index, upper_bound in enumerate(upper_bounds[vtype] + [max_val]):
+
         if index == 0:
-            lower_bound = 0
+            if upper_bound < 0:
+                bound = f'< {upper_bound}'
+                bounds.append(bound)
+                continue
+            else:
+                lower_bound = 0
         else:
-            lower_bound = upper_bounds[model_var][index-1]
+            lower_bound = upper_bounds[vtype][index-1]
+        # Prevent inconsistent legend labels between ints and floats
+        if type(lower_bound) == int and upper_bound == np.round(upper_bound):
+            upper_bound = int(upper_bound)
 
         # format the numerical legend here
-        if (model_var=="DOXG") or (model_var=="salinity"):
-            bound = f'{lower_bound:.0f} - {upper_bound:.0f}'
-        else:
-            bound = f'{lower_bound:.2f} - {upper_bound:.2f}'
+        bound = f'{lower_bound} - {upper_bound}'
         bounds.append(bound)
-    
-    color_list = {
-        'DOXG': ['red','orange','navajowhite','beige','skyblue','royalblue','midnightblue'],
-        'salinity': ['navy','mediumblue','cadetblue','seagreen','lightseagreen','khaki','lemonchiffon'],
-        'SST': ['midnightblue','darkslateblue','darkmagenta','darkorchid',
-                'palevioletred','thistle','palegoldenrod','khaki','gold','goldenrod'],
-        'NO3': ['darkgoldenrod','goldenrod','darkkhaki','khaki','thistle','palevioletred','darkorchid',
-                'darkmagenta','darkslateblue','midnightblue']
-    }
-    
-    # Dictionary of titles for each parameter case
-    if run_tag=='baseline':
-        if (loc=='surface') or (loc=='bottom'):
-            title_tag = {
-                "DOXG":f"2014 Conditions\n{loc.capitalize()}, {stat_type.capitalize()} Daily Dissolved Oxygen (DO)",
-                "NO3":f"2014 Conditions\n{loc.capitalize()}, {stat_type.capitalize()} Daily NO3",
-                "salinity":f"2014 Conditions\n{loc.capitalize()}, {stat_type.capitalize()} Daily Salinity" 
-            }
-        else:
-            title_tag = {
-                "DOXG":f"2014 Conditions\nWater Column, {stat_type.capitalize()} Daily Dissolved Oxygen (DO)",
-                "NO3":f"2014 Conditions\nWater Column, {stat_type.capitalize()} Daily NO3",
-                "salinity":f"2014 Conditions\nWater Column, {stat_type.capitalize()} Daily Salinity" 
-            }
-    elif run_tag=='reference':
-        if (loc=='surface') or (loc=='bottom'):
-            title_tag = {
-                "DOXG":f"Reference Scenario\n{loc.capitalize()}, {stat_type.capitalize()} Daily Dissolved Oxygen (DO)",
-                "NO3":f"Reference Scenario\n{loc.capitalize()}, {stat_type.capitalize()} Daily NO3",
-                "salinity":f"Reference Scenario\n{loc.capitalize()}, {stat_type.capitalize()} Daily Salinity" 
-            }
-        else:
-            title_tag = {
-                "DOXG":f"Reference Scenario\nWater Column, {stat_type.capitalize()} Daily Dissolved Oxygen (DO)",
-                "NO3":f"Reference Scenario\nWater Column, {stat_type.capitalize()} Daily NO3",
-                "salinity":f"Reference Scenario\nWater Column, {stat_type.capitalize()} Daily Salinity" 
-            }
+
+    title = f"{ssm['run_information']['run_description_short'][case][run_type]}"
+    if delta_ref:
+        title += " Minus Reference"
+    title += f"\n{SCOPES[depth]}, {stat_type.capitalize()} Daily {long_name}"
+    area = gdf if region is None else gdf.loc[gdf['Regions'] == region]
+    hatch_gdf = []
+    if mispecies is not None and depth == 'bt':
+        depth_threshold = ssm['mi']['species'][mispecies].get('habitat_max_depth')
+        if depth_threshold is not None:
+            logger.info(f'Applying max depth {depth_threshold} for species {mispecies}')
+            depth_mask_hatch = area['depth'] * 1000 > depth_threshold
+            hatch_gdf = area.loc[depth_mask_hatch]
+            area = area.loc[~depth_mask_hatch]
+
+    # Define background tileset
+    if toner or ('stadia' not in API_KEYS):
+        tileset = cx.providers.CartoDB.PositronNoLabels
+        #if toner:
+        #    tileset = cx.providers.Stadia.StamenTonerLite
+        #    tileset['url'] = 'https://tiles.stadiamaps.com/tiles/stamen_toner_background/{z}/{x}/{y}{r}.png?api_key=' + API_KEYS['stadia']
     else:
-        if (loc=='surface') or (loc=='bottom'):
-            title_tag = {
-                "DOXG":f"{ssm['run_information']['run_description_short'][case][run_tag]}\n{loc.capitalize()}, {stat_type.capitalize()} Daily Dissolved Oxygen (DO)",
-                "NO3":f"{ssm['run_information']['run_description_short'][case][run_tag]}\n{loc.capitalize()}, {stat_type.capitalize()} Daily NO3",
-                "salinity":f"{ssm['run_information']['run_description_short'][case][run_tag]}\n{loc.capitalize()}, {stat_type.capitalize()} Daily Salinity" 
-            }
-        else:
-            title_tag = {
-                "DOXG":f"{ssm['run_information']['run_description_short'][case][run_tag]}\nWater Column, {stat_type.capitalize()} Daily Dissolved Oxygen (DO)",
-                "NO3":f"{ssm['run_information']['run_description_short'][case][run_tag]}\nWater Column, {stat_type.capitalize()} Daily NO3",
-                "salinity":f"{ssm['run_information']['run_description_short'][case][run_tag]}\nWater Column, {stat_type.capitalize()} Daily Salinity" 
-            }
+        tileset = cx.providers.Stadia.StamenTerrainBackground
+        tileset['url'] = 'https://tiles.stadiamaps.com/tiles/stamen_terrain_background/{z}/{x}/{y}{r}.png?api_key=' + API_KEYS['stadia']
 
-    # hard-code date period
-    dti = pandas.date_range("2014-01-01", periods=367, freq="D")
+    output_file_base = f'{case}_{run_type + ("-ref" if delta_ref else "")}_{ff.output_var_base}_{stat_type}_{depth}'
 
-    # Plot threshold for each day
-    for day in range(ndays):
-        model_day = day + ssm['run_information']['spin_up_days'] 
-        # date to show in graphic title
-        model_date = dti[model_day]
+    # Plot for each day
+    def plot_day(i,model_dt):
         # define output file name with model day-of-year
-        output_file = output_directory/f'{case}_{run_tag}_{model_var}_{stat_type}_conc_{loc}_{model_day+1}.png'
-         
-        print(f'Day {model_day} of {ndays}')
-        gdf[model_var] = param_wc[day,:]
+        output_file = output_directory / f'{output_file_base}_{i+1:03d}.png'
+        model_date = model_dt.data
 
-        # Set graphic fontsizes
-        mpl.rc('font', size=10)
-        # some of the following may be repetetive but can also be set 
-        # relative to the font value above (eg "xx-small, x-small,small, 
-        # medium, large, x-large, xx-large, larger, or smaller")
-        mpl.rc('legend', fontsize=10)
-        mpl.rc('axes', titlesize=14)
-        mpl.rc('axes', labelsize=10)
-        mpl.rc('figure', titlesize=10)
-        mpl.rc('font', family='sans-serif', weight='normal', style='normal')
+        if i % 10 == 0:
+            logger.info(f'Date {model_date}')
+        data = param.sel(day=model_date, node=area.index).to_numpy()
 
-        fig, axs = plt.subplots(1, figsize = (8,8))
-        if frame=="Region":
-            gdf.loc[(gdf['Regions']==case.capitalize())].plot(
-               ax=axs,
-               column=model_var,
+        fig, ax = plt.subplots(1, figsize = (8,9))
+        area.plot(data, ax=ax,
                scheme="User_Defined",
-               legend=True,
-               classification_kwds=dict(bins=upper_bounds[model_var]),
-               cmap=mpl.colors.ListedColormap(color_list[model_var])
-            )
-
-        else:
-            gdf.plot(ax=axs,
-               column=model_var,
-               scheme="User_Defined", 
-               legend=True, 
-               classification_kwds=dict(bins=upper_bounds[model_var]),
-               cmap=mpl.colors.ListedColormap(color_list[model_var])
-            )
-            # set graphic limits (these capture the range where DO_standard applies)
-            axs.set_xlim(-1.39e7,-1.359e7)
-            axs.set_ylim(5.94e6,6.3e6)
+               classification_kwds=dict(bins=upper_bounds[vtype] + [max_val]),
+               cmap=mpl.colors.ListedColormap(color_list[vtype])
+        )
+        handles = [mpl.patches.Patch(color=color_list[vtype][j], label=bounds[j]) for j in range(len(color_list[vtype]))]
+        if len(hatch_gdf) > 0:
+            hatch_gdf.plot(ax=ax, color='lightgrey', edgecolor='#9A9A9A', linewidth=0.4, hatch='///', alpha=1)
+            handles.append(mpl.patches.Patch(facecolor='lightgrey', edgecolor='black', hatch='///', label=f'>{depth_threshold}m'))
+        if region is None:
+            ax.set_xlim(-123.3, -122.18)  # Limiting longitude for PSound
+            ax.set_ylim(47, 48.77)        # Limiting latitude for PSound
         # set legend to lower left corner 
         # (instead of default upper-right, which overlaps SOGNB)
         # the legend for salinity and nitrogen doesn't have the 
         # same attributes
-        legend = axs.get_legend()
-        legend._loc = 3 # lower-left
-        if (model_var=='NO3') or (model_var=='DOXG'):
-            legend.set_title(f'{model_var} [mg/l]')
-        elif model_var=='salinity':
-            legend.set_title(f'{model_var} [ppt]')
-        # get all the legend labels
-        legend_labels = axs.get_legend().get_texts()
-        # replace the legend labels
-        for bound, legend_label in zip(bounds, legend_labels):
-            legend_label.set_text(bound)      
-        # remove x-, y-labels
-        axs.set_xticklabels('')
-        axs.set_yticklabels('')
+        ax.legend(handles=handles, loc='lower left', title=f'{vtype}{" [" + units + "]" if units is not None and units != "none" else ""}')
+        ax.set(xlabel='Latitude',ylabel='Longitude')
         # add background landscape
-        cx.add_basemap(axs, 
-            crs=gdf.crs,
-            source=cx.providers.Stamen.TerrainBackground,
-            alpha=1
-        )
-        axs.set_title(
-            f"{title_tag[model_var]}\n{model_date.month_name()} {model_date.day:02d}, 2014"
-        )
-        plt.savefig(output_file, bbox_inches='tight', format='png')
-        plt.clf() #clear figure and memory
+        cx.add_basemap(ax, crs=gdf.crs, source=tileset, alpha=1)
+        ax.set_title(f"{title}\n{mispecies.title() + ' ' + mitype.title() + '; ' if mispecies is not None else ''}{model_dt.dt.strftime('%B %d, %Y').item()}")
+        fig.savefig(output_file, bbox_inches='tight')
+        plt.close(fig) #clear figure and memory
+        return output_file
 
-    return
+    # Pretty sure this can't be parallelized because GeoDataFrames aren't pickleable.
+    outputs = [plot_day(i, dt) for i, dt in enumerate(time_coords)]
 
-if __name__=='__main__':
-    """
-    HEADER information not yet added
-    case: "SOG_NB" or "whidbey"
-    run_file
+    return outputs
 
-    frame: "FullDomain" or "Region"
-    """
-    # skip first argument, which is the file name
-    args = sys.argv[1:]
-    case=args[0]
-    model_var=args[1]
-    stat_type=args[2]
-    loc=args[3]
-    run_file=args[4]
-    frame=args[5]
-    
+def main():
+    parser = argparse.ArgumentParser(description="Plot concentration animation frames")
+    parser.add_argument('case', help='Case name (SOG_NB, whidbey, ...) or file')
+    parser.add_argument('stat_type', choices=('min','mean','max'), help='Daily aggregation')
+    parser.add_argument('depth', choices=SCOPES.keys(), help='Depth reduction')
+    parser.add_argument('run_type', help='Run tag for scenario to plot')
+    parser.add_argument('-d', '--delta-ref', action='store_true',
+                        help='Make a delta plot against reference condition')
+    parser.add_argument('-r', '--region', help='More restrictive regional scope')
+    parser.add_argument('-t', '--toner', action='store_true',
+                        help='Use Stamen Toner background instead of terrain')
+    parser.add_argument('-m', '--ffmpeg', action='store_true', help='Produce movie at end')
+    subparsers = parser.add_subparsers(title='Data type selection')
+    parser_var = subparsers.add_parser('var', help='Work with a model output variable')
+    parser_var.add_argument('variable', help='Output variable, like DOXG')
+    parser_var.set_defaults(mode='var')
+
+    parser_mi = subparsers.add_parser('mi', help='Work with metabolic index data')
+    parser_mi.add_argument('species', help='Species tag')
+    parser_mi.add_argument('type', choices=('routine','smr'), help='routine or smr')
+    parser_mi.set_defaults(mode='mi')
+    args = parser.parse_args()
+
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(level=logging.INFO)
+
     # Start time counter
-    start = time.time()
+    start = time.perf_counter()
 
-    # load yaml file containing path definitions.  This file is created by
-    # https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/etc/SSM_config.ipynb
-    # but can also be modified here (with the caveat the modifications will be 
-    # over-written when the SSM_config.ipynb is run
-    # https://github.com/RachaelDMueller/KingCounty-Rachael/blob/main/etc/SSM_config.yaml
-    with open(f'../etc/SSM_config_{case}.yaml', 'r') as file:
-        ssm = yaml.safe_load(file)
-        # get shapefile path    
-        shp = ssm['paths']['shapefile']
+    # Load yaml file containing path definitions
+    ssm, case = read_case(args.case)
 
-    print(f'Calling plot_conc_movie for: {run_file.split("/")[-2]}')
-    plot_conc_graphics(shp, case, model_var, stat_type, loc, run_file, frame)
-    
+    if args.mode == 'mi':
+        outputs = plot_conc_graphics(case, ssm, args.stat_type, 'mi',
+                                 args.depth, args.run_type, region=args.region,
+                                 mitype=args.type, mispecies=args.species,
+                                 toner=args.toner, delta_ref=args.delta_ref)
+    else:
+        outputs = plot_conc_graphics(case, ssm, args.stat_type, args.variable,
+                                     args.depth, args.run_type, region=args.region,
+                                     toner=args.toner, delta_ref=args.delta_ref)
+
+    if args.ffmpeg:
+        video_output = str(outputs[0].parent / '_'.join(outputs[0].stem.split('_')[:-1])) + '_video.mp4'
+        logger.info(f'Creating video file {video_output}')
+        ffmpeg_command = ["ffmpeg","-y","-framerate",'6']
+        ffmpeg_command += ['-i',str(outputs[0].parent / outputs[0].stem[:-3]) + '%03d' + outputs[0].suffix]
+        ffmpeg_command += ["-vf","scale=trunc(iw/2)*2:trunc(ih/2)*2","-c:v","libx264","-r",'30',"-pix_fmt","yuv420p"]
+        ffmpeg_command.append(video_output)
+        subprocess.check_output(ffmpeg_command)
+
     # End time counter
-    end = time.time()
-    print(f'Execution time: {(end - start)/60} minutes')
+    end = time.perf_counter()
+    logger.info(f'Execution time: {(end - start)/60:.3f} minutes')
+
+if __name__=='__main__': main()

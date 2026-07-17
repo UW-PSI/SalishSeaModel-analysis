@@ -1,2 +1,4 @@
 .ipynb_checkpoints
 __pycache__
+# This has private API keys that need to be personalized. See apis-example.py
+apis.py

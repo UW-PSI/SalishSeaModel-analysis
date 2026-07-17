@@ -4,8 +4,16 @@
 Contributors to this repository
 **********************************************
 
-This project was funded by King County.  The coding platform was designed and developed by Rachael D. Mueller under the supervision of `Stefano Mazzilli`_ and `Joel Baker`_ and in collaboration with `Tarang Khangaonkar`_ 
-at the University of Washington's `Puget Sound Institute`_ and `PNNL`_. Stefano Mazzilli and Joel Baker defined the model setup and nutrient loading scenario specifications, with input from King County.  Su Kyong Yun and Tarang Khangaonkar provided the modeling expertise to implement the scenarios.  Most scenarios were run prior to the start of my work, although I was responsible for some (see filepaths for details).
+This project was funded by King County.  The coding platform was originally
+designed and developed by Rachael D. Mueller under the supervision of
+`Stefano Mazzilli`_ and `Joel Baker`_ and in collaboration with
+`Tarang Khangaonkar`_  at the University of Washington's
+`Puget Sound Institute`_ and `PNNL`_. Stefano Mazzilli and Joel Baker defined
+the model setup and nutrient loading scenario specifications, with input from
+King County. Su Kyong Yun and Tarang Khangaonkar provided the modeling
+expertise to implement the scenarios. More recent updates in 2026 were by Ben
+Roberts <bedaro@uw.edu>, with much of the original metabolic index
+implementation by Stefano Mazzilli.
 
 More details on contributions to code development follow:
 

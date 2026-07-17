@@ -1,0 +1,29 @@
+- set up my ssm-analysis conda environment
+	conda create -f environment.yml
+	add path to ssm-analysis/fvcom_util to miniforge3/envs/ssm-analysis/lib/python3.10/site-packages.conda.pth (create this file)
+- make intermediate netcdf using "DO ecology extraction.ipynb" with all ecology outputs
+	Notebook config:
+	outputs = {
+	    'exist25': "/gscratch/ssmc/USRS/PSI/Stefano/projects/KingCounty_Ecy25/SalishSeaModel/2014Exist/2014_Exist_W3_WQ_hot10_Base4_nodes.nc",
+	    'reference25': "/gscratch/ssmc/USRS/PSI/Stefano/projects/KingCounty_Ecy25/SalishSeaModel/2014Ref/2014_Ref_W3_WQ_hot10_Base4_Deschutes_nodes.nc",
+	    'opt2_8_25': "/gscratch/ssmc/USRS/PSI/Ben/projects/Ecy25_analysis/ecology_runs/wqm_opt2_8/2014_J5D4_W3_WQ_hot10_Base4_Deschutes_nodes.nc",
+	    'exist21': "/gscratch/scrubbed/bedaro/2014_SSM4_WQ_Exist1_nodes.nc"
+	}
+
+	do_output_bottom_nc = "/gscratch/ssmc/USRS/PSI/Ben/projects/Ecy25_analysis/data/bottomdo_21vs25_yr2014_existonly_v2.nc"
+	do_output_full_nc = "/gscratch/ssmc/USRS/PSI/Ben/projects/Ecy25_analysis/data/fulldepthdo_21vs25_yr2014_existonly_v2.nc"
+	start = '2014.01.01'
+
+	var = {
+	    'Var_10': 'DOXG'
+	}
+
+	grid_file = 'SSM_Grid/ssm_grid.2dm'
+	sections_file = 'SSM_Grid/sections.ini'
+	sections = ['SJFElwha', 'UpperHaroToMainland']
+	masked_nodes_txt = None
+- this was QA'd using the original version of my ecology extraction notebook which was much slower, but produced the same result. I could not get it to run on a Hyak node in any reasonable amount of time because it was so inefficient, but could run over several hours on a PC with sufficient disk space to hold the model output files from Ecology.
+- add Stefano's model run to the intermediate netcdf using rawcdf_extract.py
+	conda activate ssm-analysis
+	rawcdf_extract.py --invar DOXG:bottom -v /gscratch/ssmc/USRS/PSI/Stefano/projects/CEng_SSMv4/wqm_test_EcyExe/outputs/ssm_FVCOMICM_*.nc /gscratch/ssmc/USRS/PSI/Ben/projects/Ecy25_analysis/data/bottomdo_21vs25_yr2014_existonly_v2.nc stefano_ben_test
+	rawcdf_extract.py --invar DOXG:all -v /gscratch/ssmc/USRS/PSI/Stefano/projects/CEng_SSMv4/wqm_test_EcyExe/outputs/ssm_FVCOMICM_*.nc /gscratch/ssmc/USRS/PSI/Ben/projects/Ecy25_analysis/data/fulldepthdo_21vs25_yr2014_existonly_v2.nc stefano_ben_test

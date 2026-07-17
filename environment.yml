@@ -1,10 +1,23 @@
-name: base
+name: psi_ssm
 channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.13
-  - conda
-  - mamba[version='>=2.5.0']
-  - pip
-prefix: /mmfs1/gscratch/ssmc/USRS/PSI/Ben/miniforge3
+  - matplotlib
+  - scipy
+  - netcdf4
+  - ipykernel
+  - geopandas
+  - cartopy
+  - cmocean
+  - xarray
+  - openpyxl
+  - contextily
+  - pyaml
+  # Required in order to use process_netcdf to read multi-file datasets
+  - dask
+  # For improved performance using process_netcdf
+  - h5netcdf
+  - gsw
+  # Recommend this one to prevent strange reprojection problems, but it consumes a lot of space
+  - proj-data

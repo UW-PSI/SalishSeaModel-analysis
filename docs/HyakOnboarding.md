@@ -388,6 +388,12 @@ Now you're ready to use Jupyter Lab on Klone and you have a populated
 development environment. You can create new ones for different projects
 and switch between them in Jupyter itself.
 
+Once you have multiple conda environments with ipykernel installed, this
+line of output will be present when you start Jupyter:
+```
+[I 2026-04-22 09:17:29.554 ServerApp] nb_conda_kernels | enabled, 3 kernels found.
+```
+
 # Bash setup
 Here is an overview of useful bits in my `.bashrc` file
 ```

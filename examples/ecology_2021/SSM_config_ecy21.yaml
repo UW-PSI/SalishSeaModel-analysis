@@ -1,0 +1,38 @@
+siglev_diff:
+- 3.2
+- 5.7
+- 7.5
+- 8.9
+- 10.1
+- 11.1
+- 12.1
+- 13.0
+- 13.8
+- 14.6
+paths:
+  model_output:
+    ecy21:
+    - /gscratch/ssmc/USRS/PSI/Stefano/projects/KingCounty/SalishSeaModel/wqm_baseline/ssm_hotstart_wqm_baseline.nc
+    - /gscratch/ssmc/USRS/PSI/Stefano/projects/KingCounty/SalishSeaModel/wqm_reference/ssm_hotstart_wqm.nc
+  processed_output: SSM_data/
+  spreadsheets: SSM_output/spreadsheets/
+  shapefiles: SSM_output/shapefiles/
+  graphics: SSM_output/graphics/
+  movies: SSM_output/movies/
+  shapefile: /home/benr/wqmodels/ssm/psi/SalishSeaModel-grid/shapefiles/SSMGrid2_tce_ecy_node_info_v2_10102022/SSMGrid2_tce_ecy_node_info_v2_10102022.shp
+  pairings_file: /home/benr/wqmodels/ssm/psi/projects/Ecy21_analysis/SSM_Opt2_Year_2014_Exist_Model_Obs_Paired.xlsx
+  nutrient_loading_inputs:
+    wqm_baseline: /home/benr/wqmodels/ssm/ecology_inputs_year1/wqm/cequalicm_wq_2014_Exist3_v3.dat
+    wqm_reference: /home/benr/wqmodels/ssm/ecology_inputs_year1/wqm/cequalicm_wq_2014_ref3.dat
+run_information:
+  spin_up_days: 5
+  baseline: wqm_baseline
+  reference: wqm_reference
+  run_description_short:
+    ecy21:
+      wqm_baseline: 2014 conditions
+      wqm_reference: Reference
+  run_tag:
+    ecy21:
+      wqm_baseline: 2014 Conditions
+      wqm_reference: Reference

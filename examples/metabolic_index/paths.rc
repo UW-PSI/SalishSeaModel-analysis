@@ -1,0 +1,25 @@
+# Make sure to change these paths to represent your setup
+#gsc_home=/gscratch/ssmc/USRS/PSI/Ben
+gsc_home=$HOME/wqmodels/ssm/psi
+
+#conda_prefix=$gsc_home/miniforge3
+conda_prefix=$HOME/miniforge3
+
+# Where the code tree lives
+REPO_HOME=$gsc_home/SalishSeaModel-analysis_2026update
+
+# The model outputs. These are only referenced by the extract script.
+GSC_STEFANO=/gscratch/ssmc/USRS/PSI/Stefano
+ECY21_EXIST=$GSC_STEFANO/projects/KingCounty/SalishSeaModel/wqm_baseline/ssm_hotstart_wqm_baseline.nc
+ECY21_REF=$GSC_STEFANO/projects/KingCounty/SalishSeaModel/wqm_reference/ssm_hotstart_wqm.nc
+
+# CASENAME is needed when CASE is a direct file path
+CASE=SSM_config_mi.yaml
+CASENAME=mi
+
+source $conda_prefix/etc/profile.d/conda.sh
+export MAMBA_ROOT_PREFIX=$conda_prefix
+source $conda_prefix/etc/profile.d/mamba.sh
+
+# Activate the appropriate conda environment
+conda activate psi_ssm
