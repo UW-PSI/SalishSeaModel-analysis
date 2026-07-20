@@ -9,8 +9,7 @@ Index for three species across Puget Sound and the Straits for the published rep
 The repository also incorporates the majority of code used to produce disolved oxyen
 metrics and data for prior reports published by PSI. This included the series of sensitivty 
 anaysis reports for regions of Northern Bays (including Bellingham), Whidbey, and Main Basin  
-(lead contributor of code Racheal Mueller), See [the original code](releases/tag/v1.1) which contains detailed
-explanations of the original code used in those reports. 
+(lead contributor of code Racheal Mueller), with details on the prior code used for those reports avalailable [here](releases/tag/v1.1). 
 
 Updates and further metrics on dissolved oxygen where done by Ben Roberts and Stefano Mazzilli and applied in subsequent
 PSI reports, and it is recommended to use this most recent version of the code (described further below) which is maintained going forward.
