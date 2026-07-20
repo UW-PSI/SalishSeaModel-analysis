@@ -1,9 +1,12 @@
 # Salish Sea Model Analysis at Puget Sound Institute (PSI)
 This repository contains a collection of post-processing files designed to create tables, graphics, and movies from Salish Sea Model output. This work was funded by King County.
 
-The most current version of the PSI code supports computing the Metabolic Index for three species across Puget Sound and the Straits for the published report, with code made by Ben Roberts and Stefano Mazzilli. The repository also incorporates most of the code used to produce dissolved oxygen metrics and data for prior reports published by PSI. This includes the series of sensitivity analysis reports for the Northern Bays (including Bellingham), Whidbey, and Main Basin regions (lead contributor of code: Rachael Mueller), with details on the prior code used for those reports available [here](.releases/tag/v1.1).
+The most current version of the PSI code supports computing the Metabolic Index for three species across Puget Sound and the Straits for the published report, with code contributed by Ben Roberts and Stefano Mazzilli.
+
+The repository also incorporates most of the code used to produce dissolved oxygen metrics and data for prior reports published by PSI. This includes the series of sensitivity analysis reports for the Northern Bays (including Bellingham), Whidbey, and Main Basin regions (lead contributor of code: Rachael Mueller), with details on the prior code used for those reports available [here](releases/tag/v1.1).
 
 Updates and additional dissolved oxygen metrics were made by Ben Roberts and Stefano Mazzilli and applied in subsequent PSI reports. It is recommended to use this most recent version of all code (described further below), which is maintained going forward.
+
 See the [project website](https://www.pugetsoundinstitute.org/nutrients/) on the PSI web pages for all reports using this code.
 
 ![SSM Node map](graphics/NodeMap_All_ECYcolors.png)
